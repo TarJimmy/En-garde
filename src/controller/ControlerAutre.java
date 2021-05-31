@@ -1,7 +1,5 @@
 package controller;
 
-package controller;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +28,7 @@ public class ControlerAutre implements CollecteurEvenements {
 		switch(c) {
 			case "menu":
 				if (InterfaceGraphiqueParametres.close() || InterfaceGraphiqueFin.close()) {
-				InterfaceGraphiqueMenu.demarrer(new ControlerAutres());}
+				InterfaceGraphiqueMenu.demarrer(new ControlerAutre());}
 				break;
 			case "play":
 				InterfaceGraphiqueMenu.close();
@@ -44,17 +42,17 @@ public class ControlerAutre implements CollecteurEvenements {
 				break;
 			case "settings":
 				InterfaceGraphiqueMenu.close();
-				Parametres.instance();
-				SaveSettings.chargerParametres();
-				settings = SaveSettings.getSettings();
-				InterfaceGraphiqueParametres.demarrer(settings, new ControlerAutres());
+				Parametre.instance();
+				SauvegardeParametre.chargerParametres();
+				settings = SauvegardeParametre.getSettings();
+				InterfaceGraphiqueParametres.demarrer(settings, new ControlerAutre());
 				break;
 			case "saveSettings":
-				SaveSettings.sauvegarderParametres(InterfaceGraphiqueParametres.getParametre("map"), InterfaceGraphiqueParametres.getParametre("nomJ1"), InterfaceGraphiqueParametres.getParametre("typeJ1"), InterfaceGraphiqueParametres.getParametre("posJ1"), InterfaceGraphiqueParametres.getParametre("nomJ2"), InterfaceGraphiqueParametres.getParametre("typeJ2"), InterfaceGraphiqueParametres.getParametre("posJ2"), InterfaceGraphiqueParametres.getParametre("modeAttaque"), InterfaceGraphiqueParametres.getParametre("manches"), InterfaceGraphiqueParametres.getParametre("carteMax"), InterfaceGraphiqueParametres.getParametre("carte1"), InterfaceGraphiqueParametres.getParametre("carte2"), InterfaceGraphiqueParametres.getParametre("carte3"), InterfaceGraphiqueParametres.getParametre("carte4"), InterfaceGraphiqueParametres.getParametre("carte5"));
+				SauvegardeParametre.sauvegarderParametres(InterfaceGraphiqueParametres.getParametre("map"), InterfaceGraphiqueParametres.getParametre("nomJ1"), InterfaceGraphiqueParametres.getParametre("typeJ1"), InterfaceGraphiqueParametres.getParametre("posJ1"), InterfaceGraphiqueParametres.getParametre("nomJ2"), InterfaceGraphiqueParametres.getParametre("typeJ2"), InterfaceGraphiqueParametres.getParametre("posJ2"), InterfaceGraphiqueParametres.getParametre("modeAttaque"), InterfaceGraphiqueParametres.getParametre("manches"), InterfaceGraphiqueParametres.getParametre("carteMax"), InterfaceGraphiqueParametres.getParametre("carte1"), InterfaceGraphiqueParametres.getParametre("carte2"), InterfaceGraphiqueParametres.getParametre("carte3"), InterfaceGraphiqueParametres.getParametre("carte4"), InterfaceGraphiqueParametres.getParametre("carte5"));
 				break;
 			case "restoreSettings":
-				SaveSettings.chargerParametres();
-				settings = SaveSettings.getSettings();
+				SauvegardeParametre.chargerParametres();
+				settings = SauvegardeParametre.getSettings();
 				InterfaceGraphiqueParametres.majParametres(settings);
 				break;
 			case "tuto":

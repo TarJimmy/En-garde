@@ -23,7 +23,7 @@ public class ScrollImageTest extends JPanel {
 
     public ScrollImageTest() {
         try {
-            this.image = ImageIO.read(Configuration.charge(Configuration.getFolderRegles() + "regle" + 1 + ".png"));
+            this.image = ImageIO.read(Configuration.charge("regle" + 1 + ".png", Configuration.REGLES));
         }catch(IOException ex) {
             Logger.getLogger(ScrollImageTest.class.getName()).log(Level.SEVERE, null, ex);
         }
