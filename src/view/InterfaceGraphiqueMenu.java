@@ -3,9 +3,7 @@ package view;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -16,13 +14,16 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import Global.Configuration;
-import controller.Controler;
-import controller.ControlerJeu;
-import controller.ControllerMenu;
+import controller.ControlerAutre;
 
+/**
+ * 
+ * @author Laï¿½titia & Delphine
+ *
+ */
 public class InterfaceGraphiqueMenu implements Runnable {
 	
-	private JFrame fenetreMenu;
+	private static JFrame fenetreMenu;
 	private CollecteurEvenements collecteurMenu;
 	private GridBagConstraints c;
 	
@@ -30,20 +31,33 @@ public class InterfaceGraphiqueMenu implements Runnable {
 		this.collecteurMenu = controle;
 	}
 	
+	/**
+	 * Ouvre la fenï¿½tre Menu
+	 * @param control
+	 */
 	public static void demarrer(CollecteurEvenements control) {
 		SwingUtilities.invokeLater(new InterfaceGraphiqueMenu(control));
 	}
 	
-	public void close() {
+	/**
+	 * Ferme la fenï¿½tre Menu
+	 */
+	public static void close() {
 		fenetreMenu.setVisible(false);
 		fenetreMenu.dispose();
 	}
 	
-	private static JButton Button (String name) throws IOException {
+	/**
+	 * Crï¿½e un bouton JButton
+	 * @param name : le nom du bouton
+	 * @return le bouton name gï¿½nï¿½rï¿½
+	 */
+	
+	private static JButton Button (String name) {
 		JButton button;
 		
 		if (name=="JOUER"){
-			ImageIcon banner = new ImageIcon(ImageIO.read(Configuration.charge(Configuration.getFolderMenu() + "cadre.png")));
+			ImageIcon banner = new ImageIcon(Configuration.getFolderMenu()+"cadre.png");
 			button = new JButton(name, banner);
 			button.setHorizontalTextPosition(SwingConstants.CENTER);
 		} else {
@@ -58,6 +72,12 @@ public class InterfaceGraphiqueMenu implements Runnable {
 		return button;
 	}
 	
+	/**
+	 * Permet de dï¿½finir l'emplacement et l'alignement (centrï¿½) d'un objet dans la fenï¿½tre Menu
+	 * @param x : abscisse
+	 * @param y : ordonnï¿½e
+	 * @return la contrainte d'emplacement et d'alignement de l'objet
+	 */
 	private static GridBagConstraints GridConstraints (int x, int y) {
 		GridBagConstraints c = new GridBagConstraints();
 		
@@ -67,48 +87,56 @@ public class InterfaceGraphiqueMenu implements Runnable {
 		
 		return c;
 	}
+	
+	/**
+	 * ï¿½criture du contenu de la fenï¿½tre Menu
+	 */
 
 	@Override
 	public void run() {
 		fenetreMenu = new JFrame("EN GARDE ! - MENU PRINCIPAL");
-		JLabel menu_fond;
+		JLabel menu_fond = null;
 		try {
-			menu_fond = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge(Configuration.getFolderMenu() + "Menu_EnGarde.png"))));
-			menu_fond.setLayout( new GridBagLayout() );
-			JButton play = Button("JOUER");
-			play.addActionListener(new AdaptateurCommande(this.collecteurMenu, "play")); //adaptateurConfiguration avec l'IG en parametre ?
-			JButton charge = Button("Charger Partie");
-			charge.addActionListener(new AdaptateurCommande(this.collecteurMenu, "chargeGame")); //adaptateurConfiguration avec l'IG en parametre ?
-			JButton settings = Button("Paramètres");
-			settings.addActionListener(new AdaptateurCommande(this.collecteurMenu, "settings"));
-			JButton rules = Button("Règles du jeu");
-			rules.addActionListener(new AdaptateurCommande(this.collecteurMenu, "rules")); //adaptateurConfiguration avec l'IG en parametre ?
-			JButton exit = Button("Quitter");
-			exit.addActionListener(new AdaptateurCommande(this.collecteurMenu, "exit"));
-			
-			c = GridConstraints(0,0);
-			menu_fond.add(play, c);
-			c = GridConstraints(0,1);
-			menu_fond.add(charge, c);
-			c = GridConstraints(0,2);
-			menu_fond.add(settings, c);
-			c = GridConstraints(0,3);
-			menu_fond.add(rules, c);
-			c = GridConstraints(0,4);
-			menu_fond.add(exit, c);
-			
-			fenetreMenu.add(menu_fond);
-			fenetreMenu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			fenetreMenu.setSize(1280, 1024);
-			fenetreMenu.setVisible(true);
+			menu_fond = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("Menu_EnGarde.png", Configuration.MENU))));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		menu_fond.setLayout( new GridBagLayout() );
+		JButton play = Button("JOUER");
+		play.addActionListener(new AdaptateurCommande(this.collecteurMenu, "play"));
+		JButton charge = Button("Charger Partie");
+		JButton demo = Button("Tutoriel");
+		demo.addActionListener(new AdaptateurCommande(this.collecteurMenu, "tuto"));
+		charge.addActionListener(new AdaptateurCommande(this.collecteurMenu, "chargeGame"));
+		JButton settings = Button("Paramï¿½tres");
+		settings.addActionListener(new AdaptateurCommande(this.collecteurMenu, "settings"));
+		JButton rules = Button("Rï¿½gles du jeu");
+		rules.addActionListener(new AdaptateurCommande(this.collecteurMenu, "rules"));
+		JButton exit = Button("Quitter");
+		exit.addActionListener(new AdaptateurCommande(this.collecteurMenu, "exit"));
+		
+		c = GridConstraints(0,0);
+		menu_fond.add(play, c);
+		c = GridConstraints(0,1);
+		menu_fond.add(charge, c);
+		c = GridConstraints(0,2);
+		menu_fond.add(demo, c);
+		c = GridConstraints(0,3);
+		menu_fond.add(settings, c);
+		c = GridConstraints(0,4);
+		menu_fond.add(rules, c);
+		c = GridConstraints(0,5);
+		menu_fond.add(exit, c);
+		
+		fenetreMenu.add(menu_fond);
+		fenetreMenu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		fenetreMenu.setSize(1280, 1024);
+		fenetreMenu.setVisible(true);
 		
 	}
 	
 	public static void main(String[] args) {
-		InterfaceGraphiqueMenu.demarrer(new ControllerMenu() {});
+		InterfaceGraphiqueMenu.demarrer(new ControlerAutre());
 	}
 }

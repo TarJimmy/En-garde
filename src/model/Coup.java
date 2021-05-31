@@ -7,50 +7,45 @@ public class Coup {
 	Carte[] cartes;
 	int action;
 	ArrayList<Integer> indicesCartesJouees;
-	ArrayList<Integer> indicesCartesJoueesDefense;
-	boolean attaqueEsquivee;
 	
 	public static final int AVANCER = 0;
 	public static final int RECULER = 1;
 	public static final int ATTAQUEDIRECTE = 2;
 	public static final int ATTAQUEINDIRECTE = 3;
+	public static final int PARER = 4;
+	public static final int ESQUIVER = 5;
+	public static final int PASSERTOUR = 6;
 	
 	public Coup(Escrimeur e, Carte[] c, int a) {
 		escrimeur = e;
 		cartes = c;
 		action = a;
 		indicesCartesJouees = new ArrayList<>();
-		indicesCartesJoueesDefense = new ArrayList<>();
-		attaqueEsquivee = false;
 	}
 	
-	public boolean isAttaqueEsquivee() {
-		return attaqueEsquivee;
-	}
-	
-	public void nullifierCartesJouees() {
+	public void viderCartesJouees() {
 		indicesCartesJouees = new ArrayList<>();
-		indicesCartesJoueesDefense = new ArrayList<>();
-	}
-
-	public void setAttaqueEsquivee(boolean attaqueEsquivee) {
-		this.attaqueEsquivee = attaqueEsquivee;
 	}
 
 	public ArrayList<Integer> getIndicesCartesJouees() {
 		return indicesCartesJouees;
 	}
 	
+	/*
+	 * remet chaque carte de la main de l'escrimeur à l'indice ou elle etait avant que l'escrimeur ne joue son coup
+	 * equivaut a annuler le decallage qui se fait chaque fois qu'on defausse une carte
+	 */
+	public void remettreCartesDansLordre() {
+		for (int i = indicesCartesJouees.size() -1; i >= 0; i--) {
+			for (int j = i; j < getEscrimeur().getNbCartes() - 1; j++) {
+				getEscrimeur().getCartes()[j+1] = getEscrimeur().getCartes()[j];
+			}
+			getEscrimeur().getCartes()[i] = null;
+		}
+	}
+	
 	public void addCarteJouee(int indice) {
 		indicesCartesJouees.add(indice);
-	}
-	
-	public ArrayList<Integer> getIndicesCartesJoueesDefense() {
-		return indicesCartesJoueesDefense;
-	}
-	
-	public void addCarteJoueeDefense(int indice) {
-		indicesCartesJoueesDefense.add(indice);
 	}
 
 	public Escrimeur getEscrimeur() {

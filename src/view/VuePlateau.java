@@ -1,14 +1,16 @@
 package view;
 
-import java.awt.BasicStroke;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.io.InputStream;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
+import Global.Configuration;
+import model.Escrimeur;
 import model.Plateau;
 
 
@@ -18,63 +20,72 @@ public class VuePlateau extends JComponent {
 	
 	private Graphics2D drawable;
 	private int NBCases;
-	private Image[] imageCases;
+	private Image[] imgDalles;
 	private Plateau p;
-	private Image ImageEscr1;
-	private Image ImageEscr2;
-	
+	private Image imgGaucher;
+	private Image imgDroitier;
+	private Image background;
 	VuePlateau(Plateau p) {
 		this.p = p;
 		this.NBCases = p.getNbCase();
-		imageCases = new Image[NBCases];
-		for (int i = 0; i < NBCases; i++) {
-			// Need to create an inputstream
-			//imageCases[i] = ImageIO.read(IMAGECASEPATH);
+		imgDalles = new Image[NBCases];
+		try {
+			this.background = ImageIO.read(Configuration.charge("Background.png", Configuration.PLATEAU));
+			this.imgGaucher = ImageIO.read(Configuration.charge("Gaucher.png", Configuration.ESCRIMEURS));
+			this.imgDroitier = ImageIO.read(Configuration.charge("Droitier.png", Configuration.ESCRIMEURS));
+			for (int i = 0; i < NBCases; i++) {
+				imgDalles[i] = ImageIO.read(Configuration.charge("D" + (i % 25 + 1) + ".png", Configuration.DALLES));
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-
+		setPreferredSize(new Dimension(getWidth(), 300));
+		//setLayout(new FlowLayout(FlowLayout.CENTER));
 	}
 	
 	@Override
 	public void paintComponent(Graphics g) {
 		drawable = (Graphics2D) g;
-		//g..setStroke(new BasicStroke(6));
-		
+	
 		int largeur = getWidth();
 		int hauteur = getHeight();
-		System.out.println(largeur + " " + largeur);
-		// On efface tout
-		drawable.clearRect(0, 0, largeur, hauteur);
+		
+		setOpaque(false);
+		drawable.drawImage(background, 0, 0, largeur, hauteur, null);
 		tracerPlateau();
 	}
 	
 	void tracerPlateau() {
-		int WidthCase = getWidth()/(NBCases);
-		int HeightCase = (int)(getHeight() * 0.8);
-		int HeigthPoint = (int)(getHeight() * 0.1);
+		int HeigthPoint = 10;
+		int posGaucher = p.getPosition(Escrimeur.GAUCHER);
+		int posDroitier =  p.getPosition(Escrimeur.DROITIER);
+	
+		final int widthEs = 150;
+		final int heightEs = 214;
 		
-		int PositionJ1 = p.getPositionGaucher();
-		int PositionJ2 = p.getPositionDroitier();
-				
+		final int widthDalle = 60;
+		final int heightDalle = 281;
+		
+		//On sauvegarde les informations des differents escrimeurs sans les dessiner, pour eviter que les dalles se dessine dessus
+		// On les redessines donc à la fin
+		int sauvGaucher = 0;
+		int sauvDroitier = 0;
 		
 		for (int i = 0; i < NBCases; i++) {
-			int WidthPoint = (getWidth()/NBCases)*i;
-			drawable.drawRect(WidthPoint, HeigthPoint, WidthCase, HeightCase);
-			//drawable.drawImage(imageCases[i],WidthPoint, HeigthPoint, WidthCase, HeightCase,null);
+			int WidthPoint = 15 + (getWidth()/NBCases) * i;
+
+			drawable.drawImage(imgDalles[i], WidthPoint, HeigthPoint, widthDalle, heightDalle, null);
 			
-			if(i == PositionJ1 - 1) {
-				drawable.setStroke(new BasicStroke(6));
-				drawable.drawRect(WidthPoint, HeigthPoint, WidthCase/2, HeightCase/2);
-				drawable.setStroke(new BasicStroke(2));
-				//drawable.drawImage(ImageEscr1,WidthPoint, HeigthPoint, WidthCase, HeightCase,null);
-			} else if (i == PositionJ2 - 1) {
-				drawable.setStroke(new BasicStroke(6));
-				drawable.drawRect(WidthPoint, HeigthPoint, WidthCase/2, HeightCase/2);
-				drawable.setStroke(new BasicStroke(2));
-				//drawable.drawImage(ImageEscr2,WidthPoint, HeigthPoint, WidthCase, HeightCase,null);
+			//On sauvegarde les informations des differents escrimeurs sans les dessiner, pour eviter que les dalles se dessine dessus
+			// On les redessines donc à la fin
+			if (i == posGaucher - 1) {
+				sauvGaucher = WidthPoint -35;
+			} else if (i == posDroitier - 1) {
+				sauvDroitier = WidthPoint - 55;
 			}
 		}
-		drawable.drawRect(0, 0, getWidth(), getHeight());
+		drawable.drawImage(imgGaucher, sauvGaucher, HeigthPoint, widthEs, heightEs, null);
+		drawable.drawImage(imgDroitier, sauvDroitier, HeigthPoint, widthEs, heightEs, null);
 	}
-	
-	
 }

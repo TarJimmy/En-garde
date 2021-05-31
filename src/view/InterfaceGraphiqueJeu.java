@@ -2,17 +2,22 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.border.LineBorder;
 
+import Global.Configuration;
 import Patterns.Observateur;
 import model.Jeu;
-import model.Plateau;
 
 public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	
@@ -20,9 +25,10 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	CollecteurEvenements controle;
 	
 	private Jeu jeu;
-	
 	VueEscrimeur mainGaucher;
 	VueEscrimeur mainDroitier;
+	
+	VueDeck vueDeck;
 	
 	VuePlateau plateau;
 	
@@ -37,7 +43,6 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	
 	@Override
 	public void miseAJour() {
-		// TODO Auto-generated method stub
 		mainGaucher.setShowFace(jeu.getIsTourGaucher());
 		mainDroitier.setShowFace(!jeu.getIsTourGaucher());
 		mainGaucher.miseAJour();
@@ -47,31 +52,48 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	public void run() {
 		frame = new JFrame("En Garde !");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(1600, 900);
 		frame.setResizable(false);
+		JLabel background = new JLabel();
 		
-		
-		
-		
-		
+		try {
+			background.setIcon(new ImageIcon(ImageIO.read(Configuration.charge("Background.png", Configuration.BG))));
+			background.setLayout(new GridLayout(3, 1));
+			background.setPreferredSize(new Dimension(1600, 900));
+			frame.add(background);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		// Haut
-//		JPanel panelHaut = new JPanel(new GridBagLayout());
+		JPanel panelTop = new JPanel(new BorderLayout());
+		panelTop.setOpaque(false);
+		// Haut -> Gauche
+		
+		// Haut -> Droit
 		mainDroitier = new VueEscrimeur(jeu.getPlateau(), jeu.getEscrimeurDroitier(), !jeu.getIsTourGaucher());
-//		panelHaut.add(mainDroitier);
-		frame.add(mainDroitier,BorderLayout.NORTH);
+		panelTop.add(mainDroitier,BorderLayout.EAST);
 		
-			
-		
-//		JPanel panelBas = new JPanel(new BorderLayout());
-		mainGaucher = new VueEscrimeur(jeu.getPlateau(), jeu.getEscrimeurGaucher(), jeu.getIsTourGaucher());
-//		panelHaut.add(mainDroitier);
-		frame.add(mainGaucher,BorderLayout.SOUTH);
-		
+		// Centre
 		plateau = new VuePlateau(jeu.getPlateau());
 		
-		frame.add(plateau);
+		// Bas
+		JPanel panelBot = new JPanel(new BorderLayout());
+		panelBot.setOpaque(false);
+		
+		// Bas -> Gauche
+		mainGaucher = new VueEscrimeur(jeu.getPlateau(), jeu.getEscrimeurGaucher(), jeu.getIsTourGaucher());
+		panelBot.add(mainGaucher, BorderLayout.WEST);
+		
+		// Bas -> Droite
+		VueDeck vueDecks = new VueDeck(jeu.getDeckPioche(), jeu.getDeckDefausse());	
+		panelBot.add(vueDecks, BorderLayout.EAST);
+		
+		
+		background.add(panelTop);
+		background.add(plateau);
+		background.add(panelBot);
+		
 		miseAJour();
-
+		frame.pack();
 		frame.setVisible(true);
 	}
 
