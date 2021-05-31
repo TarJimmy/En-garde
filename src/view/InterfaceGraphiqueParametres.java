@@ -259,7 +259,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	}
 
 	/**
-	 * ecriture du contenu de la fenetre Parametres
+	 * Ecriture du contenu de la fenetre Parametres
 	 */
 	@Override
 	public void run() {

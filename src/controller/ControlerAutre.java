@@ -1,11 +1,9 @@
 package controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import Global.Parametre;
 import model.SauvegardeParametre;
-import view.CollecteurEvenements;
 import view.InterfaceGraphiqueFin;
 //import view.InterfaceGraphiqueJeu;
 import view.InterfaceGraphiqueMenu;
@@ -17,7 +15,7 @@ import view.InterfaceGraphiqueRegles;
  * @author La�titia & Delphine
  *
  */
-public class ControlerAutre implements CollecteurEvenements {
+public class ControlerAutre extends Controler {
 	
 	private List<String> settings;
 	
@@ -66,24 +64,6 @@ public class ControlerAutre implements CollecteurEvenements {
 			default:
 				throw new IllegalArgumentException("Unexpected value: " + c);
 		}
-		return false;
-	}
-
-	@Override
-	public boolean clickSouris(String s, int l, int c) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean selectTypeCarte(String c) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean jouerCartes(ArrayList<Integer> carteAAjouer) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }
