@@ -20,7 +20,7 @@ import model.Deck;
 import model.DeckDefausse;
 import model.DeckPioche;
 
-public class VueDeck extends JComponent implements Observateur {
+public class VueDeck extends JComponent {
 	
 	DeckPioche deckPioche;
 	DeckDefausse deckDefausse;
@@ -33,10 +33,6 @@ public class VueDeck extends JComponent implements Observateur {
 		this.deckDefausse = deckDefausse;
 		setPreferredSize(new Dimension(600, 300));
 		setOpaque(false);
-		repaint();
-	}
-	@Override
-	public void miseAJour() {
 		repaint();
 	}
 	
@@ -57,8 +53,7 @@ public class VueDeck extends JComponent implements Observateur {
 		drawable.drawImage(imgFond, posx, posy, largeurDeck, hauteurDeck, null);
 		if (nbCarte > 0) {
 			Image img = ImageIO.read(Configuration.charge("DP" + (nbCarte > 4 ? 4 : nbCarte) + ".png", Configuration.CARTES));
-			drawable.setFont(new Font("Arial", Font.BOLD, 30));
-			drawable.drawString("" + nbCarte, posx + largeurDeck - 30 - (nbCarte >= 10 ? 10 : 0), posy + 35); 
+			
 			if (isDefausse) {
 				drawable.drawImage(img, posx + 12, posy + 50, 120, 170, null);
 				int distance = ((DeckDefausse) deck).consulterCarteVisible().getDistance();
@@ -68,5 +63,7 @@ public class VueDeck extends JComponent implements Observateur {
 				drawable.drawImage(img, posx + 17, posy + 42, 120, 170, null);
 			}
 		}
+		drawable.setFont(new Font("Arial", Font.BOLD, 30));
+		drawable.drawString("" + nbCarte, posx + largeurDeck - 30 - (nbCarte >= 10 ? 10 : 0), posy + 35); 
 	}
 }

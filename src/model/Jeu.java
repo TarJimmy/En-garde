@@ -39,30 +39,31 @@ public class Jeu extends Observable {
 	public static final int NONE = 2;
 	public static final int EGALITE = 3;
 
-	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, Escrimeur eGaucher, Escrimeur eDroitier) {
+	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier) {
 		super();
 		this.indiceCurrentEscrimeur = 0;
-		this.escrimeurs = new Escrimeur[2];
-		this.escrimeurs[0] = eGaucher;
-		this.escrimeurs[1] = eDroitier;
-		init(modeSimple, plateau, deckPioche, deckDefausse);
+		setHistorique(new Historique(this));
+		init(modeSimple, plateau, deckPioche, deckDefausse, gaucher, droitier);
 		modifieVue(Action.CHANGER_TOUR);
 	}
 
-	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, Action action) {
+	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, Action action, Historique historique) {
 		super();
-		this.escrimeurs[0] = gaucher;
-		this.escrimeurs[1] = droitier;
 		this.indiceCurrentEscrimeur = indiceCurrentEscrimeur;
-		init(modeSimple, plateau, deckPioche, deckDefausse);
+		setHistorique(historique);
+		init(modeSimple, plateau, deckPioche, deckDefausse, gaucher, droitier);
 		modifieVue(action);
 	}
 	
-	private void init(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse) {
+	private void init(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, Escrimeur gaucher, Escrimeur droitier) {
 		this.modeSimple = modeSimple;
 		this.plateau = plateau;
 		this.deckPioche = deckPioche;
 		this.deckDefausse = deckDefausse;
+		this.escrimeurs = new Escrimeur[2];
+		this.escrimeurs[0] = gaucher;
+		this.escrimeurs[1] = droitier;
+
 		this.dernierTour = false;
 		this.winner = NONE;
 	}
@@ -89,6 +90,10 @@ public class Jeu extends Observable {
 
 	public Escrimeur getCurrentEscrimeur() {
 		return this.escrimeurs[this.indiceCurrentEscrimeur];
+	}
+	
+	public Escrimeur getNotCurrentEscrimeur() {
+		return this.escrimeurs[((indiceCurrentEscrimeur + 1) % 2)];
 	}
 
 	public Plateau getPlateau() {
@@ -129,17 +134,8 @@ public class Jeu extends Observable {
 	public int changerTour() {
 		piocher(getCurrentEscrimeur());
 		indiceCurrentEscrimeur = (indiceCurrentEscrimeur + 1) % 2;
-		metAJour();
-		if (deckPioche.deckVide()) {
-			System.out.println("piocheVide");
-			return 1;
-		}
-		if (!plateau.peutJouer(getCurrentEscrimeur())) {
-			winner = ((indiceCurrentEscrimeur + 1) % 2);
-			return 1;
-		}
 		modifieVue(Action.CHANGER_TOUR);
-		return 0;
+		return 1;
 	}
 
 	/**
@@ -197,6 +193,8 @@ public class Jeu extends Observable {
 							historique.viderCoupsAnnules();
 						}
 						modifieVue(Action.ACTUALISE_PLATEAU);
+						modifieVue(Action.ACTUALISE_MAINS);
+						return true;
 					} else {
 						// le coup ne va pas etre joué, on ramene donc le joueur a sa position initiale
 						plateau.deplacerEscrimeur(c.getEscrimeur(), (c.getCartes()[0].getDistance()) * (-sens));
@@ -243,6 +241,7 @@ public class Jeu extends Observable {
 				}
 				changerTour();
 				modifieVue(Action.ACTUALISE_PLATEAU);
+				modifieVue(Action.ACTUALISE_MAINS);
 				return true;
 				
 			case Coup.PARER :
@@ -271,6 +270,7 @@ public class Jeu extends Observable {
 					return false;
 				}
 				modifieVue(Action.ACTUALISE_PLATEAU);
+				modifieVue(Action.ACTUALISE_MAINS);
 				return true;
 			
 			default : 
@@ -368,12 +368,7 @@ public class Jeu extends Observable {
 		Escrimeur eGaucher = new Escrimeur("Gaucher", TypeEscrimeur.HUMAIN, Escrimeur.GAUCHER, 5);
 		Escrimeur eDroitier = new Escrimeur("Droitier", TypeEscrimeur.HUMAIN, Escrimeur.DROITIER, 5);
 		Jeu jeu = null;
-		try {
-			jeu = new Jeu(true, new Plateau(23), deckPioche, deckDefausse, eGaucher, eDroitier);
-		} catch (IncorrectPlateauException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		jeu = null;//new Jeu(true, new Plateau(23), deckPioche, deckDefausse, eGaucher, eDroitier);
 		jeu.setHistorique(new Historique(jeu));
 
 		jeu.piocher(eDroitier);

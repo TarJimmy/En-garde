@@ -40,19 +40,8 @@ public class VueEscrimeur extends JPanel {
 		add(vueMain);
 	}
 	
-	@Override
-	public void paintComponent(Graphics g) {
-		/*
-		int distance;
-		for (int i = 0; i < nbCartesMax; i++) {
-			distance = e.getCarte(i).getDistance();
-			setCarte(i, distance);
-			cartes[i].repaintCarte(distance, showFace);
-		}
-		*/
-	}
-	
-	public void setShowFace(Boolean showFace) {
+	public void actualise(Boolean showFace) {
 		this.showFace = showFace;
+		vueMain.actualise(showFace);
 	}
 }

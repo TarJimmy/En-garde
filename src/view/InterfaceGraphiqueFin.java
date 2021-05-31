@@ -102,7 +102,7 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 	}
 
 	public static void main(String[] args) {
-		InterfaceGraphiqueFin.demarrer(new ControlerAutres());
+		InterfaceGraphiqueFin.demarrer(new ControlerAutre());
 	}
 }
 

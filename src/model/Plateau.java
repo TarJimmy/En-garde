@@ -105,7 +105,7 @@ public class Plateau extends Observable {
 		boolean res = false;
 		int i = 0;
 		while( i < e.getNbCartes() && res == false) {
-			if (escrimeurPeutAttaquer(e, e.getCartes()[i].getDistance()) || mouvementPossible(e, e.getCartes()[i].getDistance())) {
+			if (e.getCarte(i) != null && (escrimeurPeutAttaquer(e, e.getCartes()[i].getDistance()) || mouvementPossible(e, e.getCartes()[i].getDistance()))) {
 				res = true;
 			}
 			i++;
@@ -123,16 +123,18 @@ public class Plateau extends Observable {
 		int cartesDefense = 0;
 		HashSet<Integer> res = new HashSet<>();
 		for (int i = 0; i < e.getNbCartes(); i++) {
-			int distance = e.getCarte(i).getDistance();
-			if (mouvementPossible(e, distance) && (typesCoupsPossibles | 0x1) == typesCoupsPossibles) {
-				res.add(getPosition(escrimeur) + distance);
-			}
-			if (mouvementPossible(e, -distance) && (typesCoupsPossibles | 0x10) == typesCoupsPossibles) {
-				res.add(getPosition(escrimeur) - distance);
-			}
-			if (escrimeurPeutAttaquer(e, distance) && (typesCoupsPossibles | 0x100) == typesCoupsPossibles) {
-				res.add(getPosition(escrimeur) + distance);
-				cartesDefense += 1;
+			if (e.getCarte(i) != null) {
+				int distance = e.getCarte(i).getDistance();
+				if (mouvementPossible(e, distance) && (typesCoupsPossibles | 0x1) == typesCoupsPossibles) {
+					res.add(getPosition(escrimeur) + getValeurOrientation(e, distance));
+				}
+				if (mouvementPossible(e, -distance) && (typesCoupsPossibles | 0x10) == typesCoupsPossibles) {
+					res.add(getPosition(escrimeur) - getValeurOrientation(e, distance));
+				}
+				if (escrimeurPeutAttaquer(e, distance) && (typesCoupsPossibles | 0x100) == typesCoupsPossibles) {
+					res.add(getPosition(escrimeur) + getValeurOrientation(e, distance));
+					cartesDefense += 1;
+				}
 			}
 		}
 		if ((typesCoupsPossibles | 0x1000) == typesCoupsPossibles && cartesDefense >= valeurDefense) {
@@ -141,6 +143,7 @@ public class Plateau extends Observable {
 		if ((typesCoupsPossibles | 0x10000) == typesCoupsPossibles) {
 			res.add(-1);
 		}
+		System.out.println(res);
 		return res;
 	}
 }

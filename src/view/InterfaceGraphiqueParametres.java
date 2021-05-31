@@ -3,8 +3,10 @@ package view;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
+import java.io.IOException;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -17,7 +19,7 @@ import Patterns.Observateur;
 
 /**
  * 
- * @author La�titia & Delphine
+ * @author Laetitia & Delphine
  *
  */
 public class InterfaceGraphiqueParametres implements Runnable, Observateur {
@@ -89,12 +91,15 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	static int cartes4;
 	static int cartes5;
 	
+	private Boolean textJ1NoNull;
+	private Boolean textJ2NoNull;
+	private Boolean canEnregistrer;
 	private InterfaceGraphiqueParametres(CollecteurEvenements controle) {
 		this.controle = controle;
 	}
 	
 	/**
-	 * (R�)Initialisation des valeurs par d�faut du formulaire
+	 * (Re)Initialisation des valeurs par defaut du formulaire
 	 * @param settings : liste des valeurs du formulaire
 	 */
 	private static void settings(List<String> settings) {
@@ -116,7 +121,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	}
 	
 	/**
-	 * Ouvre la fen�tre Parametres
+	 * Ouvre la fenetre Parametres
 	 * @param settings : liste des valeurs pour l'inisialisation du formulaire 
 	 * @param control
 	 */
@@ -126,7 +131,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	}
 	
 	/**
-	 * Ferme la fen�tre Parametres
+	 * Ferme la fenetre Parametres
 	 */
 	public static boolean close() {
 		try {
@@ -139,7 +144,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	}
 
 	/**
-	 * Mise � jour des valeurs par d�faut du formulaire
+	 * Mise e jour des valeurs par defaut du formulaire
 	 * @param settings : liste des valeurs du formulaire
 	 */
 	public static void majParametres(List<String> settings) {
@@ -160,10 +165,10 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	}
 	
 	/**
-	 * Mise � true du radio bouton selon la valeur du parametre
+	 * Mise e true du radio bouton selon la valeur du parametre
 	 * @param typeJ1 : valeur du type du joueur 1 (humain ou IA)
 	 * @param typeJ2 : valeur du type du joueur 2 (humain ou IA)
-	 * @param modeAttaque : valeur par d�faut du mode d'attaque (basique ou avanc�)
+	 * @param modeAttaque : valeur par defaut du mode d'attaque (basique ou avance)
 	 */
 	private static void setRadioButtons(String typeJ1, String typeJ2, String modeAttaque) {
 		switch (typeJ1) {
@@ -187,8 +192,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	
 	/**
 	 * Affichage d'un warning si de la zone de texte est vide
-	 * @param txtJoueur : zone de texte � v�rifier
-	 * @param warning : le text � afficher
+	 * @param txtJoueur : zone de texte e verifier
+	 * @param warning : le text e afficher
 	 */
 	private void warningField(JTextField txtJoueur, JLabel warning) {
 		txtJoueur.getDocument().addDocumentListener(new DocumentListener() {
@@ -204,46 +209,54 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 
 			private void warn() {
 				if (txtJoueur.getText().isEmpty()) {
+					textJ1NoNull = true;
 					warning.setVisible(true);
-				} else {warning.setVisible(false);}
-				
+				} else {
+					textJ1NoNull = false;
+					canEnregistrer = textJ2NoNull;
+					warning.setVisible(false);
+				}
 			}
 			
 		});
-		
 	}
 	
 	/**
-	 * Cr�e un bouton JButton
+	 * Cree un bouton JButton
 	 * @param name : le nom du bouton
-	 * @return le bouton name g�n�r�
+	 * @return le bouton name genere
 	 */
 	private static JButton Button (String name) {
 		JButton button;
 		ImageIcon banner;
 		
-		switch (name){
-			case "JOUER":
-			case "MENU":
-			case "FERMER":
-				banner = new ImageIcon(new ImageIcon(Configuration.getFolderMenu()+"cadre2.png").getImage().getScaledInstance(195, 37, Image.SCALE_SMOOTH));
-				button = new JButton(name, banner);
-				button.setFont(new Font("Century", Font.PLAIN, 15));
-				break;
-			default:
-				banner = new ImageIcon(new ImageIcon(Configuration.getFolderMenu()+ "cadre3.png").getImage().getScaledInstance(266, 40, Image.SCALE_SMOOTH));
-				button = new JButton(name, banner);
-				button.setFont(new Font("Century", Font.PLAIN, 11));
-				break;
+		try {
+			switch (name){
+				case "JOUER":
+				case "MENU":
+				case "FERMER":
+					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre2.png", Configuration.MENU))).getImage().getScaledInstance(195, 37, Image.SCALE_SMOOTH));
+					button = new JButton(name, banner);
+					button.setFont(new Font("Century", Font.PLAIN, 15));
+					break;
+				default:
+					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre3.png", Configuration.MENU))).getImage().getScaledInstance(266, 40, Image.SCALE_SMOOTH));
+					button = new JButton(name, banner);
+					button.setFont(new Font("Century", Font.PLAIN, 11));
+					break;
+			}
+			
+			button.setHorizontalTextPosition(SwingConstants.CENTER);
+			button.setFocusPainted(false);
+			button.setBorderPainted(false);
+			button.setContentAreaFilled(false);
+			button.setOpaque(false);
+			
+			return button;
+		} catch (IOException e) {
+			System.err.println("An error as occured");
+			return null;
 		}
-		
-		button.setHorizontalTextPosition(SwingConstants.CENTER);
-		button.setFocusPainted(false);
-		button.setBorderPainted(false);
-		button.setContentAreaFilled(false);
-		button.setOpaque(false);
-		
-		return button;
 	}
 
 	@Override
@@ -252,10 +265,13 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	}
 
 	/**
-	 * �criture du contenu de la fen�tre Parametres
+	 * Ecriture du contenu de la fenetre Parametres
 	 */
 	@Override
 	public void run() {
+		textJ2NoNull = true;
+		textJ1NoNull = true;
+		canEnregistrer = true;
 		/*Parametres.instance();*/
 		fenetreParametres = new JFrame("EN GARDE ! - PARAMETRES");
 		/*JLabel contentPane = new JLabel(new ImageIcon("res/parametres.png"));*/
@@ -303,27 +319,27 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		
 		/////type du joueur 1
 		btnRadioJ1_Humain = new JRadioButton("Humain");
-		btnRadioJ1_Humain.setActionCommand("Humain");
+		btnRadioJ1_Humain.setActionCommand("HUMAIN");
 		buttonGroup_TypeJ1.add(btnRadioJ1_Humain);
 		btnRadioJ1_Humain.setBounds(332, 149, 70, 23);
 		contentPane.add(btnRadioJ1_Humain);
 		btnRadioJ1_Facile = new JRadioButton("IA Facile");
-		btnRadioJ1_Facile.setActionCommand("IA Facile");
+		btnRadioJ1_Facile.setActionCommand("IA_FACILE");
 		buttonGroup_TypeJ1.add(btnRadioJ1_Facile);
 		btnRadioJ1_Facile.setBounds(408, 150, 86, 23);
 		contentPane.add(btnRadioJ1_Facile);
 		btnRadioJ1_Moyenne = new JRadioButton("IA Moyenne");
-		btnRadioJ1_Moyenne.setActionCommand("IA Moyenne");
+		btnRadioJ1_Moyenne.setActionCommand("IA_MOYENNE");
 		buttonGroup_TypeJ1.add(btnRadioJ1_Moyenne);
 		btnRadioJ1_Moyenne.setBounds(490, 150, 100, 23);
 		contentPane.add(btnRadioJ1_Moyenne);
 		btnRadioJ1_Difficile = new JRadioButton("IA Difficile");
-		btnRadioJ1_Difficile.setActionCommand("IA Difficile");
+		btnRadioJ1_Difficile.setActionCommand("IA_DIFFICILE");
 		buttonGroup_TypeJ1.add(btnRadioJ1_Difficile);
 		btnRadioJ1_Difficile.setBounds(592, 150, 86, 23);
 		contentPane.add(btnRadioJ1_Difficile);
 		
-		/////emplacement du joueur 1 au d�but de la partie
+		/////emplacement du joueur 1 au debut de la partie
 		labelPositionJ1 = new JLabel("Position");
 		labelPositionJ1.setBounds(716, 153, 46, 14);
 		contentPane.add(labelPositionJ1);
@@ -352,27 +368,27 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		
 		/////type du joueur 2
 		btnRadioJ2_Humain = new JRadioButton("Humain");
-		btnRadioJ2_Humain.setActionCommand("Humain");
+		btnRadioJ2_Humain.setActionCommand("HUMAIN");
 		buttonGroup_TypeJ2.add(btnRadioJ2_Humain);
 		btnRadioJ2_Humain.setBounds(332, 203, 70, 23);
 		contentPane.add(btnRadioJ2_Humain);
 		btnRadioJ2_Facile = new JRadioButton("IA Facile");
-		btnRadioJ2_Facile.setActionCommand("IA Facile");
+		btnRadioJ2_Facile.setActionCommand("IA_FACILE");
 		buttonGroup_TypeJ2.add(btnRadioJ2_Facile);
 		btnRadioJ2_Facile.setBounds(408, 204, 86, 23);
 		contentPane.add(btnRadioJ2_Facile);
 		btnRadioJ2_Moyenne = new JRadioButton("IA Moyenne");
-		btnRadioJ2_Moyenne.setActionCommand("IA Moyenne");
+		btnRadioJ2_Moyenne.setActionCommand("IA_MOYENNE");
 		buttonGroup_TypeJ2.add(btnRadioJ2_Moyenne);
 		btnRadioJ2_Moyenne.setBounds(490, 204, 100, 23);
 		contentPane.add(btnRadioJ2_Moyenne);
 		btnRadioJ2_Difficile = new JRadioButton("IA Difficile");
-		btnRadioJ2_Difficile.setActionCommand("IA Difficile");
+		btnRadioJ2_Difficile.setActionCommand("IA_DIFFICILE");
 		buttonGroup_TypeJ2.add(btnRadioJ2_Difficile);
 		btnRadioJ2_Difficile.setBounds(592, 204, 86, 23);
 		contentPane.add(btnRadioJ2_Difficile);
 		
-		/////emplacement du joueur 2 au d�but de la partie
+		/////emplacement du joueur 2 au debut de la partie
 		labelPositionJ2 = new JLabel("Position");
 		labelPositionJ2.setBounds(716, 207, 46, 14);
 		contentPane.add(labelPositionJ2);
@@ -472,12 +488,12 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		contentPane.add(spinner_cartes5);
 		
 		///Boutons
-		JButton btnSaveSettings = Button("Enregistrer comme param�tres par d�faut");
-		btnSaveSettings.addActionListener(new AdaptateurCommande(this.controle, "saveSettings"));
+		JButton btnSaveSettings = Button("Enregistrer comme parametres par defaut");
+		btnSaveSettings.addActionListener(new AdaptateurCommande(this.controle, "saveSettings", canEnregistrer));
 		btnSaveSettings.setBounds(55, 517, 266, 37);
 		contentPane.add(btnSaveSettings);
 		
-		JButton btnRestoreSettings = Button("R�tablir les param�tres par d�faut");
+		JButton btnRestoreSettings = Button("Retablir les parametres par defaut");
 		btnRestoreSettings.addActionListener(new AdaptateurCommande(this.controle, "restoreSettings"));
 		btnRestoreSettings.setBounds(331, 517, 266, 37);
 		contentPane.add(btnRestoreSettings);
@@ -529,8 +545,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	}
 
 	/**
-	 * R�cup�ration d'un parametre
-	 * @param para : le parametres que l'on souhaite r�cup�rer
+	 * Recuperation d'un parametre
+	 * @param para : le parametres que l'on souhaite recuperer
 	 * @return la valeur du parametre para
 	 */
 	public static String getParametre(String para) {

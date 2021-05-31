@@ -21,7 +21,7 @@ public class Parametre {
 		File dossier = new File("Parametres"); 
 	    boolean res = dossier.mkdir();
 	    if (res) {
-	    	System.out.println("Le dossier Parametres a �t� cr��.");
+	    	System.out.println("Le dossier Parametres a été crée.");
 	      	String filePath = dirPara + "/parametres.txt";
 			try {
 				// Create new file if needed

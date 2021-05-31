@@ -1,0 +1,15 @@
+23
+
+IA_FACILE
+1
+Joueur 2
+HUMAIN
+23
+Basique
+5
+7
+7
+5
+5
+5
+5

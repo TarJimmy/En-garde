@@ -2,7 +2,7 @@ package model;
 
 /**
  * 
- * @author La�titia & Delphine
+ * @author Laetitia & Delphine
  *
  */
 import java.io.File;
@@ -43,9 +43,9 @@ public class SauvegardeParametre {
 	 * @param nomJ2 : identifiant du joueur 2
 	 * @param typeJ2 : type du joueur 2
 	 * @param posJ2 : position, sur le terrain, du joueur 2
-	 * @param modeAttaque : basique ou avanc�
+	 * @param modeAttaque : basique ou avance
 	 * @param manches : nombre de manche pour gagner
-	 * @param carteMax : nombre de cartes maximum autoris� en main
+	 * @param carteMax : nombre de cartes maximum autorise en main
 	 * @param carte1 : nombre de cartes de valeur 1
 	 * @param carte2 : nombre de cartes de valeur 2
 	 * @param carte3 : nombre de cartes de valeur 3
@@ -78,9 +78,9 @@ public class SauvegardeParametre {
 	}
 	
 	/**
-	 * Chargement des param�tres
-	 * Extraction des valeurs du fichier .txt renseignant les parametres par d�faut du formulaire
-	 * vers les variables priv�es de SaveSettings
+	 * Chargement des parametres
+	 * Extraction des valeurs du fichier .txt renseignant les parametres par defaut du formulaire
+	 * vers les variables privees de SaveSettings
 	 */
 	public static void chargerParametres() {
 		try {
@@ -117,14 +117,14 @@ public class SauvegardeParametre {
 	}
 	
 	/**
-	 * R�cup�ration des parametres
-	 * @return la liste de string des parametres enregistr�s
+	 * Recuperation des parametres
+	 * @return la liste de string des parametres enregistres
 	 */
 	public static List<String> getSettings() {
 		List<String> settings = new ArrayList<>();
 		settings.add(map);
-		for (String value1 : joueur1) {settings.add((value1));}
-		for (String value2 : joueur2) {settings.add(value2);}
+		for (String value1 : joueur1) { settings.add((value1)); }
+		for (String value2 : joueur2) { settings.add(value2); }
 		settings.add(modeAttaque);
 		settings.add(manches);
 		settings.add(cartes_max);

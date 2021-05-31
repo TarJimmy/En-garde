@@ -27,16 +27,21 @@ public class VuePlateau extends JComponent {
 	private Plateau p;
 	private Image imgGaucher;
 	private Image imgDroitier;
+	private Image imgGaucherBlack;
+	private Image imgDroitierBlack;
 	private Image background;
 	private CollecteurEvenements controle;
 	private HashSet<Integer> caseClickable;
+	private Boolean gaucherDoitJouer;
 	
 	VuePlateau(Plateau p, CollecteurEvenements controle) {
 		caseClickable = new HashSet<>();
+		gaucherDoitJouer = true;
 		init(p, controle);
 	}
 	
-	VuePlateau(Plateau p, CollecteurEvenements controle, HashSet<Integer> caseAccessible) {
+	VuePlateau(Plateau p, CollecteurEvenements controle, HashSet<Integer> caseAccessible, Boolean gaucherDoitJouer) {
+		this.gaucherDoitJouer = gaucherDoitJouer;
 		this.controle = controle;
 		caseClickable = caseAccessible;
 		init(p, controle);
@@ -50,6 +55,8 @@ public class VuePlateau extends JComponent {
 			this.background = ImageIO.read(Configuration.charge("Background.png", Configuration.PLATEAU));
 			this.imgGaucher = ImageIO.read(Configuration.charge("Gaucher.png", Configuration.ESCRIMEURS));
 			this.imgDroitier = ImageIO.read(Configuration.charge("Droitier.png", Configuration.ESCRIMEURS));
+			this.imgGaucherBlack = ImageIO.read(Configuration.charge("GaucherB.png", Configuration.ESCRIMEURS));
+			this.imgDroitierBlack = ImageIO.read(Configuration.charge("DroitierB.png", Configuration.ESCRIMEURS));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -106,15 +113,22 @@ public class VuePlateau extends JComponent {
 				sauvDroitier = posXImage - 55;
 			}
 		}
-		drawable.drawImage(imgGaucher, sauvGaucher, HeigthPoint, widthEs, heightEs, null);
-		drawable.drawImage(imgDroitier, sauvDroitier, HeigthPoint, widthEs, heightEs, null);
+		if (gaucherDoitJouer) {
+			drawable.drawImage(imgGaucher, sauvGaucher, HeigthPoint, widthEs, heightEs, null);
+			drawable.drawImage(imgDroitierBlack, sauvDroitier, HeigthPoint, widthEs, heightEs, null);
+		} else {
+			drawable.drawImage(imgGaucherBlack, sauvGaucher, HeigthPoint, widthEs, heightEs, null);
+			drawable.drawImage(imgDroitier, sauvDroitier, HeigthPoint, widthEs, heightEs, null);
+		}
 	}
 
-	public void setCaseClickable(HashSet<Integer> caseClickable) {
+	public void actualise(HashSet<Integer> caseClickable, Boolean gaucherDoitJouer) {
+		this.gaucherDoitJouer = gaucherDoitJouer;
 		this.caseClickable.clear();
 		Iterator<Integer> it = caseClickable.iterator();
 	      while(it.hasNext()) {
 	    	  this.caseClickable.add(it.next());
 	      }
+	      repaint();
 	}
 }

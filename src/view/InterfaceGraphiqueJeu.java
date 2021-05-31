@@ -46,6 +46,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	private InterfaceGraphiqueJeu(CollecteurEvenements controle, Jeu jeu) {
 		this.controle = controle;
 		this.jeu = jeu;
+		jeu.ajouteObservateur(this);
 	}
 	
 	public static void demarrer(CollecteurEvenements control, Jeu jeu) {
@@ -55,12 +56,11 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	@Override
 	public void miseAJour() {
 		Action action = jeu.action;
-		System.out.println(action.toString());
+		System.out.println(action);
 		switch (action) {
 			case CHANGER_TOUR:
 			case ACTUALISE_PLATEAU: // Actualise les cases accessibles du plateau
-				vuePlateau.setCaseClickable(jeu.casesJouables());
-				vuePlateau.repaint();
+				vuePlateau.actualise(jeu.casesJouables(), jeu.getIsTourGaucher());
 				if (action != Action.CHANGER_TOUR) { // Stop si ce n'est pas  un changement de tour
 					break;
 				}
@@ -73,12 +73,12 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				}
 			case ACTUALISE_MAINS:
 			case ACTUALISE_MAIN_DROITIER:
-				mainDroitier.repaint();
-				if (action != Action.CHANGER_TOUR || action != Action.ACTUALISE_MAINS) { // Stop si ce n'est pas  un changement de tour ou l'actualisation des 2 mains
+				mainDroitier.actualise(jeu.getIsTourGaucher() == false);
+				if (action != Action.CHANGER_TOUR && action != Action.ACTUALISE_MAINS) { // Stop si ce n'est pas  un changement de tour ou l'actualisation des 2 mains
 					break;
 				}
 			case ACTUALISE_MAIN_GAUCHER:
-				mainGaucher.repaint();
+				mainGaucher.actualise(jeu.getIsTourGaucher());
 				if (action != Action.CHANGER_TOUR) { // Stop si ce n'est pas  un changement de tour
 					break;
 				}

@@ -69,4 +69,9 @@ public class VueMain extends JComponent {
 			drawable.drawImage(img, posXSocle + ((largeurSocle - largeurCarte) / 2), posYSocle + ((hauteurSocle - hauteurCarte) / 2), largeurCarte, hauteurCarte, null);
 		}
 	}
+	
+	public void actualise(Boolean showFace) {
+		this.showFace = showFace;
+		repaint();
+	}
 }
