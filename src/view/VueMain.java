@@ -25,10 +25,11 @@ public class VueMain extends JComponent {
 	private final int largeurSocle = 160;
 	private final int hauteurSocle = 203;
 	private Graphics2D drawable;
-	
+	private Boolean showFace;
 	private Image imgSocle;
 	
-	public VueMain(Carte[] cartes) {
+	public VueMain(Carte[] cartes, Boolean showFace) {
+		this.showFace = showFace;
 		this.cartes = cartes;
 		this.setPreferredSize(new Dimension(1000, 300));
 		setPreferredSize(new Dimension(120, 150));
@@ -64,7 +65,7 @@ public class VueMain extends JComponent {
 		if (distance > 0) {
 			int largeurCarte = 98;
 			int hauteurCarte = 150;
-			Image img = ImageIO.read(Configuration.charge(distance + ".png", Configuration.CARTES));
+			Image img = ImageIO.read(Configuration.charge((showFace ? distance + ".png" : "Dos.png"), Configuration.CARTES));
 			drawable.drawImage(img, posXSocle + ((largeurSocle - largeurCarte) / 2), posYSocle + ((hauteurSocle - hauteurCarte) / 2), largeurCarte, hauteurCarte, null);
 		}
 	}

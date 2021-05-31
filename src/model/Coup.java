@@ -14,7 +14,6 @@ public class Coup {
 	public static final int ATTAQUEINDIRECTE = 3;
 	public static final int PARER = 4;
 	public static final int ESQUIVER = 5;
-	public static final int PASSERTOUR = 6;
 	
 	public Coup(Escrimeur e, Carte[] c, int a) {
 		escrimeur = e;

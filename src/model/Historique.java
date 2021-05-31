@@ -37,19 +37,19 @@ public class Historique {
 	}
 	
 	public Coup voirDernierCoup() {
-		return historique.peek();
+		return historique.isEmpty() ? null : historique.peek();
 	}
 	
 	public Coup depilerDernierCoup() {
-		return historique.pop();
+		return historique.isEmpty() ? null : historique.pop();
 	}
 	
 	public Coup voirDernierCoupAnnule() {
-		return coupsAnnules.peek();
+		return coupsAnnules.isEmpty() ? null : coupsAnnules.peek();
 	}
 	
 	public Coup depilerDernierCoupAnnule() {
-		return coupsAnnules.pop();
+		return coupsAnnules.isEmpty() ? null : coupsAnnules.pop();
 	}
 	
 	
@@ -71,7 +71,7 @@ public class Historique {
 	
 	
 	/*
-	
+	FONCTION A REFAIRE 5ON PEUT S'INSPIRER DE CELLE ECRITE MAIS IL DOIT Y AVOIR FULL BULLSHIT
 	
 	public boolean annulerCoup() {
 	 /!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\

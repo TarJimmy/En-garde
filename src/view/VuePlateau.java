@@ -5,43 +5,56 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
 import Global.Configuration;
+import Patterns.Observateur;
 import model.Escrimeur;
 import model.Plateau;
 
 
+@SuppressWarnings("serial")
 public class VuePlateau extends JComponent {
 
 	public static final String IMAGECASEPATH = "../Images/Case";
 	
 	private Graphics2D drawable;
 	private int NBCases;
-	private Image[] imgDalles;
 	private Plateau p;
 	private Image imgGaucher;
 	private Image imgDroitier;
 	private Image background;
-	VuePlateau(Plateau p) {
+	private CollecteurEvenements controle;
+	private HashSet<Integer> caseClickable;
+	
+	VuePlateau(Plateau p, CollecteurEvenements controle) {
+		caseClickable = new HashSet<>();
+		init(p, controle);
+	}
+	
+	VuePlateau(Plateau p, CollecteurEvenements controle, HashSet<Integer> caseAccessible) {
+		this.controle = controle;
+		caseClickable = caseAccessible;
+		init(p, controle);
+	}
+	
+	private void init(Plateau p, CollecteurEvenements controle) {
+		this.controle = controle;
 		this.p = p;
 		this.NBCases = p.getNbCase();
-		imgDalles = new Image[NBCases];
 		try {
 			this.background = ImageIO.read(Configuration.charge("Background.png", Configuration.PLATEAU));
 			this.imgGaucher = ImageIO.read(Configuration.charge("Gaucher.png", Configuration.ESCRIMEURS));
 			this.imgDroitier = ImageIO.read(Configuration.charge("Droitier.png", Configuration.ESCRIMEURS));
-			for (int i = 0; i < NBCases; i++) {
-				imgDalles[i] = ImageIO.read(Configuration.charge("D" + (i % 25 + 1) + ".png", Configuration.DALLES));
-			}
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		setPreferredSize(new Dimension(getWidth(), 300));
-		//setLayout(new FlowLayout(FlowLayout.CENTER));
+		addMouseListener(new AdaptateurCase(controle, NBCases, caseClickable, this));
 	}
 	
 	@Override
@@ -53,10 +66,15 @@ public class VuePlateau extends JComponent {
 		
 		setOpaque(false);
 		drawable.drawImage(background, 0, 0, largeur, hauteur, null);
-		tracerPlateau();
+		try {
+			tracerPlateau();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	void tracerPlateau() {
+	void tracerPlateau() throws IOException {
 		int HeigthPoint = 10;
 		int posGaucher = p.getPosition(Escrimeur.GAUCHER);
 		int posDroitier =  p.getPosition(Escrimeur.DROITIER);
@@ -71,21 +89,32 @@ public class VuePlateau extends JComponent {
 		// On les redessines donc à la fin
 		int sauvGaucher = 0;
 		int sauvDroitier = 0;
-		
+		int espaceCase = getWidth() / NBCases;
 		for (int i = 0; i < NBCases; i++) {
-			int WidthPoint = 15 + (getWidth()/NBCases) * i;
-
-			drawable.drawImage(imgDalles[i], WidthPoint, HeigthPoint, widthDalle, heightDalle, null);
+			int posX = i * espaceCase;
+			int posXImage = posX + (espaceCase - widthDalle) / 2;
+			int num = i + 1;
+			Image imgDalle = ImageIO.read(Configuration.charge((caseClickable.contains(num) ? "#" : "") + "D" + num + ".png", Configuration.DALLES));
+			
+			drawable.drawImage(imgDalle, posXImage, HeigthPoint, widthDalle, heightDalle, null);
 			
 			//On sauvegarde les informations des differents escrimeurs sans les dessiner, pour eviter que les dalles se dessine dessus
 			// On les redessines donc à la fin
 			if (i == posGaucher - 1) {
-				sauvGaucher = WidthPoint -35;
+				sauvGaucher = posXImage - 35;
 			} else if (i == posDroitier - 1) {
-				sauvDroitier = WidthPoint - 55;
+				sauvDroitier = posXImage - 55;
 			}
 		}
 		drawable.drawImage(imgGaucher, sauvGaucher, HeigthPoint, widthEs, heightEs, null);
 		drawable.drawImage(imgDroitier, sauvDroitier, HeigthPoint, widthEs, heightEs, null);
+	}
+
+	public void setCaseClickable(HashSet<Integer> caseClickable) {
+		this.caseClickable.clear();
+		Iterator<Integer> it = caseClickable.iterator();
+	      while(it.hasNext()) {
+	    	  this.caseClickable.add(it.next());
+	      }
 	}
 }

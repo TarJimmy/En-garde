@@ -130,7 +130,7 @@ public class Escrimeur extends Observable {
 		return indice == GAUCHER;
 	}
 	
-	public void addMancheGagner() {
+	public void addMancheGagnee() {
 		mancheGagner++;
 	}	
 }

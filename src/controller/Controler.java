@@ -33,6 +33,12 @@ public abstract class Controler implements CollecteurEvenements {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
 
+	@Override
+	public boolean clickCase(int x) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	
 }

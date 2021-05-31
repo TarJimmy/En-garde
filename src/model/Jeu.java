@@ -8,6 +8,20 @@ import Patterns.Observable;
 import controller.ControlerJeu;
 
 public class Jeu extends Observable {
+	
+	public enum Action {
+		CHANGER_TOUR,
+		ACTUALISE_DECK,
+		ACTUALISE_PLATEAU,
+		ACTUALISE_MAINS,
+		ACTUALISE_MAIN_DROITIER,
+		ACTUALISE_MAIN_GAUCHER,
+		PIOCHER,
+		DEFAUSSER,
+		DEBUT_MANCHE,
+		FIN_MANCHE
+	}
+	
 	private Boolean modeSimple; 
 	private Plateau plateau;
 	private DeckPioche deckPioche;
@@ -16,39 +30,57 @@ public class Jeu extends Observable {
 	private Escrimeur[] escrimeurs;
 	private int winner;
 	private Historique historique;
-
+	private boolean dernierTour;
+	
+	public Action action;
+	
 	public static final int EGAUCHER = 0;
 	public static final int EDROITIER = 1;
 	public static final int NONE = 2;
 	public static final int EGALITE = 3;
 
-	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse,
-			Escrimeur eGaucher, Escrimeur eDroitier) {
+	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, Escrimeur eGaucher, Escrimeur eDroitier) {
 		super();
-		this.modeSimple = modeSimple;
-		this.plateau = plateau;
-		this.deckPioche = deckPioche;
-		this.deckDefausse = deckDefausse;
 		this.indiceCurrentEscrimeur = 0;
 		this.escrimeurs = new Escrimeur[2];
 		this.escrimeurs[0] = eGaucher;
 		this.escrimeurs[1] = eDroitier;
-		this.winner = 2;
+		init(modeSimple, plateau, deckPioche, deckDefausse);
+		modifieVue(Action.CHANGER_TOUR);
 	}
 
-	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse,
-			Boolean isTourGaucher) {
+	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, Action action) {
 		super();
+		this.escrimeurs[0] = gaucher;
+		this.escrimeurs[1] = droitier;
+		this.indiceCurrentEscrimeur = indiceCurrentEscrimeur;
+		init(modeSimple, plateau, deckPioche, deckDefausse);
+		modifieVue(action);
+	}
+	
+	private void init(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse) {
 		this.modeSimple = modeSimple;
 		this.plateau = plateau;
 		this.deckPioche = deckPioche;
 		this.deckDefausse = deckDefausse;
-		this.indiceCurrentEscrimeur = 0;
-		this.winner = 2;
+		this.dernierTour = false;
+		this.winner = NONE;
+	}
+	
+	public boolean isDernierTour() {
+		return dernierTour;
+	}
+
+	public void setDernierTour(boolean dernierTour) {
+		this.dernierTour = dernierTour;
 	}
 
 	public void setHistorique(Historique h) {
 		this.historique = h;
+	}
+	
+	public Historique getHistorique() {
+		return this.historique;
 	}
 
 	public Boolean getModeSimple() {
@@ -90,16 +122,14 @@ public class Jeu extends Observable {
 	public void piocher(Escrimeur e) {
 		while (e.manqueCarte() && !deckPioche.deckVide()) {
 			e.ajouterCarte(deckPioche.piocher());
+			//modifieVue(Action.PIOCHER);
 		}
 	}
 
-	/*
-	 * return 1 si la partie doit se terminer ?? (a passer en public void et checker
-	 * les trucs dans le controller je pense)
-	 */
 	public int changerTour() {
 		piocher(getCurrentEscrimeur());
 		indiceCurrentEscrimeur = (indiceCurrentEscrimeur + 1) % 2;
+		metAJour();
 		if (deckPioche.deckVide()) {
 			System.out.println("piocheVide");
 			return 1;
@@ -108,6 +138,7 @@ public class Jeu extends Observable {
 			winner = ((indiceCurrentEscrimeur + 1) % 2);
 			return 1;
 		}
+		modifieVue(Action.CHANGER_TOUR);
 		return 0;
 	}
 
@@ -115,16 +146,17 @@ public class Jeu extends Observable {
 	 * retire une carte de la main de l'escrimeur, l'ajoute à la défausse et serre
 	 * les cartes de l'escrimeur à gauche.
 	 * 
-	 * @param e, escrimeur qui doit defausser la carte c
-	 * @param c, carte que l'escrimeur e doit defausser
+	 * @param e, escrimeur qui doit ACTION_DEFAUSSER la carte c
+	 * @param c, carte que l'escrimeur e doit ACTION_DEFAUSSER
 	 * @return si -1 -> echec, sinon indice de la carte qui a été défaussée
 	 */
-	public int defausser(Escrimeur e, Carte c) {
+	public int ACTION_DEFAUSSER(Escrimeur e, Carte c) {
 		int res = e.supprimerCarte(c);
 		if (res == -1) {
 			return res;
 		}
 		deckDefausse.defausser(c);
+		modifieVue(Action.DEFAUSSER);
 		return res;
 	}
 
@@ -147,111 +179,104 @@ public class Jeu extends Observable {
 			System.err.println("impossible de jouer un coup si ce n'est pas au tour de ce joueur");
 			return false;
 		}
+		
 		int indiceDefausse;
 		
 		switch(c.getAction()) {
-		
-		case Coup.AVANCER : 
-		case Coup.RECULER :
-		case Coup.ESQUIVER :
-			int sens = ((c.getAction() % 2) == 0 ? 1 : -1);
-
-			if (plateau.deplacerEscrimeur(c.getEscrimeur(), c.getCartes()[0].getDistance() * sens)) {
-				indiceDefausse = defausser(c.getEscrimeur(), c.getCartes()[0]);
-				if (indiceDefausse != -1) {
-					c.addCarteJouee(indiceDefausse);
-					historique.ajouterCoup(c);
-					if (!rejoueCoupAnnule) {
-						historique.viderCoupsAnnules();
+			case Coup.AVANCER : 
+			case Coup.RECULER :
+			case Coup.ESQUIVER :
+				int sens = ((c.getAction() % 2) == 0 ? 1 : -1);
+	
+				if (plateau.deplacerEscrimeur(c.getEscrimeur(), c.getCartes()[0].getDistance() * sens)) {
+					indiceDefausse = ACTION_DEFAUSSER(c.getEscrimeur(), c.getCartes()[0]);
+					if (indiceDefausse != -1) {
+						c.addCarteJouee(indiceDefausse);
+						historique.ajouterCoup(c);
+						if (!rejoueCoupAnnule) {
+							historique.viderCoupsAnnules();
+						}
+						modifieVue(Action.ACTUALISE_PLATEAU);
+					} else {
+						// le coup ne va pas etre joué, on ramene donc le joueur a sa position initiale
+						plateau.deplacerEscrimeur(c.getEscrimeur(), (c.getCartes()[0].getDistance()) * (-sens));
+						System.err.println("impossible de jouer un coup si le joueur n'a pas la carte en main");
+						return false;
 					}
-					metAJour();
-					return true;
 				} else {
-					// le coup ne va pas etre joué, on ramene donc le joueur a sa position initiale
-					plateau.deplacerEscrimeur(c.getEscrimeur(), (c.getCartes()[0].getDistance()) * (-sens));
-					System.err.println("impossible de jouer un coup si le joueur n'a pas la carte en main");
+					System.err.println("impossible de jouer un coup si le deplacement n'est pas possible");
 					return false;
 				}
-			} else {
-				System.err.println("impossible de jouer un coup si le deplacement n'est pas possible");
-				return false;
-			}
-			
-		case Coup.ATTAQUEDIRECTE :
-		case Coup.ATTAQUEINDIRECTE :
-			int valeurAttaque = c.getCartes()[0].getDistance();
-			if (!plateau.attaquerEscrimeur(c.getEscrimeur(), valeurAttaque)) {
-				System.err.println("impossible de jouer un coup d'attaque car les distances ne correspondent pas");
-				return false;
-			}
-			int i = 0;
-			boolean defausseOk = true;
-			while (i < c.getCartes().length && c.getCartes()[i].getDistance() == valeurAttaque && defausseOk) {
-				indiceDefausse = defausser(c.getEscrimeur(), c.getCartes()[i]);
-				if (indiceDefausse == -1) {
-					defausseOk = false;
-				} else {
-					c.addCarteJouee(indiceDefausse);
-					i++;
+			case Coup.ATTAQUEDIRECTE :
+			case Coup.ATTAQUEINDIRECTE :
+				int valeurAttaque = c.getCartes()[0].getDistance();
+				if (!plateau.escrimeurPeutAttaquer(c.getEscrimeur(), valeurAttaque)) {
+					System.err.println("impossible de jouer un coup d'attaque car les distances ne correspondent pas");
+					return false;
 				}
-			}
-			if (i != c.getCartes().length) {
-				System.err.println("les cartes de l'attaque ne sont pas toutes de même valeur ou l'attaquant ne les a pas toutes en main");
-				c.remettreCartesDansLordre();
-				while (i != 0) {
-					if (!c.getEscrimeur().ajouterCarteAIndiceVide(deckDefausse.reprendreDerniereCarte(),
-							c.getIndicesCartesJouees().get(i - 1))) {
-						System.err.println("probleme lors de l'annulation du coup impossible");
+				int i = 0;
+				boolean defausseOk = true;
+				while (i < c.getCartes().length && c.getCartes()[i].getDistance() == valeurAttaque && defausseOk) {
+					indiceDefausse = ACTION_DEFAUSSER(c.getEscrimeur(), c.getCartes()[i]);
+					if (indiceDefausse == -1) {
+						defausseOk = false;
+					} else {
+						c.addCarteJouee(indiceDefausse);
+						i++;
 					}
-					i--;
 				}
+				if (i != c.getCartes().length) {
+					System.err.println("les cartes de l'attaque ne sont pas toutes de même valeur ou l'attaquant ne les a pas toutes en main");
+					c.remettreCartesDansLordre();
+					while (i != 0) {
+						if (!c.getEscrimeur().ajouterCarteAIndiceVide(deckDefausse.reprendreDerniereCarte(),
+								c.getIndicesCartesJouees().get(i - 1))) {
+							System.err.println("probleme lors de l'annulation du coup impossible");
+						}
+						i--;
+					}
+					return false;
+				}
+				historique.ajouterCoup(c);
+				if (!rejoueCoupAnnule) {
+					historique.viderCoupsAnnules();
+				}
+				changerTour();
+				modifieVue(Action.ACTUALISE_PLATEAU);
+				return true;
+				
+			case Coup.PARER :
+				int attaque = historique.voirDernierCoup().getCartes().length;
+				int j = 0;
+				int nbcartes = getCurrentEscrimeur().getNbCartes();
+				while (j < nbcartes && attaque > 0) {
+					if (plateau.escrimeurPeutAttaquer(getCurrentEscrimeur(),
+							getCurrentEscrimeur().getCartes()[j].getDistance())) {
+						indiceDefausse = ACTION_DEFAUSSER(getCurrentEscrimeur(), getCurrentEscrimeur().getCartes()[j]);
+						nbcartes--;// si on defausse la carte on reste au meme indice mais on ira voir une carte
+									// moins loin car ACTION_DEFAUSSER() decalle les cartes vers la gauche
+						c.addCarteJouee(indiceDefausse);
+						attaque--;
+					} else {
+						j++;
+					}
+				}
+				historique.ajouterCoup(c);
+				if (!rejoueCoupAnnule) {
+					historique.viderCoupsAnnules();
+				}
+				if (attaque != 0) {
+					System.err.println("le defenseur n'a pas tout defendu");
+					historique.annulerCoup();
+					return false;
+				}
+				modifieVue(Action.ACTUALISE_PLATEAU);
+				return true;
+			
+			default : 
+				System.err.println("coup inconnu");
 				return false;
 			}
-			historique.ajouterCoup(c);
-			if (!rejoueCoupAnnule) {
-				historique.viderCoupsAnnules();
-			}
-			Coup passe = new Coup(getCurrentEscrimeur(),new Carte[0], Coup.PASSERTOUR);
-			jouer(passe,false);
-			metAJour();
-			return true;
-			
-		case Coup.PARER :
-			int attaque = historique.voirDernierCoup().getCartes().length;
-			int j = 0;
-			int nbcartes = getCurrentEscrimeur().getNbCartes();
-			while (j < nbcartes && attaque > 0) {
-				if (plateau.attaquerEscrimeur(getCurrentEscrimeur(),
-						getCurrentEscrimeur().getCartes()[j].getDistance())) {
-					indiceDefausse = defausser(getCurrentEscrimeur(), getCurrentEscrimeur().getCartes()[j]);
-					nbcartes--;// si on defausse la carte on reste au meme indice mais on ira voir une carte
-								// moins loin car defausser() decalle les cartes vers la gauche
-					c.addCarteJouee(indiceDefausse);
-					attaque--;
-				} else {
-					j++;
-				}
-			}
-			historique.ajouterCoup(c);
-			if (!rejoueCoupAnnule) {
-				historique.viderCoupsAnnules();
-			}
-			if (attaque != 0) {
-				System.err.println("le defenseur n'a pas tout defendu");
-				historique.annulerCoup();
-				return false;
-			}
-			metAJour();
-			return true;
-			
-		case Coup.PASSERTOUR :
-			changerTour();
-			return true;
-			
-		default : 
-			System.err.println("coup inconnu");
-			return false;
-		}
 	}
 
 	public void afficherEtatJeu() {
@@ -285,39 +310,45 @@ public class Jeu extends Observable {
 	 * -1 correspond au bouton passer son tour
 	 * @return un HashSet correspondant à toutes les cases sur lesquelles le joueur dont c'est le tour peut cliquer
 	 */
+	@SuppressWarnings("unused")
 	public HashSet<Integer> casesJouables(){
 		//cases jouables doit dependre du dernier coup effectué, modifier plateau.casesJouables pour qu'il retourne que les coups acceptés
 		Coup dernierCoup = historique.voirDernierCoup();
-		switch(dernierCoup.getAction()) {
-		case Coup.ATTAQUEDIRECTE :
-			return plateau.casesJouables(getCurrentEscrimeur(), 0x1000);//defendre
-		case Coup.ATTAQUEINDIRECTE :
-			if(modeSimple) {
-				return plateau.casesJouables(getCurrentEscrimeur(), 0x1000);//defendre
-			}else {
-				return plateau.casesJouables(getCurrentEscrimeur(), 0x1010);//defendre ou esquiver
+		int atk;
+		int code;
+		if (dernierCoup == null) {
+			atk = getCurrentEscrimeur().getNbCartes();
+			code = 0x1;
+		} else {
+			atk = dernierCoup.getCartes().length;
+			switch(dernierCoup.getAction()) {
+				case Coup.ATTAQUEDIRECTE :
+					code =  0x1000; // defendre
+					break;
+				case Coup.ATTAQUEINDIRECTE :
+					code = modeSimple ? 0x1000 : 0x1010;
+					break;
+				case Coup.AVANCER :
+					if (dernierCoup.getEscrimeur() == getCurrentEscrimeur()) {
+						code = modeSimple ? 0x10000 : 0x10100; // passer
+					} else {
+						code = 0x111; // avancer ou reculer ou attaquer
+					}
+					break;
+				case Coup.RECULER :
+					code = dernierCoup.getEscrimeur() == getCurrentEscrimeur() ? 0x10000 : 0x111;
+					break;
+				case Coup.ESQUIVER :
+				case Coup.PARER :
+					code = 0x111;// avancer ou reculer ou attaquer
+					break;
+				default :
+					System.err.println("coup inconnu");
+					code = 0x0;
+					break;
 			}
-		case Coup.AVANCER :
-			if(dernierCoup.getEscrimeur() == getCurrentEscrimeur() && modeSimple) {
-				return plateau.casesJouables(getCurrentEscrimeur(), 0x10000);//passer
-			}else if(dernierCoup.getEscrimeur() == getCurrentEscrimeur()) {
-				return plateau.casesJouables(getCurrentEscrimeur(), 0x10100);//attaquer ou passer
-			}else {
-				return plateau.casesJouables(getCurrentEscrimeur(), 0x111);//avancer ou reculer ou attaquer
-			}
-		case Coup.RECULER :
-			if(dernierCoup.getEscrimeur() == getCurrentEscrimeur()) {
-				return plateau.casesJouables(getCurrentEscrimeur(), 0x10000);//passer
-			}else {
-				return plateau.casesJouables(getCurrentEscrimeur(), 0x111);//avancer ou reculer ou attaquer
-			}
-		case Coup.ESQUIVER :
-		case Coup.PARER :
-			return plateau.casesJouables(getCurrentEscrimeur(), 0x111);//avancer ou reculer ou attaquer
-		default :
-			System.err.println("coup inconnu");
-			return plateau.casesJouables(getCurrentEscrimeur(), 0x0);
 		}
+		return plateau.casesJouables(getCurrentEscrimeur(), code, atk);
 	}
 
 	public static void main(String[] args) {
@@ -330,7 +361,6 @@ public class Jeu extends Observable {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 		}
 		DeckPioche deckPioche = new DeckPioche(cartes);
 		deckPioche.melanger();
@@ -387,6 +417,14 @@ public class Jeu extends Observable {
 		} else {
 			System.out.println("fin de manche, egalité");
 		}
+	}
 
+	public void nouvelleManche() {
+		// TODO Auto-generated method stub
+	}
+	
+	private void modifieVue(Action action) {
+		this.action = action;
+		metAJour();
 	}
 }

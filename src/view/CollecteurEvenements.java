@@ -7,4 +7,5 @@ public interface CollecteurEvenements {
 	boolean clickSouris(String s, int l, int c);
 	boolean selectTypeCarte(String c);
 	boolean jouerCartes(ArrayList<Integer> carteAAjouer);
+	boolean clickCase(int x);
 }

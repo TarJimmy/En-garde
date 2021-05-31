@@ -218,6 +218,6 @@ public class InterfaceGraphiqueRegles implements Runnable {
     }
 	public static void main(String[] args) {
     	System.out.println("coucou");
-        new InterfaceGraphiqueRegles();
+        InterfaceGraphiqueRegles.demarrer();
     }
 }

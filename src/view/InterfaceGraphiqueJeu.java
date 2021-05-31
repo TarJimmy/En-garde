@@ -17,7 +17,18 @@ import javax.swing.border.LineBorder;
 
 import Global.Configuration;
 import Patterns.Observateur;
+import controller.ControlerJeu;
+import model.Carte;
+import model.DeckDefausse;
+import model.DeckPioche;
+import model.Escrimeur;
+import model.Historique;
+import model.IncorrectCarteException;
+import model.IncorrectPlateauException;
 import model.Jeu;
+import model.Plateau;
+import model.TypeEscrimeur;
+import model.Jeu.Action;
 
 public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	
@@ -28,9 +39,9 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	VueEscrimeur mainGaucher;
 	VueEscrimeur mainDroitier;
 	
-	VueDeck vueDeck;
+	VueDeck vueDecks;
 	
-	VuePlateau plateau;
+	VuePlateau vuePlateau;
 	
 	private InterfaceGraphiqueJeu(CollecteurEvenements controle, Jeu jeu) {
 		this.controle = controle;
@@ -43,10 +54,38 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	
 	@Override
 	public void miseAJour() {
-		mainGaucher.setShowFace(jeu.getIsTourGaucher());
-		mainDroitier.setShowFace(!jeu.getIsTourGaucher());
-		mainGaucher.miseAJour();
-		mainDroitier.miseAJour();
+		Action action = jeu.action;
+		System.out.println(action.toString());
+		switch (action) {
+			case CHANGER_TOUR:
+			case ACTUALISE_PLATEAU: // Actualise les cases accessibles du plateau
+				vuePlateau.setCaseClickable(jeu.casesJouables());
+				vuePlateau.repaint();
+				if (action != Action.CHANGER_TOUR) { // Stop si ce n'est pas  un changement de tour
+					break;
+				}
+			case DEFAUSSER:
+			case PIOCHER:
+			case ACTUALISE_DECK: // Actualise les decks
+				vueDecks.repaint();
+				if (action != Action.CHANGER_TOUR) { // Stop si ce n'est pas  un changement de tour
+					break;
+				}
+			case ACTUALISE_MAINS:
+			case ACTUALISE_MAIN_DROITIER:
+				mainDroitier.repaint();
+				if (action != Action.CHANGER_TOUR || action != Action.ACTUALISE_MAINS) { // Stop si ce n'est pas  un changement de tour ou l'actualisation des 2 mains
+					break;
+				}
+			case ACTUALISE_MAIN_GAUCHER:
+				mainGaucher.repaint();
+				if (action != Action.CHANGER_TOUR) { // Stop si ce n'est pas  un changement de tour
+					break;
+				}
+			default:
+				System.out.println("Action non reconnu");
+				break;
+			}
 	}
 	
 	public void run() {
@@ -73,7 +112,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		panelTop.add(mainDroitier,BorderLayout.EAST);
 		
 		// Centre
-		plateau = new VuePlateau(jeu.getPlateau());
+		vuePlateau = new VuePlateau(jeu.getPlateau(), controle);
 		
 		// Bas
 		JPanel panelBot = new JPanel(new BorderLayout());
@@ -84,18 +123,16 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		panelBot.add(mainGaucher, BorderLayout.WEST);
 		
 		// Bas -> Droite
-		VueDeck vueDecks = new VueDeck(jeu.getDeckPioche(), jeu.getDeckDefausse());	
+		vueDecks = new VueDeck(jeu.getDeckPioche(), jeu.getDeckDefausse());	
 		panelBot.add(vueDecks, BorderLayout.EAST);
 		
 		
 		background.add(panelTop);
-		background.add(plateau);
+		background.add(vuePlateau);
 		background.add(panelBot);
 		
 		miseAJour();
 		frame.pack();
 		frame.setVisible(true);
 	}
-
-	
 }

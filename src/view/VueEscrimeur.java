@@ -6,13 +6,12 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 
 import Patterns.Observateur;
 import model.Escrimeur;
 import model.Plateau;
 
-public class VueEscrimeur extends JPanel implements Observateur {
+public class VueEscrimeur extends JPanel {
 	
 	Escrimeur e;
 	private Boolean showFace;
@@ -21,7 +20,6 @@ public class VueEscrimeur extends JPanel implements Observateur {
 	public VueEscrimeur(Plateau p, Escrimeur e, Boolean showFace) {
 		this.e = e;
 		this.showFace = showFace;
-		this.e.ajouteObservateur(this);
 		start();
 	}
 	
@@ -34,7 +32,7 @@ public class VueEscrimeur extends JPanel implements Observateur {
 		carteGrid.setPreferredSize(new Dimension(1000, 210));
 		carteGrid.setBorder(new EmptyBorder(30, 30, 30, 30));
 		//add(carteGrid, BorderLayout.WEST);
-		vueMain = new VueMain(e.getCartes());
+		vueMain = new VueMain(e.getCartes(), showFace);
 		
 		vueManche = new VueManche(5, e.getMancheGagner(), e.getIsGaucher());
 		
@@ -56,11 +54,5 @@ public class VueEscrimeur extends JPanel implements Observateur {
 	
 	public void setShowFace(Boolean showFace) {
 		this.showFace = showFace;
-	}
-	
-	@Override
-	public void miseAJour() {
-		// TODO Auto-generated method stub
-		repaint();
 	}
 }

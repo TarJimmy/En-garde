@@ -57,7 +57,7 @@ public class InterfaceGraphiqueMenu implements Runnable {
 		JButton button;
 		
 		if (name=="JOUER"){
-			ImageIcon banner = new ImageIcon(Configuration.getFolderMenu()+"cadre.png");
+			ImageIcon banner = new ImageIcon(Configuration.charge("cadre.png", Configuration.MENU));
 			button = new JButton(name, banner);
 			button.setHorizontalTextPosition(SwingConstants.CENTER);
 		} else {
@@ -137,6 +137,6 @@ public class InterfaceGraphiqueMenu implements Runnable {
 	}
 	
 	public static void main(String[] args) {
-		InterfaceGraphiqueMenu.demarrer(new ControlerAutre());
+		InterfaceGraphiqueMenu.demarrer(new ControlerMenu());
 	}
 }
