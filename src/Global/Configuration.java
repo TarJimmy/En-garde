@@ -5,14 +5,16 @@ import java.io.InputStream;
 
 public class Configuration {
 	private static Configuration instance;
+	public final static int BG = 0;
+	public final static int CARTES = 1;
+	public final static int MENU = 2;
+	public final static int REGLES = 3;
+	public final static int PLATEAU = 4;
+	public final static int DALLES = 5;
+	public final static int MANCHES = 6;
+	public final static int ESCRIMEURS = 7;
 	
-	public static InputStream charge(String nom) {
-		return ClassLoader.getSystemClassLoader().getResourceAsStream(nom);
-	}
-
-	private Configuration() {
-		
-	}
+	private Configuration() {}
 	
 	public static Configuration instance() {
 		if (instance == null) {
@@ -21,13 +23,37 @@ public class Configuration {
 		return instance;
 	}
 	
-	public static String getFolderCartes() {
-		return "Images" + File.separator + "Cartes" + File.separator;
-	}
-	public static String getFolderRegles() {
-		return "Images" + File.separator + "Regles" + File.separator;
-	}
-	public static String getFolderMenu() {
-		return "Images" + File.separator + "Menu" + File.separator;
+	public static InputStream charge(String nom, int type) {
+		String path = "Images" + File.separator;
+		switch (type) {
+			case BG:
+				path += "Background";
+				break;
+			case CARTES:
+				path += "Cartes";
+				break;
+			case MENU: 
+				path += "Menu";
+				break;
+			case REGLES: 
+				path += "Regles";
+				break;
+			case PLATEAU:
+				path += "Plateau";
+				break;
+			case DALLES: 
+				path += "Plateau" + File.separator + "Dalles";
+				break;
+			case MANCHES: 
+				path += "Manches";
+				break;
+			case ESCRIMEURS: 
+				path += "Escrimeurs";
+				break;
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + type);
+		}
+		path += File.separator;
+		return ClassLoader.getSystemClassLoader().getResourceAsStream(path + nom);
 	}
 }

@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -23,7 +22,7 @@ public class ScrollImageTest extends JPanel {
 
     public ScrollImageTest() {
         try {
-            this.image = ImageIO.read(Configuration.charge(Configuration.getFolderRegles() + "regle" + 1 + ".png"));
+            this.image = ImageIO.read(Configuration.charge("regle" + 1 + ".png", Configuration.REGLES));
         }catch(IOException ex) {
             Logger.getLogger(ScrollImageTest.class.getName()).log(Level.SEVERE, null, ex);
         }

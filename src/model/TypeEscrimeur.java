@@ -2,6 +2,7 @@ package model;
 
 public enum TypeEscrimeur {
 	HUMAIN,
-	IAFACILE,
-	IADIFFICILE
+	IA_FACILE,
+	IA_MOYENNE,
+	IA_DIFFICILE
 }

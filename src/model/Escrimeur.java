@@ -1,18 +1,42 @@
 package model;
 
-public class Escrimeur {
+import Patterns.Observable;
+
+public class Escrimeur extends Observable {
 	private String nom;
 	private TypeEscrimeur type;
-	private Boolean isGaucher;
+	private int indice; //0 si l'escrimeur est gaucher, 1 sinon
 	private Carte[] cartes;
 	private int nbCartes;
-	
-	public Escrimeur(String nom, TypeEscrimeur type, Boolean isGaucher, int nbCarte) {
+	public static final int GAUCHER = 0;
+	public static final int DROITIER = 1;
+	private int mancheGagner;
+	/**
+	 * Constructeur lors d'unne nouvelle partie
+	 * @param nom
+	 * @param type
+	 * @param indice
+	 * @param nbCarte
+	 */
+	public Escrimeur(String nom, TypeEscrimeur type, int indice, int nbCarte) { //indice = 0 pour gaucher, 1 pour droitier
 		setNom(nom);
 		this.type = type;
-		this.isGaucher = isGaucher;
+		this.indice = indice;
 		this.cartes = new Carte[nbCarte];
 		this.nbCartes = nbCarte;
+		this.mancheGagner = 0;
+	}
+	
+	/**
+	 * Constructeur lors du chargement d'une partie
+	 * @param nom
+	 * @param type
+	 * @param indice
+	 * @param distances
+	 * @param mancheGagner
+	 */
+	public Escrimeur(String nom, TypeEscrimeur type, int indice, int[] distances, int mancheGagner) {
+		setNom(nom);
 	}
 	
 	public int getNbCartes() {
@@ -39,11 +63,14 @@ public class Escrimeur {
 		for (int i = 0; i < cartes.length; i++) {
 			if (cartes[i] == null) {
 				cartes[i] = c;
+				metAJour();
 				return true;
 			}
 		}
 		return false;
 	}
+	
+	
 	
 	public Boolean ajouterCarteAIndiceVide(Carte c, int indice) {
 		if (cartes[indice] == null) {
@@ -60,6 +87,7 @@ public class Escrimeur {
 					cartes[j] = cartes [j+1];
 				}
 				cartes[cartes.length - 1] = null;
+				metAJour();
 				return i;
 			}
 		}
@@ -82,7 +110,27 @@ public class Escrimeur {
 		return type;
 	}
 
-	public Boolean getIsGaucher() {
-		return isGaucher;
+	public int getIndice() {
+		return indice;
 	}
+
+	public static int getGaucher() {
+		return GAUCHER;
+	}
+
+	public static int getDroitier() {
+		return DROITIER;
+	}
+
+	public int getMancheGagner() {
+		return mancheGagner;
+	}
+	
+	public Boolean getIsGaucher() {
+		return indice == GAUCHER;
+	}
+	
+	public void addMancheGagnee() {
+		mancheGagner++;
+	}	
 }

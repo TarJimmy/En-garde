@@ -14,15 +14,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -39,7 +36,7 @@ import Global.Configuration;
  * @author tardyj
  */
 public class InterfaceGraphiqueRegles implements Runnable {
-    private int i;
+	
     private JFrame frame;
     private BtnNavigation plus;
     private BtnNavigation moins;
@@ -126,7 +123,7 @@ public class InterfaceGraphiqueRegles implements Runnable {
         center = new JPanel(c1);
         try {
 	        for (int i = 1; i <= 4; i++){
-	            center.add(new ScrollPanelImage(widthImageRegle, heightImageRegle, Configuration.charge(Configuration.getFolderRegles() + "regle" + i + ".png")), i - 1);
+	            center.add(new ScrollPanelImage(widthImageRegle, heightImageRegle, Configuration.charge("regle" + i + ".png", Configuration.REGLES)), i - 1);
 	        }
         } catch(Exception e) {
         	e.printStackTrace();
@@ -188,7 +185,7 @@ public class InterfaceGraphiqueRegles implements Runnable {
                 this.image = ImageIO.read(in);
                 canvas = new PanelImage(width, height, this.image);
             } catch(IOException ex) {
-                Logger.getLogger(ScrollImageTest.class.getName()).log(Level.SEVERE, null, ex);
+                ex.printStackTrace();
             }
             setSize(width, height);
             JScrollPane sp = new JScrollPane(canvas);
@@ -198,9 +195,9 @@ public class InterfaceGraphiqueRegles implements Runnable {
         }
         
         private class PanelImage extends JComponent {
-            public int width, height;
+			
+			public int width, height;
             public BufferedImage img;
-            public float zoom = 1f;
              
             public PanelImage(int width, int height, BufferedImage image) {
             	this.img = image;
@@ -221,6 +218,6 @@ public class InterfaceGraphiqueRegles implements Runnable {
     }
 	public static void main(String[] args) {
     	System.out.println("coucou");
-        new InterfaceGraphiqueRegles();
+        InterfaceGraphiqueRegles.demarrer();
     }
 }

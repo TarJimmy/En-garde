@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Stack;
 
 public abstract class Deck {
@@ -21,4 +23,11 @@ public abstract class Deck {
 		return cartes.empty();
 	}
 	
+	public int nbCartes() {
+		return cartes.size();
+	}
+	
+	public void addCarte(Carte c) {
+		cartes.push(c);
+	}
 }
