@@ -15,6 +15,7 @@ import model.Jeu;
 import model.Plateau;
 import model.SauvegardeParametre;
 import model.TypeEscrimeur;
+import view.InterfaceGraphiqueActionAnnexe;
 import view.InterfaceGraphiqueFin;
 import view.InterfaceGraphiqueJeu;
 //import view.InterfaceGraphiqueJeu;
@@ -24,7 +25,7 @@ import view.InterfaceGraphiqueRegles;
 
 /**
  * 
- * @author La�titia & Delphine
+ * @author Laetitia & Delphine
  *
  */
 public class ControlerAutre extends Controler {
@@ -40,8 +41,9 @@ public class ControlerAutre extends Controler {
 				if (InterfaceGraphiqueParametres.close() || InterfaceGraphiqueFin.close()) {
 				InterfaceGraphiqueMenu.demarrer(new ControlerAutre());}
 				break;
-			case "play":
+			case "jouerMenu":
 				InterfaceGraphiqueMenu.close();
+			case "jouer":
 				try {
 					Parametre.instance();
 					SauvegardeParametre.chargerParametres();
@@ -92,16 +94,24 @@ public class ControlerAutre extends Controler {
 				} catch (IncorrectCarteException e) {
 					e.printStackTrace();
 				}
-				
-				//InterfaceGraphiqueJeu.demarrer(new ControlerJeu());
 				break;
-			case "chargeGame":
+			case "nouvellePartie":
+				commande("jouer");
+				break;
+			case "sauvPartie":
+				break;
+			case "chargePartieMenu":
 				InterfaceGraphiqueMenu.close();
+			case "chargePartie":
 				//InterfaceGraphiqueJeu.demarrer(new ControlerJeu());
 				break;
-			case "retry":
+			case "annuleCoup":
 				break;
-			case "settings":
+			case "refaireCoup":
+				break;
+			case "rejouer":
+				break;
+			case "parametres":
 				InterfaceGraphiqueMenu.close();
 				Parametre.instance();
 				SauvegardeParametre.chargerParametres();
@@ -118,8 +128,11 @@ public class ControlerAutre extends Controler {
 				break;
 			case "tuto":
 				break;
-			case "rules":
+			case "regles":
 				InterfaceGraphiqueRegles.demarrer();
+				break;
+			case "close":
+				InterfaceGraphiqueActionAnnexe.close();
 				break;
 			case "exit":
 				System.exit(0);

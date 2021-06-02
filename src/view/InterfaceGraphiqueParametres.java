@@ -25,7 +25,7 @@ import Patterns.Observateur;
 public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	
 	private static JFrame fenetreParametres;
-	CollecteurEvenements controle;
+	private static CollecteurEvenements controle;
 	
 	//Terrain
 	private JLabel titreSectionTerrain;
@@ -97,7 +97,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	private Boolean canEnregistrer;
 	
 	private InterfaceGraphiqueParametres(CollecteurEvenements controle) {
-		this.controle = controle;
+		InterfaceGraphiqueParametres.controle = controle;
 	}
 	
 	/**
@@ -240,14 +240,17 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 				case "JOUER":
 				case "MENU":
 				case "FERMER":
-					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre2.png", Configuration.MENU))).getImage().getScaledInstance(195, 37, Image.SCALE_SMOOTH));
+					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre4.png", Configuration.MENU))).getImage().getScaledInstance(195, 40, Image.SCALE_SMOOTH));
 					button = new JButton(name, banner);
 					button.setFont(new Font("Century", Font.PLAIN, 15));
+					button.setForeground(Color.WHITE);
+					button.addMouseListener(new AdaptateurBouton(controle, "cadre4", button, 195));
 					break;
 				default:
 					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre3.png", Configuration.MENU))).getImage().getScaledInstance(266, 40, Image.SCALE_SMOOTH));
 					button = new JButton(name, banner);
 					button.setFont(new Font("Century", Font.PLAIN, 11));
+					button.addMouseListener(new AdaptateurBouton(controle, "cadre3", button, 266));
 					break;
 			}
 			
@@ -512,17 +515,17 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		warnEnregistrement.setVisible(false);
 		contentPane.add(warnEnregistrement);
 		btnSaveSettings = Button("Enregistrer comme parametres par defaut");
-		btnSaveSettings.addActionListener(new AdaptateurCommande(this.controle, "sauvePara", canEnregistrer));
+		btnSaveSettings.addActionListener(new AdaptateurCommande(InterfaceGraphiqueParametres.controle, "sauvePara", canEnregistrer));
 		btnSaveSettings.setBounds(55, 540, 266, 37);
 		contentPane.add(btnSaveSettings);
 		
 		JButton btnRestoreSettings = Button("Retablir les parametres par defaut");
-		btnRestoreSettings.addActionListener(new AdaptateurCommande(this.controle, "restaurePara"));
+		btnRestoreSettings.addActionListener(new AdaptateurCommande(InterfaceGraphiqueParametres.controle, "restaurePara"));
 		btnRestoreSettings.setBounds(331, 540, 266, 37);
 		contentPane.add(btnRestoreSettings);
 		
 		JButton btnPlay = Button("MENU");
-		btnPlay.addActionListener(new AdaptateurCommande(this.controle, "menu"));
+		btnPlay.addActionListener(new AdaptateurCommande(InterfaceGraphiqueParametres.controle, "menu"));
 		btnPlay.setBounds(634, 540, 195, 37);
 		contentPane.add(btnPlay);
 		
