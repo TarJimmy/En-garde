@@ -101,9 +101,8 @@ public class InterfaceGraphiqueMenu implements Runnable {
 	}
 	
 	/**
-	 * ecriture du contenu de la fenetre Menu
+	 * Ecriture du contenu de la fenetre Menu
 	 */
-
 	@Override
 	public void run() {
 		fenetreMenu = new JFrame("EN GARDE ! - MENU PRINCIPAL");

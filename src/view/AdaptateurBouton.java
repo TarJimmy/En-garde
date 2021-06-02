@@ -20,15 +20,19 @@ public class AdaptateurBouton extends MouseAdapter {
 	private JButton bouton;
 	private ImageIcon image;
 	private int width;
-	private int height = 40;
+	private int height;
 	
 	public AdaptateurBouton(CollecteurEvenements controller, String commande, JButton bouton, int width) {
 		this.commande = commande;
 		this.control = controller;
 		this.bouton = bouton;
 		this.width = width;
+		this.height = 40;
 	}
 	
+	/**
+	 * Modifie le bouton quand on passe dessus
+	 */
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		try {
@@ -45,6 +49,9 @@ public class AdaptateurBouton extends MouseAdapter {
 		}
 	}
 	
+	/**
+	 * Rétabli le bouton quand la souris n'est plus dessus
+	 */
 	@Override
 	public void mouseExited(MouseEvent e) {
 		try {
@@ -62,6 +69,9 @@ public class AdaptateurBouton extends MouseAdapter {
 		}
 	}
 	
+	/**
+	 * Modifie le bouton quand on appuie dessus
+	 */
 	@Override
 	public void mousePressed(MouseEvent e) {
 		

@@ -28,7 +28,7 @@ public class InterfaceGraphiqueActionAnnexe implements Runnable, Observateur {
 	}
 	
 	/**
-	 * Ouvre la fenetre Menu
+	 * Ouvre la fenetre de triche
 	 * @param control
 	 */
 	public static void demarrer(CollecteurEvenements control) {
@@ -36,7 +36,7 @@ public class InterfaceGraphiqueActionAnnexe implements Runnable, Observateur {
 	}
 	
 	/**
-	 * Ferme la fenetre Menu
+	 * Ferme la fenetre de triche
 	 */
 	public static void close() {
 		fenetreActionAnnexe.setVisible(false);
@@ -123,6 +123,9 @@ public class InterfaceGraphiqueActionAnnexe implements Runnable, Observateur {
 		
 	}
 
+	/**
+	 * Ecriture du contenu de la fenetre Menu
+	 */
 	@Override
 	public void run() {
 		try {
@@ -134,12 +137,12 @@ public class InterfaceGraphiqueActionAnnexe implements Runnable, Observateur {
 		fenetreActionAnnexe.setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblNewLabel = Label("Titre");
-		contentPane.add(lblNewLabel);
+		JLabel titre = Label("Titre");
+		contentPane.add(titre);
 		
-		JLabel lblNewLabel_1 = Label("Partie en cours :");
-		lblNewLabel_1.setBounds(92, 180, 200, 50);
-		contentPane.add(lblNewLabel_1);
+		JLabel partieEnCours = Label("Partie en cours :");
+		partieEnCours.setBounds(92, 180, 200, 50);
+		contentPane.add(partieEnCours);
 		
 		JButton nouvellePartie = Button("Nouvelle la partie");
 		nouvellePartie.addActionListener(new AdaptateurCommande(this.controle, "nouvellePartie"));
@@ -159,9 +162,9 @@ public class InterfaceGraphiqueActionAnnexe implements Runnable, Observateur {
 		chargePartie.addMouseListener(new AdaptateurBouton(this.controle, "cadre2", chargePartie, 200));
 		contentPane.add(chargePartie);
 		
-		JLabel lblNewLabel_2 = Label("Dernier coup :");
-		lblNewLabel_2.setBounds(92, 430, 200, 50);
-		contentPane.add(lblNewLabel_2);
+		JLabel dernierCoup = Label("Dernier coup :");
+		dernierCoup.setBounds(92, 430, 200, 50);
+		contentPane.add(dernierCoup);
 		
 		JButton annuleCoup = Button("Annuler le coup");
 		annuleCoup.addActionListener(new AdaptateurCommande(this.controle, "annuleCoup"));
