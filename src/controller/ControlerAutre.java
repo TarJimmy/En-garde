@@ -108,10 +108,10 @@ public class ControlerAutre extends Controler {
 				settings = SauvegardeParametre.getSettings();
 				InterfaceGraphiqueParametres.demarrer(settings, new ControlerAutre());
 				break;
-			case "saveSettings":
+			case "sauvePara":
 				SauvegardeParametre.sauvegarderParametres(InterfaceGraphiqueParametres.getParametre("map"), InterfaceGraphiqueParametres.getParametre("nomJ1"), InterfaceGraphiqueParametres.getParametre("typeJ1"), InterfaceGraphiqueParametres.getParametre("posJ1"), InterfaceGraphiqueParametres.getParametre("nomJ2"), InterfaceGraphiqueParametres.getParametre("typeJ2"), InterfaceGraphiqueParametres.getParametre("posJ2"), InterfaceGraphiqueParametres.getParametre("modeAttaque"), InterfaceGraphiqueParametres.getParametre("manches"), InterfaceGraphiqueParametres.getParametre("carteMax"), InterfaceGraphiqueParametres.getParametre("carte1"), InterfaceGraphiqueParametres.getParametre("carte2"), InterfaceGraphiqueParametres.getParametre("carte3"), InterfaceGraphiqueParametres.getParametre("carte4"), InterfaceGraphiqueParametres.getParametre("carte5"));
 				break;
-			case "restoreSettings":
+			case "restaurePara":
 				SauvegardeParametre.chargerParametres();
 				settings = SauvegardeParametre.getSettings();
 				InterfaceGraphiqueParametres.majParametres(settings);

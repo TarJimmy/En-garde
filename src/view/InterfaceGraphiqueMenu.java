@@ -140,6 +140,7 @@ public class InterfaceGraphiqueMenu implements Runnable {
 		fenetreMenu.add(menu_fond);
 		fenetreMenu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		fenetreMenu.setSize(1280, 1024);
+		fenetreMenu.setResizable(false);
 		fenetreMenu.setVisible(true);
 		
 	}

@@ -33,8 +33,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	private static JSpinner spinner_map;
 	////joueur 1
 	private JLabel labelJ1;
-	private static JTextField txtJoueur1 = new JTextField(); // Pas bien !
-	private static ButtonGroup buttonGroup_TypeJ1 = new ButtonGroup();
+	private static JTextField txtJoueur1;
+	private static ButtonGroup buttonGroup_TypeJ1;
 	private static JRadioButton btnRadioJ1_Humain;
 	private static JRadioButton btnRadioJ1_Facile;
 	private static JRadioButton btnRadioJ1_Moyenne;
@@ -43,8 +43,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	private static JSpinner spinner_positionJ1;
 	////joueur 2
 	private JLabel labelJ2;
-	private static JTextField txtJoueur2 = new JTextField();
-	private static ButtonGroup buttonGroup_TypeJ2 = new ButtonGroup();
+	private static JTextField txtJoueur2;
+	private static ButtonGroup buttonGroup_TypeJ2;
 	private static JRadioButton btnRadioJ2_Humain;
 	private static JRadioButton btnRadioJ2_Facile;
 	private static JRadioButton btnRadioJ2_Moyenne;
@@ -54,7 +54,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	//Jeu
 	private JLabel titreSectionJeu;
 	private JLabel labelModeAttaque;
-	private static ButtonGroup buttonGroup_ModeAttaque = new ButtonGroup();
+	private static ButtonGroup buttonGroup_ModeAttaque;
 	private static JRadioButton modeAttaque_Basique;
 	private static JRadioButton modeAttaque_Avance;
 	private JLabel labelNbManches;
@@ -73,6 +73,9 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	private static JSpinner spinner_cartes4;
 	private JLabel labelCartes5;
 	private static JSpinner spinner_cartes5;
+	//Boutons
+	private JLabel warnEnregistrement;
+	private JButton btnSaveSettings;
 	
 	//Variables du formulaire
 	static int map;
@@ -91,9 +94,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	static int cartes4;
 	static int cartes5;
 	
-	private Boolean textJ1NoNull;
-	private Boolean textJ2NoNull;
 	private Boolean canEnregistrer;
+	
 	private InterfaceGraphiqueParametres(CollecteurEvenements controle) {
 		this.controle = controle;
 	}
@@ -172,16 +174,16 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	 */
 	private static void setRadioButtons(String typeJ1, String typeJ2, String modeAttaque) {
 		switch (typeJ1) {
-			case "Humain" : btnRadioJ1_Humain.setSelected(true);break;
-			case "IA Facile" : btnRadioJ1_Facile.setSelected(true);break;
-			case "IA Moyenne" : btnRadioJ1_Moyenne.setSelected(true);break;
-			case "IA Difficile" : btnRadioJ1_Difficile.setSelected(true);break;
+			case "HUMAIN" : btnRadioJ1_Humain.setSelected(true);break;
+			case "IA_FACILE" : btnRadioJ1_Facile.setSelected(true);break;
+			case "IA_MOYENNE" : btnRadioJ1_Moyenne.setSelected(true);break;
+			case "IA_DIFFICILE" : btnRadioJ1_Difficile.setSelected(true);break;
 		}
 		switch (typeJ2) {
-			case "Humain" : btnRadioJ2_Humain.setSelected(true);break;
-			case "IA Facile" : btnRadioJ2_Facile.setSelected(true);break;
-			case "IA Moyenne" : btnRadioJ2_Moyenne.setSelected(true);break;
-			case "IA Difficile" : btnRadioJ2_Difficile.setSelected(true);break;
+			case "HUMAIN" : btnRadioJ2_Humain.setSelected(true);break;
+			case "IA_FACILE" : btnRadioJ2_Facile.setSelected(true);break;
+			case "IA_MOYENNE" : btnRadioJ2_Moyenne.setSelected(true);break;
+			case "IA_DIFFICILE" : btnRadioJ2_Difficile.setSelected(true);break;
 		}
 		switch (modeAttaque) {
 			case "Basique" : modeAttaque_Basique.setSelected(true);break;
@@ -209,11 +211,14 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 
 			private void warn() {
 				if (txtJoueur.getText().isEmpty()) {
-					textJ1NoNull = true;
+					canEnregistrer = false;
+					warnEnregistrement.setVisible(true);
+					btnSaveSettings.setVisible(false);
 					warning.setVisible(true);
 				} else {
-					textJ1NoNull = false;
-					canEnregistrer = textJ2NoNull;
+					canEnregistrer = true;
+					warnEnregistrement.setVisible(false);
+					btnSaveSettings.setVisible(true);
 					warning.setVisible(false);
 				}
 			}
@@ -269,12 +274,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	 */
 	@Override
 	public void run() {
-		textJ2NoNull = true;
-		textJ1NoNull = true;
 		canEnregistrer = true;
-		/*Parametres.instance();*/
 		fenetreParametres = new JFrame("EN GARDE ! - PARAMETRES");
-		/*JLabel contentPane = new JLabel(new ImageIcon("res/parametres.png"));*/
 		JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		fenetreParametres.setContentPane(contentPane);
@@ -306,7 +307,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		labelJ1.setBounds(55, 153, 130, 14);
 		
 		/////nom du joueur 1
-		txtJoueur1.setText(nomJoueur1);
+		txtJoueur1 = new JTextField(nomJoueur1);
+		txtJoueur1.setDocument(new JTextFieldLimit(15));
 		txtJoueur1.setBounds(175, 150, 130, 20);
 		contentPane.add(txtJoueur1);
 		txtJoueur1.setColumns(10);
@@ -320,6 +322,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		/////type du joueur 1
 		btnRadioJ1_Humain = new JRadioButton("Humain");
 		btnRadioJ1_Humain.setActionCommand("HUMAIN");
+		buttonGroup_TypeJ1 = new ButtonGroup();
 		buttonGroup_TypeJ1.add(btnRadioJ1_Humain);
 		btnRadioJ1_Humain.setBounds(332, 149, 70, 23);
 		contentPane.add(btnRadioJ1_Humain);
@@ -354,8 +357,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		contentPane.add(labelJ2);
 		
 		/////nom du joueur 2
-		txtJoueur2 = new JTextField();
-		txtJoueur2.setText(nomJoueur2);
+		txtJoueur2 = new JTextField(nomJoueur2);
+		txtJoueur2.setDocument(new JTextFieldLimit(15));
 		txtJoueur2.setColumns(10);
 		txtJoueur2.setBounds(175, 204, 130, 20);
 		contentPane.add(txtJoueur2);
@@ -369,6 +372,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		/////type du joueur 2
 		btnRadioJ2_Humain = new JRadioButton("Humain");
 		btnRadioJ2_Humain.setActionCommand("HUMAIN");
+		buttonGroup_TypeJ2 = new ButtonGroup();
 		buttonGroup_TypeJ2.add(btnRadioJ2_Humain);
 		btnRadioJ2_Humain.setBounds(332, 203, 70, 23);
 		contentPane.add(btnRadioJ2_Humain);
@@ -410,6 +414,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		contentPane.add(labelModeAttaque);
 		modeAttaque_Basique = new JRadioButton("Basique");
 		modeAttaque_Basique.setActionCommand("Basique");
+		buttonGroup_ModeAttaque = new ButtonGroup();
 		buttonGroup_ModeAttaque.add(modeAttaque_Basique);
 		modeAttaque_Basique.setBounds(170, 316, 75, 23);
 		contentPane.add(modeAttaque_Basique);
@@ -488,13 +493,19 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		contentPane.add(spinner_cartes5);
 		
 		///Boutons
-		JButton btnSaveSettings = Button("Enregistrer comme parametres par defaut");
-		btnSaveSettings.addActionListener(new AdaptateurCommande(this.controle, "saveSettings", canEnregistrer));
+		warnEnregistrement = new JLabel("Enregistrement des parametres impossible");
+		warnEnregistrement.setFont(new Font("Tahoma", Font.BOLD, 11));
+		warnEnregistrement.setForeground(new Color(128, 0, 0));
+		warnEnregistrement.setBounds(70, 517, 300, 40);
+		warnEnregistrement.setVisible(false);
+		contentPane.add(warnEnregistrement);
+		btnSaveSettings = Button("Enregistrer comme parametres par defaut");
+		btnSaveSettings.addActionListener(new AdaptateurCommande(this.controle, "sauvePara", canEnregistrer));
 		btnSaveSettings.setBounds(55, 517, 266, 37);
 		contentPane.add(btnSaveSettings);
 		
 		JButton btnRestoreSettings = Button("Retablir les parametres par defaut");
-		btnRestoreSettings.addActionListener(new AdaptateurCommande(this.controle, "restoreSettings"));
+		btnRestoreSettings.addActionListener(new AdaptateurCommande(this.controle, "restaurePara"));
 		btnRestoreSettings.setBounds(331, 517, 266, 37);
 		contentPane.add(btnRestoreSettings);
 		
@@ -541,6 +552,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		//fenetreParametres.add(para_fond);
 		fenetreParametres.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		fenetreParametres.setBounds(100, 100, 900, 635);
+		fenetreParametres.setResizable(false);
 		fenetreParametres.setVisible(true);
 	}
 

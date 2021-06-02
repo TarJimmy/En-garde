@@ -98,6 +98,7 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 		
 		fenetreFin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		fenetreFin.setBounds(100, 100, 900, 450);
+		fenetreFin.setResizable(false);
 		fenetreFin.setVisible(true);
 	}
 
