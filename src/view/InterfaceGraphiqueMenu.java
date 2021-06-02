@@ -115,17 +115,17 @@ public class InterfaceGraphiqueMenu implements Runnable {
 		}
 		menu_fond.setLayout( new GridBagLayout() );
 		JButton play = Button("JOUER");
-		play.addActionListener(new AdaptateurCommande(InterfaceGraphiqueMenu.collecteurMenu, "jouerMenu"));
+		play.addActionListener(new AdaptateurCommande(collecteurMenu, "jouerMenu"));
 		JButton charge = Button("Charger Partie");
 		JButton demo = Button("Tutoriel");
-		demo.addActionListener(new AdaptateurCommande(InterfaceGraphiqueMenu.collecteurMenu, "tuto"));
-		charge.addActionListener(new AdaptateurCommande(InterfaceGraphiqueMenu.collecteurMenu, "chargePartieMenu"));
+		demo.addActionListener(new AdaptateurCommande(collecteurMenu, "tuto"));
+		charge.addActionListener(new AdaptateurCommande(collecteurMenu, "chargePartieMenu"));
 		JButton settings = Button("Parametres");
-		settings.addActionListener(new AdaptateurCommande(InterfaceGraphiqueMenu.collecteurMenu, "parametres"));
+		settings.addActionListener(new AdaptateurCommande(collecteurMenu, "parametres"));
 		JButton rules = Button("Regles du jeu");
-		rules.addActionListener(new AdaptateurCommande(InterfaceGraphiqueMenu.collecteurMenu, "regles"));
+		rules.addActionListener(new AdaptateurCommande(collecteurMenu, "regles"));
 		JButton exit = Button("Quitter");
-		exit.addActionListener(new AdaptateurCommande(InterfaceGraphiqueMenu.collecteurMenu, "exit"));
+		exit.addActionListener(new AdaptateurCommande(collecteurMenu, "exit"));
 		
 		c = GridConstraints(0,0);
 		menu_fond.add(play, c);

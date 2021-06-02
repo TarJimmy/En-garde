@@ -515,17 +515,17 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		warnEnregistrement.setVisible(false);
 		contentPane.add(warnEnregistrement);
 		btnSaveSettings = Button("Enregistrer comme parametres par defaut");
-		btnSaveSettings.addActionListener(new AdaptateurCommande(InterfaceGraphiqueParametres.controle, "sauvePara", canEnregistrer));
+		btnSaveSettings.addActionListener(new AdaptateurCommande(controle, "sauvePara", canEnregistrer));
 		btnSaveSettings.setBounds(55, 540, 266, 37);
 		contentPane.add(btnSaveSettings);
 		
 		JButton btnRestoreSettings = Button("Retablir les parametres par defaut");
-		btnRestoreSettings.addActionListener(new AdaptateurCommande(InterfaceGraphiqueParametres.controle, "restaurePara"));
+		btnRestoreSettings.addActionListener(new AdaptateurCommande(controle, "restaurePara"));
 		btnRestoreSettings.setBounds(331, 540, 266, 37);
 		contentPane.add(btnRestoreSettings);
 		
 		JButton btnPlay = Button("MENU");
-		btnPlay.addActionListener(new AdaptateurCommande(InterfaceGraphiqueParametres.controle, "menu"));
+		btnPlay.addActionListener(new AdaptateurCommande(controle, "menu"));
 		btnPlay.setBounds(634, 540, 195, 37);
 		contentPane.add(btnPlay);
 		

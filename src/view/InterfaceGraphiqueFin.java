@@ -92,17 +92,17 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 		
 		///Boutons
 		JButton btnMenu = Button("MENU");
-		btnMenu.addActionListener(new AdaptateurCommande(InterfaceGraphiqueFin.controle, "menu"));
+		btnMenu.addActionListener(new AdaptateurCommande(controle, "menu"));
 		btnMenu.setBounds(50, 350, 200, 40);
 		contentPane.add(btnMenu);
 		
 		JButton btnRecommencer = Button("Recommencer");
-		btnRecommencer.addActionListener(new AdaptateurCommande(InterfaceGraphiqueFin.controle, "rejouer"));
+		btnRecommencer.addActionListener(new AdaptateurCommande(controle, "rejouer"));
 		btnRecommencer.setBounds(342, 350, 200, 40);
 		contentPane.add(btnRecommencer);
 		
 		JButton btnQuit = Button("Quitter");
-		btnQuit.addActionListener(new AdaptateurCommande(InterfaceGraphiqueFin.controle, "exit"));
+		btnQuit.addActionListener(new AdaptateurCommande(controle, "exit"));
 		btnQuit.setBounds(634, 350, 200, 40);
 		contentPane.add(btnQuit);
 		

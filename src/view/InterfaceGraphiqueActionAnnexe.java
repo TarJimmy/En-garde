@@ -21,10 +21,10 @@ import controller.ControlerAutre;
 public class InterfaceGraphiqueActionAnnexe implements Runnable, Observateur {
 	
 	private static JFrame fenetreActionAnnexe;
-	CollecteurEvenements controle;
+	private static CollecteurEvenements controle;
 	
 	private InterfaceGraphiqueActionAnnexe(CollecteurEvenements controle) {
-		this.controle = controle;
+		InterfaceGraphiqueActionAnnexe.controle = controle;
 	}
 	
 	/**
@@ -94,12 +94,14 @@ public class InterfaceGraphiqueActionAnnexe implements Runnable, Observateur {
 				case "FERMER":
 					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre3.png", Configuration.MENU))).getImage().getScaledInstance(150, 40, Image.SCALE_SMOOTH));
 					button = new JButton(name, banner);
+					button.addMouseListener(new AdaptateurBouton(controle,"cadre3", button, 150));
 					button.setFont(new Font("Century", Font.PLAIN, 15));
 					button.setBounds(10, 650, 150, 50);
 					break;
 				default:
 					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre2.png", Configuration.MENU))).getImage().getScaledInstance(200, 40, Image.SCALE_SMOOTH));
 					button = new JButton(name, banner);
+					button.addMouseListener(new AdaptateurBouton(controle, "cadre2", button, 200));
 					button.setFont(new Font("Century", Font.PLAIN, 12));
 					break;
 			}
@@ -145,21 +147,18 @@ public class InterfaceGraphiqueActionAnnexe implements Runnable, Observateur {
 		contentPane.add(partieEnCours);
 		
 		JButton nouvellePartie = Button("Nouvelle la partie");
-		nouvellePartie.addActionListener(new AdaptateurCommande(this.controle, "nouvellePartie"));
+		nouvellePartie.addActionListener(new AdaptateurCommande(controle, "nouvellePartie"));
 		nouvellePartie.setBounds(92, 240, 200, 50);
-		nouvellePartie.addMouseListener(new AdaptateurBouton(this.controle, "cadre2", nouvellePartie, 200));
 		contentPane.add(nouvellePartie);
 		
 		JButton sauvPartie = Button("Sauvegarder la partie");
-		sauvPartie.addActionListener(new AdaptateurCommande(this.controle, "sauvPartie"));
+		sauvPartie.addActionListener(new AdaptateurCommande(controle, "sauvPartie"));
 		sauvPartie.setBounds(92, 300, 200, 50);
-		sauvPartie.addMouseListener(new AdaptateurBouton(this.controle, "cadre2", sauvPartie, 200));
 		contentPane.add(sauvPartie);
 		
 		JButton chargePartie = Button("Charger une partie");
-		chargePartie.addActionListener(new AdaptateurCommande(this.controle, "chargePartie"));
+		chargePartie.addActionListener(new AdaptateurCommande(controle, "chargePartie"));
 		chargePartie.setBounds(92, 360, 200, 50);
-		chargePartie.addMouseListener(new AdaptateurBouton(this.controle, "cadre2", chargePartie, 200));
 		contentPane.add(chargePartie);
 		
 		JLabel dernierCoup = Label("Dernier coup :");
@@ -167,20 +166,17 @@ public class InterfaceGraphiqueActionAnnexe implements Runnable, Observateur {
 		contentPane.add(dernierCoup);
 		
 		JButton annuleCoup = Button("Annuler le coup");
-		annuleCoup.addActionListener(new AdaptateurCommande(this.controle, "annuleCoup"));
+		annuleCoup.addActionListener(new AdaptateurCommande(controle, "annuleCoup"));
 		annuleCoup.setBounds(92, 490, 200, 50);
-		annuleCoup.addMouseListener(new AdaptateurBouton(this.controle, "cadre2", annuleCoup, 200));
 		contentPane.add(annuleCoup);
 		
 		JButton refaireCoup = Button("Refaire le dernier coup");
-		refaireCoup.addActionListener(new AdaptateurCommande(this.controle, "refaireCoup"));
+		refaireCoup.addActionListener(new AdaptateurCommande(controle, "refaireCoup"));
 		refaireCoup.setBounds(92, 550, 200, 50);
-		refaireCoup.addMouseListener(new AdaptateurBouton(this.controle, "cadre2", refaireCoup, 200));
 		contentPane.add(refaireCoup);
 		
 		JButton fermer = Button("FERMER");
-		fermer.addActionListener(new AdaptateurCommande(this.controle, "close"));
-		fermer.addMouseListener(new AdaptateurBouton(this.controle,"cadre3", fermer, 150));
+		fermer.addActionListener(new AdaptateurCommande(controle, "close"));
 		contentPane.add(fermer);
 		
 		fenetreActionAnnexe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
