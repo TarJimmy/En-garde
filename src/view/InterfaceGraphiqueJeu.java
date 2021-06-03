@@ -27,7 +27,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	
 	private final int hauteurFenetre = 900;
 	private final int largeurFenetre = 1600;
-	private JFrame frame;
+	private static JFrame frame;
 	CollecteurEvenements controle;
 	
 	private Jeu jeu;
@@ -51,6 +51,16 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	
 	public static void demarrer(CollecteurEvenements control, Jeu jeu) {
 		SwingUtilities.invokeLater(new InterfaceGraphiqueJeu(control, jeu));
+	}
+	
+	/**
+	 * Ferme la fenetre de jeu
+	 */
+	public static void close() {
+		if(frame!=null) {
+			frame.setVisible(false);
+			frame.dispose();
+		}
 	}
 	
 	@Override

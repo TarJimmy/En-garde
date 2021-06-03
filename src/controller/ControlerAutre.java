@@ -15,7 +15,6 @@ import model.Jeu;
 import model.Plateau;
 import model.SauvegardeParametre;
 import model.TypeEscrimeur;
-import view.InterfaceGraphiqueActionAnnexe;
 import view.InterfaceGraphiqueFin;
 import view.InterfaceGraphiqueJeu;
 //import view.InterfaceGraphiqueJeu;
@@ -38,8 +37,9 @@ public class ControlerAutre extends Controler {
 	public boolean commande(String c) {
 		switch(c) {
 			case "menu":
-				if (InterfaceGraphiqueParametres.close() || InterfaceGraphiqueFin.close()) {
-				InterfaceGraphiqueMenu.demarrer(new ControlerAutre());}
+				InterfaceGraphiqueParametres.close();
+				InterfaceGraphiqueFin.close();
+				InterfaceGraphiqueMenu.demarrer(new ControlerAutre());
 				break;
 			case "jouerMenu":
 				InterfaceGraphiqueMenu.close();
@@ -99,16 +99,8 @@ public class ControlerAutre extends Controler {
 			case "nouvellePartie":
 				commande("jouer");
 				break;
-			case "sauvPartie":
-				break;
 			case "chargePartieMenu":
 				InterfaceGraphiqueMenu.close();
-			case "chargePartie":
-				//InterfaceGraphiqueJeu.demarrer(new ControlerJeu());
-				break;
-			case "annuleCoup":
-				break;
-			case "refaireCoup":
 				break;
 			case "rejouer":
 				break;
@@ -131,9 +123,6 @@ public class ControlerAutre extends Controler {
 				break;
 			case "regles":
 				InterfaceGraphiqueRegles.demarrer();
-				break;
-			case "close":
-				InterfaceGraphiqueActionAnnexe.close();
 				break;
 			case "exit":
 				System.exit(0);

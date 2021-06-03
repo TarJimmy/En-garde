@@ -37,13 +37,10 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 	/**
 	 * Ferme la fenetre Fin
 	 */
-	public static boolean close() {
-		try {
+	public static void close() {
+		if(fenetreFin!=null) {
 			fenetreFin.setVisible(false);
 			fenetreFin.dispose();
-			return true;
-		} catch(NullPointerException n) {
-			return false;
 		}
 	}
 	

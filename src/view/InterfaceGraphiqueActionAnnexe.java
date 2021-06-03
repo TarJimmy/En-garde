@@ -18,7 +18,6 @@ import javax.swing.border.EmptyBorder;
 
 import Global.Configuration;
 import Patterns.Observateur;
-import controller.ControlerAutre;
 
 public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Runnable, Observateur {
 	
@@ -44,8 +43,10 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 	 * Ferme la fenetre de triche
 	 */
 	public static void close() {
-		fenetreActionAnnexe.setVisible(false);
-		fenetreActionAnnexe.dispose();
+		if (fenetreActionAnnexe!=null) {
+			fenetreActionAnnexe.setVisible(false);
+			fenetreActionAnnexe.dispose();
+		}
 	}
 	
 	/**
@@ -62,7 +63,7 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 				case "Titre":
 					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre.png", Configuration.MENU))).getImage().getScaledInstance(250, 75, Image.SCALE_SMOOTH));
 					label = new JLabel(banner);
-					label.setText("Action annexe");
+					label.setText("Actions annexes");
 					label.setFont(new Font("Century", Font.PLAIN, 25));
 					label.setBounds(67, 15, 250, 75);
 					break;
@@ -181,7 +182,7 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		contentPane.add(refaireCoup);
 		
 		JButton fermer = Button("FERMER");
-		//fermer.addActionListener(new Action);
+		fermer.addActionListener(new AdaptateurCommande(controle, "close"));
 		contentPane.add(fermer);
 		
 		fenetreActionAnnexe.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
