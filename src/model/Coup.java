@@ -36,10 +36,10 @@ public class Coup {
 	 */
 	public void remettreCartesDansLordre() {
 		for (int i = indicesCartesJouees.size() -1; i >= 0; i--) {
-			for (int j = i; j < getEscrimeur().getNbCartes() - 1; j++) {
+			for (int j = indicesCartesJouees.get(i); j < getEscrimeur().getNbCartes() - 1; j++) {
 				getEscrimeur().getCartes()[j+1] = getEscrimeur().getCartes()[j];
 			}
-			getEscrimeur().getCartes()[i] = null;
+			getEscrimeur().getCartes()[indicesCartesJouees.get(i)] = null;
 		}
 	}
 	

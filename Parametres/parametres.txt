@@ -1,11 +1,11 @@
 23
 Joueur 1
 HUMAIN
-1
+20
 Joueur 2
-HUMAIN
+IA_FACILE
 23
-Basique
+Avance
 7
 7
 7

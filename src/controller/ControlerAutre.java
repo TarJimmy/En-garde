@@ -15,6 +15,7 @@ import model.Jeu;
 import model.Plateau;
 import model.SauvegardeParametre;
 import model.TypeEscrimeur;
+import view.InterfaceGraphiqueActionAnnexe;
 import view.InterfaceGraphiqueFin;
 import view.InterfaceGraphiqueJeu;
 //import view.InterfaceGraphiqueJeu;
@@ -24,7 +25,7 @@ import view.InterfaceGraphiqueRegles;
 
 /**
  * 
- * @author La�titia & Delphine
+ * @author Laetitia & Delphine
  *
  */
 public class ControlerAutre extends Controler {
@@ -40,8 +41,9 @@ public class ControlerAutre extends Controler {
 				if (InterfaceGraphiqueParametres.close() || InterfaceGraphiqueFin.close()) {
 				InterfaceGraphiqueMenu.demarrer(new ControlerAutre());}
 				break;
-			case "play":
+			case "jouerMenu":
 				InterfaceGraphiqueMenu.close();
+			case "jouer":
 				try {
 					Parametre.instance();
 					SauvegardeParametre.chargerParametres();
@@ -50,7 +52,7 @@ public class ControlerAutre extends Controler {
 					int nbDalles = Integer.parseInt(it.next());
 					String nameJ1 = it.next();
 					TypeEscrimeur typeJ1 = getTypeEscrimeur(it.next());
-					int posJ1 = Integer.parseInt(it.next()) + 5;
+					int posJ1 = Integer.parseInt(it.next());
 					
 					String nameJ2 = it.next();
 					TypeEscrimeur typeJ2 = getTypeEscrimeur(it.next());
@@ -93,34 +95,45 @@ public class ControlerAutre extends Controler {
 				} catch (IncorrectCarteException e) {
 					e.printStackTrace();
 				}
-				
-				//InterfaceGraphiqueJeu.demarrer(new ControlerJeu());
 				break;
-			case "chargeGame":
+			case "nouvellePartie":
+				commande("jouer");
+				break;
+			case "sauvPartie":
+				break;
+			case "chargePartieMenu":
 				InterfaceGraphiqueMenu.close();
+			case "chargePartie":
 				//InterfaceGraphiqueJeu.demarrer(new ControlerJeu());
 				break;
-			case "retry":
+			case "annuleCoup":
 				break;
-			case "settings":
+			case "refaireCoup":
+				break;
+			case "rejouer":
+				break;
+			case "parametres":
 				InterfaceGraphiqueMenu.close();
 				Parametre.instance();
 				SauvegardeParametre.chargerParametres();
 				settings = SauvegardeParametre.getSettings();
 				InterfaceGraphiqueParametres.demarrer(settings, new ControlerAutre());
 				break;
-			case "saveSettings":
+			case "sauvePara":
 				SauvegardeParametre.sauvegarderParametres(InterfaceGraphiqueParametres.getParametre("map"), InterfaceGraphiqueParametres.getParametre("nomJ1"), InterfaceGraphiqueParametres.getParametre("typeJ1"), InterfaceGraphiqueParametres.getParametre("posJ1"), InterfaceGraphiqueParametres.getParametre("nomJ2"), InterfaceGraphiqueParametres.getParametre("typeJ2"), InterfaceGraphiqueParametres.getParametre("posJ2"), InterfaceGraphiqueParametres.getParametre("modeAttaque"), InterfaceGraphiqueParametres.getParametre("manches"), InterfaceGraphiqueParametres.getParametre("carteMax"), InterfaceGraphiqueParametres.getParametre("carte1"), InterfaceGraphiqueParametres.getParametre("carte2"), InterfaceGraphiqueParametres.getParametre("carte3"), InterfaceGraphiqueParametres.getParametre("carte4"), InterfaceGraphiqueParametres.getParametre("carte5"));
 				break;
-			case "restoreSettings":
+			case "restaurePara":
 				SauvegardeParametre.chargerParametres();
 				settings = SauvegardeParametre.getSettings();
 				InterfaceGraphiqueParametres.majParametres(settings);
 				break;
 			case "tuto":
 				break;
-			case "rules":
+			case "regles":
 				InterfaceGraphiqueRegles.demarrer();
+				break;
+			case "close":
+				InterfaceGraphiqueActionAnnexe.close();
 				break;
 			case "exit":
 				System.exit(0);

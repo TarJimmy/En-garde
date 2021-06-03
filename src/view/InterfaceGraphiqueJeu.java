@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.io.IOException;
@@ -24,6 +25,8 @@ import model.Jeu.Action;
 
 public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	
+	private final int hauteurFenetre = 900;
+	private final int largeurFenetre = 1600;
 	private JFrame frame;
 	CollecteurEvenements controle;
 	
@@ -37,7 +40,9 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	
 	VueInfoJeu vueInfoJeu;
 	
+	
 	private PanelAnimation panelAnimation;
+	
 	private InterfaceGraphiqueJeu(CollecteurEvenements controle, Jeu jeu) {
 		this.controle = controle;
 		this.jeu = jeu;
@@ -51,11 +56,10 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	@Override
 	public void miseAJour() {
 		Action action = jeu.getActionCourante();
-		System.out.println("Lance " + action);
 		switch (action) {
 			case CHANGER_TOUR:
 			case ACTUALISER_PLATEAU: // Actualise les cases accessibles du plateau
-				vuePlateau.actualise(jeu.casesJouables(), jeu.getIndiceCurrentEscrimeur());
+				vuePlateau.actualise(jeu.casesJouables(), jeu.getCurrentEscrimeur());
 				if (action != Action.CHANGER_TOUR) { // Stop si ce n'est pas  un changement de tour
 					controle.commande("ActionTerminer");
 					break;
@@ -102,7 +106,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		try {
 			background.setIcon(new ImageIcon(ImageIO.read(Configuration.charge("Background.png", Configuration.BG))));
 			background.setLayout(new GridLayout(3, 1));
-			background.setPreferredSize(new Dimension(1600, 900));
+			background.setPreferredSize(new Dimension(largeurFenetre, hauteurFenetre));
 			frame.add(background);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -111,9 +115,9 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		JPanel panelTop = new JPanel(new BorderLayout());
 		panelTop.setOpaque(false);
 		// Haut -> Gauche
-		panelTop.add(new VueInfoJeu(jeu.getEscrimeurGaucher().getNom(), jeu.getEscrimeurDroitier().getNom()), BorderLayout.WEST);
+		panelTop.add(new VueInfoJeu(jeu.getEscrimeurGaucher().getNom(), jeu.getEscrimeurDroitier().getNom(), controle), BorderLayout.WEST);
 		// Haut -> Droit
-		mainDroitier = new VueEscrimeur(controle, jeu.getPlateau(), jeu.getEscrimeurDroitier(), !jeu.getIsTourGaucher());
+		mainDroitier = new VueEscrimeur(controle, jeu.getPlateau(), jeu.getEscrimeurDroitier(), !jeu.getIsTourGaucher(), jeu.getPeutPasserTour());
 		panelTop.add(mainDroitier,BorderLayout.EAST);
 		
 		// Centre
@@ -124,7 +128,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		panelBot.setOpaque(false);
 		
 		// Bas -> Gauche
-		mainGaucher = new VueEscrimeur(controle, jeu.getPlateau(), jeu.getEscrimeurGaucher(), jeu.getIsTourGaucher());
+		mainGaucher = new VueEscrimeur(controle, jeu.getPlateau(), jeu.getEscrimeurGaucher(), jeu.getIsTourGaucher(), jeu.getPeutPasserTour());
 		panelBot.add(mainGaucher, BorderLayout.WEST);
 		
 		// Bas -> Droite
@@ -136,20 +140,22 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		background.add(vuePlateau);
 		background.add(panelBot);
 		
-		panelAnimation = new PanelAnimation();
-		panelAnimation.setPreferredSize(new Dimension(1600, 900));
-		frame.setGlassPane(panelAnimation);
-		
+		panelAnimation = new PanelAnimation(largeurFenetre, hauteurFenetre);
+		panelAnimation.setVisible(false);
+		final JPanel glass = (JPanel) frame.getGlassPane();
+		glass.setLayout(new GridBagLayout());
+	    glass.setVisible(true);
+	    glass.add(panelAnimation);
 		miseAJour();
 		frame.pack();
 		frame.setVisible(true);
 	}
-	
 	@SuppressWarnings("serial")
 	public class PanelAnimation extends JComponent implements Animateur{
 		
-		public PanelAnimation() {
+		public PanelAnimation(int largeur, int hauteur) {
 			super();
+			setPreferredSize(new Dimension(largeur, hauteur));
 			setVisible(true);
 			setOpaque(false);
 		}
@@ -159,7 +165,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 			// TODO Auto-generated method stub
 			super.paintComponent(g);
 			Graphics2D drawable = (Graphics2D)g;
-			drawable.fillRect(getWidth() / 2 - 100, getHeight() / 2, 500, 300);
+			drawable.fillRect(getWidth() / 2 -  250, getHeight() / 2 - 250, 500, 500);
 		}
 		
 		public Animation generateAnimationDeplacerCartes() {

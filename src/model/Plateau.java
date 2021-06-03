@@ -149,4 +149,11 @@ public class Plateau extends Observable {
 		}
 		return res;
 	}
+	
+	public int getNbCartesAttaque(Escrimeur e) {
+		int distance = Math.abs(getPosition((e.getIndice() + 1) % 2) - getPosition(e.getIndice()));
+		return e.getNbCartes(distance);
+	}
+	
+	
 }

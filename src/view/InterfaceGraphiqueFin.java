@@ -2,27 +2,32 @@ package view;
 
 import java.awt.Font;
 import java.awt.Image;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
+import Global.Configuration;
 import Patterns.Observateur;
 import controller.ControlerAutre;
 
 /**
  * 
- * @author La�titia & Delphine
+ * @author Laetitia & Delphine
  *
  */
 public class InterfaceGraphiqueFin implements Runnable, Observateur {
 	
 	private static JFrame fenetreFin;
-	CollecteurEvenements controle;
+	private static CollecteurEvenements controle;
 	
 	private InterfaceGraphiqueFin(CollecteurEvenements controle) {
-		this.controle = controle;
+		InterfaceGraphiqueFin.controle = controle;
 	}
 	
 	/**
-	 * Ouvre la fen�tre Fin
+	 * Ouvre la fenetre Fin
 	 * @param control
 	 */
 	public static void demarrer(CollecteurEvenements control) {
@@ -30,7 +35,7 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 	}
 	
 	/**
-	 * Ferme la fen�tre Fin
+	 * Ferme la fenetre Fin
 	 */
 	public static boolean close() {
 		try {
@@ -43,22 +48,27 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 	}
 	
 	/**
-	 * Cr�e un bouton JButton
+	 * Cree un bouton JButton
 	 * @param name : le nom du bouton
-	 * @return le bouton "name" g�n�r�
+	 * @return le bouton "name" genere
 	 */
 	private static JButton Button (String name) {
-		JButton button;
+		JButton button = null;
 		ImageIcon banner;
 		
-		banner = new ImageIcon(new ImageIcon("res/Images/Menu/cadre2.png").getImage().getScaledInstance(195, 40, Image.SCALE_SMOOTH));
-		button = new JButton(name, banner);
-		button.setFont(new Font("Century", Font.PLAIN, 15));		
-		button.setHorizontalTextPosition(SwingConstants.CENTER);
-		button.setFocusPainted(false);
-		button.setBorderPainted(false);
-		button.setContentAreaFilled(false);
-		button.setOpaque(false);
+		try {
+			banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre2.png", Configuration.MENU))).getImage().getScaledInstance(195, 40, Image.SCALE_SMOOTH));
+			button = new JButton(name, banner);
+			button.setFont(new Font("Century", Font.PLAIN, 15));	
+			button.setHorizontalTextPosition(SwingConstants.CENTER);
+			button.addMouseListener(new AdaptateurBouton(controle, "cadre2", button, 195));
+			button.setFocusPainted(false);
+			button.setBorderPainted(false);
+			button.setContentAreaFilled(false);
+			button.setOpaque(false);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		return button;
 	}
@@ -69,7 +79,7 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 	}
 
 	/**
-	 * �criture du contenu de la fen�tre Fin
+	 * Ecriture du contenu de la fenetre Fin
 	 */
 	@Override
 	public void run() {
@@ -82,22 +92,23 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 		
 		///Boutons
 		JButton btnMenu = Button("MENU");
-		btnMenu.addActionListener(new AdaptateurCommande(this.controle, "menu"));
+		btnMenu.addActionListener(new AdaptateurCommande(controle, "menu"));
 		btnMenu.setBounds(50, 350, 200, 40);
 		contentPane.add(btnMenu);
 		
 		JButton btnRecommencer = Button("Recommencer");
-		btnRecommencer.addActionListener(new AdaptateurCommande(this.controle, "retry"));
+		btnRecommencer.addActionListener(new AdaptateurCommande(controle, "rejouer"));
 		btnRecommencer.setBounds(342, 350, 200, 40);
 		contentPane.add(btnRecommencer);
 		
 		JButton btnQuit = Button("Quitter");
-		btnQuit.addActionListener(new AdaptateurCommande(this.controle, "exit"));
+		btnQuit.addActionListener(new AdaptateurCommande(controle, "exit"));
 		btnQuit.setBounds(634, 350, 200, 40);
 		contentPane.add(btnQuit);
 		
 		fenetreFin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		fenetreFin.setBounds(100, 100, 900, 450);
+		fenetreFin.setResizable(false);
 		fenetreFin.setVisible(true);
 	}
 

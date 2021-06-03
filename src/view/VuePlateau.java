@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -11,6 +12,9 @@ import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.Timer;
 
 import Global.Configuration;
@@ -20,14 +24,13 @@ import model.Plateau;
 
 
 @SuppressWarnings("serial")
-public class VuePlateau extends JComponent implements Animateur {
+public class VuePlateau extends JPanel implements Animateur {
 
 	public static final String IMAGECASEPATH = "../Images/Case";
 	
 	private Graphics2D drawable;
 	private int NBCases;
 	private Plateau p;
-	
 	private Image imgGaucher;
 	private Image imgDroitier;
 	private Image imgGaucherBlack;
@@ -51,6 +54,9 @@ public class VuePlateau extends JComponent implements Animateur {
 	final int widthDalle = 60;
 	final int heightDalle = 281;
 	
+	private int espaceCase;
+	private JSpinner spinner;
+	
 	VuePlateau(Plateau p, CollecteurEvenements controle) {
 		caseClickable = new HashSet<>();
 		indiceEcrimeursCourant = Escrimeur.GAUCHER;
@@ -72,6 +78,10 @@ public class VuePlateau extends JComponent implements Animateur {
 		this.positionEscrimeurs[0] = new Point(-1, posYComponent);
 		this.positionEscrimeurs[1] = new Point(-1, posYComponent);
 		this.animActif = false;
+		this.spinner = new JSpinner();
+		((JSpinner.DefaultEditor) spinner.getEditor()).getTextField().setEditable(false);
+		setLayout(null);
+		espaceCase = 1600 / NBCases;
 		try {
 			this.background = ImageIO.read(Configuration.charge("Background.png", Configuration.PLATEAU));
 			this.imgGaucher = ImageIO.read(Configuration.charge("Gaucher.png", Configuration.ESCRIMEURS));
@@ -83,6 +93,7 @@ public class VuePlateau extends JComponent implements Animateur {
 		}
 		setPreferredSize(new Dimension(getWidth(), 300));
 		addMouseListener(new AdaptateurCase(controle, NBCases, caseClickable, this));
+		add(spinner);
 	}
 	
 	@Override
@@ -105,13 +116,10 @@ public class VuePlateau extends JComponent implements Animateur {
 	void tracerPlateau() throws IOException {
 		int posGaucher = p.getPosition(Escrimeur.GAUCHER);
 		int posDroitier =  p.getPosition(Escrimeur.DROITIER);
-		
-		int espaceCase = getWidth() / NBCases;
-
-		for (int i = 0; i < NBCases; i++) {
-			int posX = i * espaceCase;
+		for (int i = 1; i <= NBCases; i++) {
+			int posX = (i - 1) * espaceCase;
 			int posXImage = posX + (espaceCase - widthDalle) / 2;
-			int num = i + 1;
+			int num = i;
 			Image imgDalle = ImageIO.read(Configuration.charge((caseClickable.contains(num) ? "#" : "") + "D" + num + ".png", Configuration.DALLES));
 			
 			drawable.drawImage(imgDalle, posXImage, posYComponent, widthDalle, heightDalle, null);
@@ -119,9 +127,9 @@ public class VuePlateau extends JComponent implements Animateur {
 			//On sauvegarde les informations des differents escrimeurs sans les dessiner, pour eviter que les dalles se dessine dessus
 			// On les redessines donc à la fin
 			if (!animActif) {
-				if (i == posGaucher - 1) {
+				if (i == posGaucher) {
 					positionEscrimeurs[Escrimeur.GAUCHER].x = posXImage - 35;
-				} else if (i == posDroitier - 1) {
+				} else if (i == posDroitier) {
 					positionEscrimeurs[Escrimeur.DROITIER].x = posXImage - 55;
 				}
 			}
@@ -135,19 +143,29 @@ public class VuePlateau extends JComponent implements Animateur {
 		}
 	}
 
-	public void actualise(HashSet<Integer> caseClickable, int indiceEcrimeursCourant) {
-		this.indiceEcrimeursCourant = indiceEcrimeursCourant;
+	public void actualise(HashSet<Integer> caseClickable, Escrimeur e) {
+		this.indiceEcrimeursCourant = e.getIndice();
 		this.caseClickable.clear();
 		Iterator<Integer> it = caseClickable.iterator();
-	      while(it.hasNext()) {
-	    	  this.caseClickable.add(it.next());
+		while(it.hasNext()) {
+			this.caseClickable.add(it.next());
+		}
+		int otherIndiceEscrimeur = (indiceEcrimeursCourant + 1) % 2;
+	    Boolean atkPossible = caseClickable.contains(p.getPosition(otherIndiceEscrimeur));
+	    if (atkPossible) {
+	    	int max = p.getNbCartesAttaque(e);
+			spinner.setModel(new SpinnerNumberModel(max, 1, max, 1));
+			System.out.println(p.getPosition(otherIndiceEscrimeur) * espaceCase + espaceCase / 2);
+			spinner.setBounds((p.getPosition(otherIndiceEscrimeur) - 1) * espaceCase + espaceCase / 2 - 18, posYComponent + 150 - 15, 36, 30);
+			spinner.setVisible(true);
+	    } else {
+	    	  spinner.setVisible(false);
 	      }
 	      repaint();
 	}
 	
 	public Animation generateAnimationDeplaceJoueur(int indiceEcrimeursCourant) {
 		int espaceCase = (getWidth() / NBCases);	
-		System.out.println("indice pour animation : " + indiceEcrimeursCourant);
 		int posEscrimeur = positionEscrimeurs[indiceEcrimeursCourant].x;
 		int caseDestination = p.getPosition(indiceEcrimeursCourant) * espaceCase;
 		int caseSource = Math.abs((positionEscrimeurs[indiceEcrimeursCourant].x + widthEs / 2) / espaceCase + 1) * espaceCase;
@@ -175,5 +193,9 @@ public class VuePlateau extends JComponent implements Animateur {
 	
 	public void activeModeAnimation() {
 		animActif = true;
+	}
+	
+	public int getNbCarteSelect() {
+		return (int)spinner.getValue();
 	}
 }

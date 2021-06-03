@@ -2,6 +2,8 @@ package model;
 
 import java.util.Stack;
 
+import model.Jeu.Action;
+
 public class Historique {
 	Jeu jeu;
 	private Stack<Coup> historique;
@@ -78,6 +80,7 @@ public class Historique {
 				nb--;
 				boucle--;
 			}
+			jeu.modifieVue(Action.PIOCHER);
 		}
 		//recuperer les cartes dans la defausse
 		dernierCoup.remettreCartesDansLordre();
@@ -90,15 +93,19 @@ public class Historique {
 		}
 		switch(dernierCoup.getAction()) {
 		case Coup.AVANCER :
-			//reculer de la valeur de la carte
+			jeu.getPlateau().deplacerEscrimeur(escrimeurCoup, -dernierCoup.getCartes()[0].getDistance());
+			jeu.modifieVue(Action.ANIMATION_DEPLACER_ESCRIMEUR);
 			break;
 		case Coup.RECULER :
 		case Coup.ESQUIVER :
-			//avancer de la valeur de la carte
+			jeu.getPlateau().deplacerEscrimeur(escrimeurCoup, dernierCoup.getCartes()[0].getDistance());
+			jeu.modifieVue(Action.ANIMATION_DEPLACER_ESCRIMEUR);
 			break;
 		default :
 			break;
 		}
+		jeu.modifieVue(Action.ACTUALISER_MAINS);
+		jeu.modifieVue(Action.DEFAUSSER);
 		jeu.setIndiceCurrentEscrimeur(escrimeurCoup.getIndice());
 		return false;
 	}

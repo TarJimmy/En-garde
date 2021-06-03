@@ -24,11 +24,11 @@ import controller.ControlerAutre;
 public class InterfaceGraphiqueMenu implements Runnable {
 	
 	private static JFrame fenetreMenu;
-	private CollecteurEvenements collecteurMenu;
+	private static CollecteurEvenements collecteurMenu;
 	private GridBagConstraints c;
 	
 	private InterfaceGraphiqueMenu(CollecteurEvenements controle) {
-		this.collecteurMenu = controle;
+		InterfaceGraphiqueMenu.collecteurMenu = controle;
 	}
 	
 	/**
@@ -63,10 +63,14 @@ public class InterfaceGraphiqueMenu implements Runnable {
 				
 				banner = new ImageIcon(ImageIO.read(Configuration.charge("cadre.png", Configuration.MENU)));
 				button = new JButton(name, banner);
-				button.setHorizontalTextPosition(SwingConstants.CENTER);
+				button.addMouseListener(new AdaptateurBouton(collecteurMenu, "cadre", button, 0));
 			} else {
-				button = new JButton(name);	
+				button = new JButton(name);
+				button.addMouseListener(new AdaptateurBouton(collecteurMenu, "pasCadre", button, 400));
 			}
+			
+			button.setHorizontalTextPosition(SwingConstants.CENTER);
+			button.setVerticalAlignment(SwingConstants.TOP);
 			button.setFont(new Font("Century", Font.PLAIN, 40));
 			button.setFocusPainted(false);
 			button.setBorderPainted(false);
@@ -97,9 +101,8 @@ public class InterfaceGraphiqueMenu implements Runnable {
 	}
 	
 	/**
-	 * ecriture du contenu de la fenetre Menu
+	 * Ecriture du contenu de la fenetre Menu
 	 */
-
 	@Override
 	public void run() {
 		fenetreMenu = new JFrame("EN GARDE ! - MENU PRINCIPAL");
@@ -112,17 +115,17 @@ public class InterfaceGraphiqueMenu implements Runnable {
 		}
 		menu_fond.setLayout( new GridBagLayout() );
 		JButton play = Button("JOUER");
-		play.addActionListener(new AdaptateurCommande(this.collecteurMenu, "play"));
+		play.addActionListener(new AdaptateurCommande(collecteurMenu, "jouerMenu"));
 		JButton charge = Button("Charger Partie");
 		JButton demo = Button("Tutoriel");
-		demo.addActionListener(new AdaptateurCommande(this.collecteurMenu, "tuto"));
-		charge.addActionListener(new AdaptateurCommande(this.collecteurMenu, "chargeGame"));
+		demo.addActionListener(new AdaptateurCommande(collecteurMenu, "tuto"));
+		charge.addActionListener(new AdaptateurCommande(collecteurMenu, "chargePartieMenu"));
 		JButton settings = Button("Parametres");
-		settings.addActionListener(new AdaptateurCommande(this.collecteurMenu, "settings"));
+		settings.addActionListener(new AdaptateurCommande(collecteurMenu, "parametres"));
 		JButton rules = Button("Regles du jeu");
-		rules.addActionListener(new AdaptateurCommande(this.collecteurMenu, "rules"));
+		rules.addActionListener(new AdaptateurCommande(collecteurMenu, "regles"));
 		JButton exit = Button("Quitter");
-		exit.addActionListener(new AdaptateurCommande(this.collecteurMenu, "exit"));
+		exit.addActionListener(new AdaptateurCommande(collecteurMenu, "exit"));
 		
 		c = GridConstraints(0,0);
 		menu_fond.add(play, c);
@@ -140,6 +143,7 @@ public class InterfaceGraphiqueMenu implements Runnable {
 		fenetreMenu.add(menu_fond);
 		fenetreMenu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		fenetreMenu.setSize(1280, 1024);
+		fenetreMenu.setResizable(false);
 		fenetreMenu.setVisible(true);
 		
 	}

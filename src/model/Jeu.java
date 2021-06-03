@@ -28,6 +28,7 @@ public class Jeu extends Observable {
 	}
 	
 	private Boolean modeSimple; 
+	public Boolean peutPasserTour;
 	private Plateau plateau;
 	private DeckPioche deckPioche;
 	private DeckDefausse deckDefausse;
@@ -55,6 +56,7 @@ public class Jeu extends Observable {
 		init(modeSimple, plateau, deckPioche, deckDefausse, nbManchesPourVictoire, gaucher, droitier);
 		modifieVue(Action.CHANGER_TOUR);
 		indicePremierJoueur = indiceCurrentEscrimeur;
+		peutPasserTour = false;
 	}
 
 	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, Action action, Historique historique) {
@@ -64,6 +66,7 @@ public class Jeu extends Observable {
 		init(modeSimple, plateau, deckPioche, deckDefausse, nbManchesPourVictoire, gaucher, droitier);
 		modifieVue(action);
 		indicePremierJoueur = indiceCurrentEscrimeur;
+		peutPasserTour = false;
 	}
 	
 	private void init(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, Escrimeur gaucher, Escrimeur droitier) {
@@ -140,13 +143,14 @@ public class Jeu extends Observable {
 	public void piocher(Escrimeur e) {
 		while (e.manqueCarte() && !deckPioche.deckVide()) {
 			e.ajouterCarte(deckPioche.piocher());
-			//modifieVue(Action.PIOCHER);
+			modifieVue(Action.PIOCHER);
 		}
 	}
 
 	public int changerTour() {
 		piocher(getCurrentEscrimeur());
 		indiceCurrentEscrimeur = (indiceCurrentEscrimeur + 1) % 2;
+		peutPasserTour = false;
 		modifieVue(Action.CHANGER_TOUR);
 		return 1;
 	}
@@ -205,8 +209,13 @@ public class Jeu extends Observable {
 						if (!rejoueCoupAnnule) {
 							historique.viderCoupsAnnules();
 						}
+						modifieVue(Action.ACTUALISER_MAINS);
+						modifieVue(Action.ACTUALISER_DECK);
 						modifieVue(Action.ANIMATION_DEPLACER_ESCRIMEUR);
-						//modifieVue(Action.ACTUALISER_MAINS);
+						if(c.getAction() != Coup.ESQUIVER) {
+							peutPasserTour = true;
+							modifieVue(Action.ACTUALISER_PLATEAU);
+						}
 						return true;
 					} else {
 						// le coup ne va pas etre joué, on ramene donc le joueur a sa position initiale
@@ -324,7 +333,6 @@ public class Jeu extends Observable {
 	 */
 	@SuppressWarnings("unused")
 	public HashSet<Integer> casesJouables(){
-		//cases jouables doit dependre du dernier coup effectué, modifier plateau.casesJouables pour qu'il retourne que les coups acceptés
 		Coup dernierCoup = historique.voirDernierCoup();
 		int atk;
 		int code;
@@ -336,14 +344,13 @@ public class Jeu extends Observable {
 			switch(dernierCoup.getAction()) {
 				case Coup.ATTAQUEDIRECTE :
 					code =  0x1000; // defendre
-					System.out.println("defendre une attaque de "+atk+ "cartes");
 					break;
 				case Coup.ATTAQUEINDIRECTE :
-					code = modeSimple ? 0x1000 : 0x1010;
+					code = 0x1010; //defendre ou esquiver
 					break;
 				case Coup.AVANCER :
 					if (dernierCoup.getEscrimeur() == getCurrentEscrimeur()) {
-						code = modeSimple ? 0x10000 : 0x10100; // passer
+						code = modeSimple ? 0x10000 : 0x10100; // passer/passer ou attaquer
 					} else {
 						code = 0x111; // avancer ou reculer ou attaquer
 					}
@@ -391,7 +398,7 @@ public class Jeu extends Observable {
 		indicePremierJoueur = (indicePremierJoueur + 1) % 2;
 		indiceCurrentEscrimeur = indicePremierJoueur;
 		//mettre a jour toute la vue (mains, pioche, defausse, plateau, manches gagn�es)
-		modifieVue(Action.CHANGER_TOUR);
+		modifieVue(Action.FIN_MANCHE); 
 	}
 	
 	public void modifieVue(Action action) {
@@ -422,5 +429,13 @@ public class Jeu extends Observable {
 		if (i >= 0 && i < 2) {
 			indiceCurrentEscrimeur = i;
 		}
+	}
+	
+	public Boolean getPeutPasserTour() {
+		return peutPasserTour;
+	}
+	
+	public Escrimeur[] getEscrimeurs() {
+		return escrimeurs;
 	}
 }

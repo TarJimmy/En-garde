@@ -6,6 +6,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
 
+import javax.swing.JSpinner;
+
 public class AdaptateurCase extends MouseAdapter {
 	private CollecteurEvenements controle;
 	private int nbCase;
@@ -27,7 +29,7 @@ public class AdaptateurCase extends MouseAdapter {
 		int x = e.getX() / espaceCase + 1;
 		
 		if (caseClickable.contains(x)) {
-			controle.clickCase(x);
+			controle.clickCase(x, (int)vuePlateau.getNbCarteSelect());
 		}
 	}
 }

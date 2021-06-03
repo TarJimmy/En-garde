@@ -39,12 +39,10 @@ public class ControlerJeu extends Controler {
 	public void piocher(Escrimeur e) {
 		jeu.piocher(e);
 	}
-
+	
 	@Override
-	public boolean clickCase(int x) {
-		int nbCartesAttaque = 1;//a pouvoir changer
-		// TODO Auto-generated method stub
-		System.out.println("Il a cliquer sur la case " + x);
+	public boolean clickCase(int x, int nbCartesAUtiliser) {
+		int nbCartesAttaque = nbCartesAUtiliser;
 		Coup dernierCoup = jeu.getHistorique().voirDernierCoup();
 		Escrimeur currentEscrimeur = jeu.getCurrentEscrimeur();
 		int indiceCurrentEscrimeur = jeu.getIndiceCurrentEscrimeur();
@@ -91,7 +89,6 @@ public class ControlerJeu extends Controler {
 			coupAJouer = new Coup(currentEscrimeur, cartesAJouer, typeAttaque);
 		} else if((currentEscrimeur.getIsGaucher() && x > positionCurrentEscrimeur) || (!currentEscrimeur.getIsGaucher() && x < positionCurrentEscrimeur)) {
 			//avancer
-			System.out.println("coup avancer");
 			cartesAJouer = new Carte[1];
 			int distanceClick = Math.abs(x - positionCurrentEscrimeur);
 			int i = 0;
@@ -104,7 +101,7 @@ public class ControlerJeu extends Controler {
 				i++;
 			}
 			coupAJouer = new Coup(currentEscrimeur, cartesAJouer, Coup.AVANCER);
-		} else{
+		} else {
 			//reculer ou esquiver
 			cartesAJouer = new Carte[1];
 			int distanceClick = Math.abs(x - positionCurrentEscrimeur);
@@ -116,14 +113,13 @@ public class ControlerJeu extends Controler {
 				}
 				i++;
 			}
-			if(dernierCoup.getAction() == Coup.ATTAQUEINDIRECTE) {
+			if (dernierCoup.getAction() == Coup.ATTAQUEINDIRECTE) {
 				coupAJouer = new Coup(currentEscrimeur, cartesAJouer, Coup.ESQUIVER);
-			}else {
+			} else {
 				coupAJouer = new Coup(currentEscrimeur, cartesAJouer, Coup.RECULER);
 			}
-			jeu.jouer(coupAJouer, false);
 		}
-		
+		jeu.jouer(coupAJouer, false);
 		if (jeu.isDernierTour()) {
 			finDeManche(null);
 		} else {
@@ -131,14 +127,12 @@ public class ControlerJeu extends Controler {
 			if ((!jeu.getDeckPioche().deckVide() && cj.isEmpty()) || (cj.isEmpty() && (jeu.getHistorique().voirDernierCoup().getAction() == Coup.ATTAQUEDIRECTE || jeu.getHistorique().voirDernierCoup().getAction() == Coup.ATTAQUEINDIRECTE))) {
 				System.out.println("aucune case jouable");
 				finDeManche(jeu.getNotCurrentEscrimeur());
-			}else if (jeu.getDeckPioche().deckVide()) {
+			} else if (jeu.getDeckPioche().deckVide()) {
 				finDeManche(null);
 			}
 		}
-		//------------------------------------------------------------------------------
-		Coup last = jeu.getHistorique().voirDernierCoup();
-		int typeDernierCoup = (last == null) ? null : last.getAction();
-		if (typeDernierCoup != Coup.ATTAQUEDIRECTE && typeDernierCoup != Coup.ATTAQUEINDIRECTE && typeDernierCoup != Coup.PARER && typeDernierCoup != Coup.ESQUIVER) {
+		HashSet<Integer> cases = jeu.casesJouables();
+		if(cases.size() == 1 && cases.contains(-1)) {
 			jeu.changerTour();
 		}
 		return false;
@@ -190,7 +184,6 @@ public class ControlerJeu extends Controler {
 		if (winner != null) {
 			winner.addMancheGagnee();
 		}
-		System.out.println("Lance nouvelle manche");
 		jeu.nouvelleManche();
 	} 
 	
@@ -210,7 +203,6 @@ public class ControlerJeu extends Controler {
 			case "Lancer":
 				if (!animations.isEmpty() && !animationsActives) {
 					animationsActives = true;
-					System.out.println("Lancement de l'animation");
 					animations.peek().demarre();
 				}
 				return true;
@@ -233,8 +225,14 @@ public class ControlerJeu extends Controler {
 			case "PasserTour":
 				jeu.changerTour();
 				return true;
+			case "annuleCoup":
+				jeu.getHistorique().annulerCoup();
+				return false;
+			case "refaireCoup":
+				jeu.getHistorique().rejouerCoupAnnule();
+				return true;
 			default:
-				System.out.println("Animation pas traité : " + c);
+				System.out.println("Commande pas traité : " + c);
 				return false;
 		}
 	}

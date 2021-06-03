@@ -22,7 +22,7 @@ public abstract class Controler implements CollecteurEvenements {
 	}
 
 	@Override
-	public boolean clickCase(int x) {
+	public boolean clickCase(int x, int nbCarte) {
 		// TODO Auto-generated method stub
 		return false;
 	}
