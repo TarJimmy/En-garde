@@ -30,7 +30,7 @@ public class VueManche extends JComponent {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		setPreferredSize(new Dimension(nbManches * 50, 70));
+		setPreferredSize(new Dimension(600, 70));
 		setOpaque(false);
 	}
 	

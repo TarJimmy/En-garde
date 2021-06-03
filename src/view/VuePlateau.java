@@ -4,12 +4,14 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
+import javax.swing.Timer;
 
 import Global.Configuration;
 import Patterns.Observateur;
@@ -18,30 +20,45 @@ import model.Plateau;
 
 
 @SuppressWarnings("serial")
-public class VuePlateau extends JComponent {
+public class VuePlateau extends JComponent implements Animateur {
 
 	public static final String IMAGECASEPATH = "../Images/Case";
 	
 	private Graphics2D drawable;
 	private int NBCases;
 	private Plateau p;
+	
 	private Image imgGaucher;
 	private Image imgDroitier;
 	private Image imgGaucherBlack;
 	private Image imgDroitierBlack;
 	private Image background;
+	
 	private CollecteurEvenements controle;
+	
 	private HashSet<Integer> caseClickable;
-	private Boolean gaucherDoitJouer;
+	private int indiceEcrimeursCourant;
+	
+	private Point[] positionEscrimeurs;
+	
+	private Boolean animActif;
+	
+	private final int posYComponent = 10;
+	
+	final int widthEs = 150;
+	final int heightEs = 214;
+	
+	final int widthDalle = 60;
+	final int heightDalle = 281;
 	
 	VuePlateau(Plateau p, CollecteurEvenements controle) {
 		caseClickable = new HashSet<>();
-		gaucherDoitJouer = true;
+		indiceEcrimeursCourant = Escrimeur.GAUCHER;
 		init(p, controle);
 	}
 	
-	VuePlateau(Plateau p, CollecteurEvenements controle, HashSet<Integer> caseAccessible, Boolean gaucherDoitJouer) {
-		this.gaucherDoitJouer = gaucherDoitJouer;
+	VuePlateau(Plateau p, CollecteurEvenements controle, HashSet<Integer> caseAccessible, int indiceEcrimeursCourant) {
+		this.indiceEcrimeursCourant = indiceEcrimeursCourant;
 		this.controle = controle;
 		caseClickable = caseAccessible;
 		init(p, controle);
@@ -51,6 +68,10 @@ public class VuePlateau extends JComponent {
 		this.controle = controle;
 		this.p = p;
 		this.NBCases = p.getNbCase();
+		this.positionEscrimeurs = new Point[2];
+		this.positionEscrimeurs[0] = new Point(-1, posYComponent);
+		this.positionEscrimeurs[1] = new Point(-1, posYComponent);
+		this.animActif = false;
 		try {
 			this.background = ImageIO.read(Configuration.charge("Background.png", Configuration.PLATEAU));
 			this.imgGaucher = ImageIO.read(Configuration.charge("Gaucher.png", Configuration.ESCRIMEURS));
@@ -82,53 +103,77 @@ public class VuePlateau extends JComponent {
 	}
 	
 	void tracerPlateau() throws IOException {
-		int HeigthPoint = 10;
 		int posGaucher = p.getPosition(Escrimeur.GAUCHER);
 		int posDroitier =  p.getPosition(Escrimeur.DROITIER);
-	
-		final int widthEs = 150;
-		final int heightEs = 214;
 		
-		final int widthDalle = 60;
-		final int heightDalle = 281;
-		
-		//On sauvegarde les informations des differents escrimeurs sans les dessiner, pour eviter que les dalles se dessine dessus
-		// On les redessines donc à la fin
-		int sauvGaucher = 0;
-		int sauvDroitier = 0;
 		int espaceCase = getWidth() / NBCases;
+
 		for (int i = 0; i < NBCases; i++) {
 			int posX = i * espaceCase;
 			int posXImage = posX + (espaceCase - widthDalle) / 2;
 			int num = i + 1;
 			Image imgDalle = ImageIO.read(Configuration.charge((caseClickable.contains(num) ? "#" : "") + "D" + num + ".png", Configuration.DALLES));
 			
-			drawable.drawImage(imgDalle, posXImage, HeigthPoint, widthDalle, heightDalle, null);
+			drawable.drawImage(imgDalle, posXImage, posYComponent, widthDalle, heightDalle, null);
 			
 			//On sauvegarde les informations des differents escrimeurs sans les dessiner, pour eviter que les dalles se dessine dessus
 			// On les redessines donc à la fin
-			if (i == posGaucher - 1) {
-				sauvGaucher = posXImage - 35;
-			} else if (i == posDroitier - 1) {
-				sauvDroitier = posXImage - 55;
+			if (!animActif) {
+				if (i == posGaucher - 1) {
+					positionEscrimeurs[Escrimeur.GAUCHER].x = posXImage - 35;
+				} else if (i == posDroitier - 1) {
+					positionEscrimeurs[Escrimeur.DROITIER].x = posXImage - 55;
+				}
 			}
 		}
-		if (gaucherDoitJouer) {
-			drawable.drawImage(imgGaucher, sauvGaucher, HeigthPoint, widthEs, heightEs, null);
-			drawable.drawImage(imgDroitierBlack, sauvDroitier, HeigthPoint, widthEs, heightEs, null);
+		if (indiceEcrimeursCourant == Escrimeur.GAUCHER) {
+			drawable.drawImage(imgGaucher, positionEscrimeurs[Escrimeur.GAUCHER].x, posYComponent, widthEs, heightEs, null);
+			drawable.drawImage(imgDroitierBlack, positionEscrimeurs[Escrimeur.DROITIER].x, posYComponent, widthEs, heightEs, null);
 		} else {
-			drawable.drawImage(imgGaucherBlack, sauvGaucher, HeigthPoint, widthEs, heightEs, null);
-			drawable.drawImage(imgDroitier, sauvDroitier, HeigthPoint, widthEs, heightEs, null);
+			drawable.drawImage(imgGaucherBlack, positionEscrimeurs[Escrimeur.GAUCHER].x, posYComponent, widthEs, heightEs, null);
+			drawable.drawImage(imgDroitier, positionEscrimeurs[Escrimeur.DROITIER].x, posYComponent, widthEs, heightEs, null);
 		}
 	}
 
-	public void actualise(HashSet<Integer> caseClickable, Boolean gaucherDoitJouer) {
-		this.gaucherDoitJouer = gaucherDoitJouer;
+	public void actualise(HashSet<Integer> caseClickable, int indiceEcrimeursCourant) {
+		this.indiceEcrimeursCourant = indiceEcrimeursCourant;
 		this.caseClickable.clear();
 		Iterator<Integer> it = caseClickable.iterator();
 	      while(it.hasNext()) {
 	    	  this.caseClickable.add(it.next());
 	      }
 	      repaint();
+	}
+	
+	public Animation generateAnimationDeplaceJoueur(int indiceEcrimeursCourant) {
+		int espaceCase = (getWidth() / NBCases);	
+		System.out.println("indice pour animation : " + indiceEcrimeursCourant);
+		int posEscrimeur = positionEscrimeurs[indiceEcrimeursCourant].x;
+		int caseDestination = p.getPosition(indiceEcrimeursCourant) * espaceCase;
+		int caseSource = Math.abs((positionEscrimeurs[indiceEcrimeursCourant].x + widthEs / 2) / espaceCase + 1) * espaceCase;
+		
+		int distance = caseDestination - caseSource;
+		
+		return new AnimationEscrimeur(controle, this, posEscrimeur, distance, indiceEcrimeursCourant);
+	}
+	
+	public void deplace(int x, int indice) {
+		positionEscrimeurs[indice].x = x;
+		repaint();
+	}
+	
+	public int getPosEscrimeur(int indiceEcrimeur) {
+		return positionEscrimeurs[indiceEcrimeur].x;
+	}
+
+	@Override
+	public void finAnimation(Animation animation) {
+		animActif = false;
+		repaint();
+		controle.animation("Terminer", animation);
+	}
+	
+	public void activeModeAnimation() {
+		animActif = true;
 	}
 }

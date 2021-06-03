@@ -50,13 +50,14 @@ public class ControlerAutre extends Controler {
 					int nbDalles = Integer.parseInt(it.next());
 					String nameJ1 = it.next();
 					TypeEscrimeur typeJ1 = getTypeEscrimeur(it.next());
-					int posJ1 = Integer.parseInt(it.next());
+					int posJ1 = Integer.parseInt(it.next()) + 5;
 					
 					String nameJ2 = it.next();
 					TypeEscrimeur typeJ2 = getTypeEscrimeur(it.next());
 					int posJ2 = Integer.parseInt(it.next());
 					
 					Boolean modeSimple = it.next().equals("Basique");
+					int nbManches = Integer.parseInt(it.next());
 					int nbCarteMaxParJoueur = Integer.parseInt(it.next());
 					Escrimeur eGaucher = new Escrimeur(nameJ1, typeJ1, Escrimeur.GAUCHER, nbCarteMaxParJoueur);
 					Escrimeur eDroitier = new Escrimeur(nameJ2, typeJ2, Escrimeur.DROITIER, nbCarteMaxParJoueur);
@@ -82,7 +83,7 @@ public class ControlerAutre extends Controler {
 					DeckDefausse deckDefausse = new DeckDefausse();
 					
 					Plateau plateau = new Plateau(posJ1, posJ2, nbDalles);
-					Jeu jeu = new Jeu(modeSimple, plateau, deckPioche, deckDefausse, Escrimeur.GAUCHER, eGaucher, eDroitier);
+					Jeu jeu = new Jeu(modeSimple, plateau, deckPioche, deckDefausse, nbManches, Escrimeur.GAUCHER, eGaucher, eDroitier);
 					
 					ControlerJeu cJeu = new ControlerJeu(jeu);
 					

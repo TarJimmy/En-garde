@@ -93,7 +93,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	
 	private Boolean textJ1NoNull;
 	private Boolean textJ2NoNull;
-	private Boolean canEnregistrer;
+	
 	private InterfaceGraphiqueParametres(CollecteurEvenements controle) {
 		this.controle = controle;
 	}
@@ -213,7 +213,6 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 					warning.setVisible(true);
 				} else {
 					textJ1NoNull = false;
-					canEnregistrer = textJ2NoNull;
 					warning.setVisible(false);
 				}
 			}
@@ -271,7 +270,6 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	public void run() {
 		textJ2NoNull = true;
 		textJ1NoNull = true;
-		canEnregistrer = true;
 		/*Parametres.instance();*/
 		fenetreParametres = new JFrame("EN GARDE ! - PARAMETRES");
 		/*JLabel contentPane = new JLabel(new ImageIcon("res/parametres.png"));*/
@@ -489,7 +487,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		
 		///Boutons
 		JButton btnSaveSettings = Button("Enregistrer comme parametres par defaut");
-		btnSaveSettings.addActionListener(new AdaptateurCommande(this.controle, "saveSettings", canEnregistrer));
+		btnSaveSettings.addActionListener(new AdaptateurCommande(this.controle, "saveSettings"));
 		btnSaveSettings.setBounds(55, 517, 266, 37);
 		contentPane.add(btnSaveSettings);
 		

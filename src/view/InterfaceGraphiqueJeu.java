@@ -1,33 +1,25 @@
 package view;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.border.LineBorder;
 
 import Global.Configuration;
 import Patterns.Observateur;
-import controller.ControlerJeu;
-import model.Carte;
-import model.DeckDefausse;
-import model.DeckPioche;
-import model.Escrimeur;
-import model.Historique;
-import model.IncorrectCarteException;
-import model.IncorrectPlateauException;
 import model.Jeu;
-import model.Plateau;
-import model.TypeEscrimeur;
 import model.Jeu.Action;
 
 public class InterfaceGraphiqueJeu implements Runnable, Observateur {
@@ -43,6 +35,9 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	
 	VuePlateau vuePlateau;
 	
+	VueInfoJeu vueInfoJeu;
+	
+	private PanelAnimation panelAnimation;
 	private InterfaceGraphiqueJeu(CollecteurEvenements controle, Jeu jeu) {
 		this.controle = controle;
 		this.jeu = jeu;
@@ -55,33 +50,43 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	
 	@Override
 	public void miseAJour() {
-		Action action = jeu.action;
-		System.out.println(action);
+		Action action = jeu.getActionCourante();
+		System.out.println("Lance " + action);
 		switch (action) {
 			case CHANGER_TOUR:
-			case ACTUALISE_PLATEAU: // Actualise les cases accessibles du plateau
-				vuePlateau.actualise(jeu.casesJouables(), jeu.getIsTourGaucher());
+			case ACTUALISER_PLATEAU: // Actualise les cases accessibles du plateau
+				vuePlateau.actualise(jeu.casesJouables(), jeu.getIndiceCurrentEscrimeur());
 				if (action != Action.CHANGER_TOUR) { // Stop si ce n'est pas  un changement de tour
+					controle.commande("ActionTerminer");
 					break;
 				}
 			case DEFAUSSER:
 			case PIOCHER:
-			case ACTUALISE_DECK: // Actualise les decks
+			case ACTUALISER_DECK: // Actualise les decks
 				vueDecks.repaint();
 				if (action != Action.CHANGER_TOUR) { // Stop si ce n'est pas  un changement de tour
+					controle.commande("ActionTerminer");
 					break;
 				}
-			case ACTUALISE_MAINS:
-			case ACTUALISE_MAIN_DROITIER:
+			case ACTUALISER_MAINS:
+			case ACTUALISER_MAIN_DROITIER:
 				mainDroitier.actualise(jeu.getIsTourGaucher() == false);
-				if (action != Action.CHANGER_TOUR && action != Action.ACTUALISE_MAINS) { // Stop si ce n'est pas  un changement de tour ou l'actualisation des 2 mains
+				if (action != Action.CHANGER_TOUR && action != Action.ACTUALISER_MAINS) { // Stop si ce n'est pas  un changement de tour ou l'actualisation des 2 mains
+					controle.commande("ActionTerminer");
 					break;
 				}
-			case ACTUALISE_MAIN_GAUCHER:
+			case ACTUALISER_MAIN_GAUCHER:
 				mainGaucher.actualise(jeu.getIsTourGaucher());
-				if (action != Action.CHANGER_TOUR) { // Stop si ce n'est pas  un changement de tour
-					break;
-				}
+				controle.commande("ActionTerminer");
+				break;
+			case ANIMATION_DEPLACER_ESCRIMEUR:
+				controle.animation("Ajouter", vuePlateau.generateAnimationDeplaceJoueur(jeu.getIndiceCurrentEscrimeur()));
+				break;
+			case ANIMATION_PIOCHER:
+				controle.animation("Ajouter", panelAnimation.generateAnimationDeplacerCartes());
+			case ANIMATION_LANCER:
+				controle.animation("Lancer", null);
+				break;
 			default:
 				System.out.println("Action non reconnu");
 				break;
@@ -106,9 +111,9 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		JPanel panelTop = new JPanel(new BorderLayout());
 		panelTop.setOpaque(false);
 		// Haut -> Gauche
-		
+		panelTop.add(new VueInfoJeu(jeu.getEscrimeurGaucher().getNom(), jeu.getEscrimeurDroitier().getNom()), BorderLayout.WEST);
 		// Haut -> Droit
-		mainDroitier = new VueEscrimeur(jeu.getPlateau(), jeu.getEscrimeurDroitier(), !jeu.getIsTourGaucher());
+		mainDroitier = new VueEscrimeur(controle, jeu.getPlateau(), jeu.getEscrimeurDroitier(), !jeu.getIsTourGaucher());
 		panelTop.add(mainDroitier,BorderLayout.EAST);
 		
 		// Centre
@@ -119,7 +124,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		panelBot.setOpaque(false);
 		
 		// Bas -> Gauche
-		mainGaucher = new VueEscrimeur(jeu.getPlateau(), jeu.getEscrimeurGaucher(), jeu.getIsTourGaucher());
+		mainGaucher = new VueEscrimeur(controle, jeu.getPlateau(), jeu.getEscrimeurGaucher(), jeu.getIsTourGaucher());
 		panelBot.add(mainGaucher, BorderLayout.WEST);
 		
 		// Bas -> Droite
@@ -131,8 +136,52 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		background.add(vuePlateau);
 		background.add(panelBot);
 		
+		panelAnimation = new PanelAnimation();
+		panelAnimation.setPreferredSize(new Dimension(1600, 900));
+		frame.setGlassPane(panelAnimation);
+		
 		miseAJour();
 		frame.pack();
 		frame.setVisible(true);
+	}
+	
+	@SuppressWarnings("serial")
+	public class PanelAnimation extends JComponent implements Animateur{
+		
+		public PanelAnimation() {
+			super();
+			setVisible(true);
+			setOpaque(false);
+		}
+		
+		@Override
+		protected void paintComponent(Graphics g) {
+			// TODO Auto-generated method stub
+			super.paintComponent(g);
+			Graphics2D drawable = (Graphics2D)g;
+			drawable.fillRect(getWidth() / 2 - 100, getHeight() / 2, 500, 300);
+		}
+		
+		public Animation generateAnimationDeplacerCartes() {
+			return new Animation(controle, panelAnimation) {
+				
+				@Override
+				public void anim(double progres) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+		}
+		
+		public void deplaceCartes(ArrayList<Point> newPoints) {
+			
+		}
+
+		@Override
+		public void finAnimation(Animation animation) {
+			frame.repaint();
+			controle.animation("Terminer", animation);
+		}
+		
 	}
 }

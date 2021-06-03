@@ -52,15 +52,14 @@ public class VueDeck extends JComponent {
 		Image imgFond = ImageIO.read(Configuration.charge((isDefausse ? "Defausse" : "Pioche") + ".png", Configuration.CARTES));
 		drawable.drawImage(imgFond, posx, posy, largeurDeck, hauteurDeck, null);
 		if (nbCarte > 0) {
-			Image img = ImageIO.read(Configuration.charge("DP" + (nbCarte > 4 ? 4 : nbCarte) + ".png", Configuration.CARTES));
-			
+			if (nbCarte > 1) {
+				Image img = ImageIO.read(Configuration.charge("DP" + (nbCarte > 4 ? 4 : nbCarte - 1) + ".png", Configuration.CARTES));
+				drawable.drawImage(img, posx + (isDefausse ? 12 : 17), posy + (isDefausse ? 50 : 42), 120, 170, null);
+			}
 			if (isDefausse) {
-				drawable.drawImage(img, posx + 12, posy + 50, 120, 170, null);
 				int distance = ((DeckDefausse) deck).consulterCarteVisible().getDistance();
 				Image imgVisible = ImageIO.read(Configuration.charge(distance +  ".png", Configuration.CARTES));
-				drawable.drawImage(imgVisible, posx + 17 + 5 * (nbCarte > 4 ? 3 : nbCarte - 1), posy + 51, 98, 150, null);
-			} else {
-				drawable.drawImage(img, posx + 17, posy + 42, 120, 170, null);
+				drawable.drawImage(imgVisible, posx + 24 + 3 * (nbCarte > 4 ? 3 : nbCarte - 1), posy + 58 - 3 * (nbCarte > 4 ? 3 : nbCarte - 1), 98, 150, null);
 			}
 		}
 		drawable.setFont(new Font("Arial", Font.BOLD, 30));

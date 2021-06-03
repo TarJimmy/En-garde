@@ -1,12 +1,12 @@
 23
-
-IA_FACILE
+Joueur 1
+HUMAIN
 1
 Joueur 2
 HUMAIN
 23
 Basique
-5
+7
 7
 7
 5

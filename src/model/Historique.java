@@ -8,7 +8,7 @@ public class Historique {
 	private Stack<Coup> coupsAnnules;
 	
 	public Historique(Jeu jeu) {
-		jeu = jeu;
+		this.jeu = jeu;
 		historique = new Stack<>();
 		coupsAnnules = new Stack <>();
 	}
@@ -27,10 +27,10 @@ public class Historique {
 	
 	public boolean rejouerCoupAnnule() {
 		if(coupsAnnules.empty()) {
-			System.err.println("aucun coup annulé");
+			System.err.println("aucun coup annulï¿½");
 			return false;
 		}else {
-			System.out.println("coup rejoué :");
+			System.out.println("coup rejouï¿½ :");
 		}
 		Coup c = coupsAnnules.pop();
 		return jeu.jouer(c,true);
@@ -52,187 +52,54 @@ public class Historique {
 		return coupsAnnules.isEmpty() ? null : coupsAnnules.pop();
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	public boolean annulerCoup() {
+		Coup dernierCoup = depilerDernierCoup();
+		if(dernierCoup == null) {
+			System.err.println("impossible d'annuler un coup, l'historique est vide");
+			return false;
+		}
+		Escrimeur escrimeurCoup = dernierCoup.getEscrimeur();
+		if(escrimeurCoup != jeu.getCurrentEscrimeur()) {
+			//compter les CartesPiochï¿½es
+			Coup coupSauvegarde = depilerDernierCoup();
+			int nb = dernierCoup.getCartes().length;
+			if(coupSauvegarde != null && coupSauvegarde.getEscrimeur() == escrimeurCoup) { //defense ou mouvement avant attaque indirecte
+				nb += coupSauvegarde.getCartes().length;
+				if(voirDernierCoup() != null && voirDernierCoup().getEscrimeur() == escrimeurCoup) { //defense avant mouvement avant attaque indirecte
+					nb+= voirDernierCoup().getCartes().length;
+				}
+			}
+			ajouterCoup(coupSauvegarde);
+			//reposer nb cartes
+			int boucle = escrimeurCoup.getNbCartes()-1;
+			while (boucle >= 0 && nb > 0) {
+				jeu.getDeckPioche().reposerCarte(escrimeurCoup.getCarte(boucle));
+				escrimeurCoup.getCartes()[boucle] = null;
+				nb--;
+				boucle--;
+			}
+		}
+		//recuperer les cartes dans la defausse
+		dernierCoup.remettreCartesDansLordre();
+		int departParcours = dernierCoup.getIndicesCartesJouees().size()-1;
+		for (int i = departParcours; i >= 0; i--) {
+			//on recupere chaque carte jouï¿½e dans la defausse et on la remet a sa place
+			if(!escrimeurCoup.ajouterCarteAIndiceVide(jeu.getDeckDefausse().reprendreDerniereCarte(), dernierCoup.getIndicesCartesJouees().get(i))) {
+				System.err.println("erreur lors de l'annulation du coup");
+			}
+		}
+		switch(dernierCoup.getAction()) {
+		case Coup.AVANCER :
+			//reculer de la valeur de la carte
+			break;
+		case Coup.RECULER :
+		case Coup.ESQUIVER :
+			//avancer de la valeur de la carte
+			break;
+		default :
+			break;
+		}
+		jeu.setIndiceCurrentEscrimeur(escrimeurCoup.getIndice());
 		return false;
 	}
-	
-	
-	/*
-	FONCTION A REFAIRE 5ON PEUT S'INSPIRER DE CELLE ECRITE MAIS IL DOIT Y AVOIR FULL BULLSHIT
-	
-	public boolean annulerCoup() {
-	 /!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\
-	 ATTENTION A SI IL FAUT ANNULER UN PIOCHAGE ET SI OUI COMBIEN DE CARTES
-	 /!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\/!\
-		if (historique.empty()) {
-			System.err.println("historique vide");
-			return false;
-		}else {
-			System.out.println("coup annulé");
-		}
-		
-		Coup c = historique.pop();
-		
-		switch(c.getAction()) {
-		case AVANCER :
-			System.out.println("aPiocheDepuisDernierMouvement = " + aPiocheDepuisDernierMouvement);
-			if(aPiocheDepuisDernierMouvement) {
-				//remettre la ou les cartes dans la pioche
-				int cartesUtiliseesEnDefense = 0;
-				if (!historique.empty()) {
-					cartesUtiliseesEnDefense = historique.peek().getIndicesCartesJoueesDefense().size();
-				}
-				for( int i = 0; i < c.getIndicesCartesJouees().size() + cartesUtiliseesEnDefense; i++) {
-					//remettre dans la pioche la carte d'index max - i
-					deckPioche.reposerCarte( c.getEscrimeur().getCartes()[c.getEscrimeur().getNbCartes() - 1 -i]);
-					c.getEscrimeur().supprimerCarte(c.getEscrimeur().getCartes()[c.getEscrimeur().getNbCartes() - 1 - i]);
-				}
-			}
-			
-			//redecaller les cartes
-			for(int i = 0; i < c.getEscrimeur().getNbCartes(); i++) {
-				if(c.getIndicesCartesJouees().contains(i)) {
-					for (int j = c.getEscrimeur().getNbCartes() - 1; j > i; j--) {
-						c.getEscrimeur().getCartes()[j] = c.getEscrimeur().getCartes()[j-1];
-					}
-					c.getEscrimeur().getCartes()[i] = null;
-				}
-			}
-			//recuperer la derniere carte de la defausse
-			c.getEscrimeur().ajouterCarte(deckDefausse.reprendreDerniereCarte());
-			
-			//reculer du nombre de cases de cette carte
-			plateau.deplacerEscrimeur(c.getEscrimeur(), -(c.getCartes()[0].getDistance()));
-			break;
-			
-		case RECULER :
-			if(aPiocheDepuisDernierMouvement) {
-				//remettre la ou les cartes dans la pioche
-				int cartesUtiliseesEnDefense = 0;
-				if (!historique.empty()) {
-					cartesUtiliseesEnDefense = historique.peek().getIndicesCartesJoueesDefense().size();
-				}
-				for( int i = 0; i < c.getIndicesCartesJouees().size() + cartesUtiliseesEnDefense; i++) {
-					//remettre dans la pioche la carte d'index max - i
-					deckPioche.reposerCarte( c.getEscrimeur().getCartes()[c.getEscrimeur().getNbCartes() - 1 -i]);
-					c.getEscrimeur().supprimerCarte(c.getEscrimeur().getCartes()[c.getEscrimeur().getNbCartes() - 1 - i]);
-				}
-			}
-			
-			
-			//redecaller les cartes
-			for(int i = 0; i < c.getEscrimeur().getNbCartes(); i++) {
-				if(c.getIndicesCartesJouees().contains(i)) {
-					for (int j = c.getEscrimeur().getNbCartes() - 1; j > i; j--) {
-						c.getEscrimeur().getCartes()[j] = c.getEscrimeur().getCartes()[j-1];
-					}
-					c.getEscrimeur().getCartes()[i] = null;
-				}
-			}
-			//recuperer la derniere carte de la defausse
-			c.getEscrimeur().ajouterCarte(deckDefausse.reprendreDerniereCarte());
-			
-			//avancer du nombre de cases de cette carte
-			plateau.deplacerEscrimeur(c.getEscrimeur(), c.getCartes()[0].getDistance());
-			break;
-			
-		case ATTAQUEDIRECTE :
-			//reposer les dernieres cartes piochée dans la pioche
-			int cartesUtiliseesEnDefense = 0;
-			if (!historique.empty()) {
-				cartesUtiliseesEnDefense = historique.peek().getIndicesCartesJoueesDefense().size();
-			}
-			for( int i = 0; i < c.getIndicesCartesJouees().size() + cartesUtiliseesEnDefense; i++) {
-				//remettre dans la pioche la carte d'index max - i
-				//System.out.println("l'attaquant repose sur la pioche une carte de valeur : "+c.getEscrimeur().getCartes()[c.getEscrimeur().getNbCartes() - 1 -i].getDistance());
-				deckPioche.reposerCarte( c.getEscrimeur().getCartes()[c.getEscrimeur().getNbCartes() - 1 -i]);
-				c.getEscrimeur().supprimerCarte(c.getEscrimeur().getCartes()[c.getEscrimeur().getNbCartes() - 1 - i]);
-			}
-			
-			//le defenseur recupere ses cartes de defense dans la defausse--------------------------------
-			Escrimeur defenseur;
-			if(c.getEscrimeur() == eGaucher) {
-				defenseur = eDroitier;
-			}else {
-				defenseur = eGaucher;
-			}
-			//pour cela
-			//d'abord remettre les cartes de sa main dans l'ordre precedent
-			System.out.println("le defenseur remet ses cartes dans l'ordre");
-			for (int i = 0; i < defenseur.getNbCartes(); i++) {
-				if(c.getIndicesCartesJoueesDefense().contains(i)) {
-					//tout decaller a droite et mettre l'indice i a null
-					//System.out.println("indice a liberer : "+ i);
-					for(int j = defenseur.getNbCartes() -1; j > i; j--) {
-						defenseur.getCartes()[j] = defenseur.getCartes()[j-1];
-					}
-					defenseur.getCartes()[i] = null;
-				}
-				
-			}
-			
-			//afficherEtatJeu();
-			//puis le defenseur recupere ses cartes d'attaques dans la defausse
-			for (int i = c.getIndicesCartesJoueesDefense().size()-1; i >= 0; i--) {
-				if(!defenseur.ajouterCarteAIndiceVide(deckDefausse.reprendreDerniereCarte(),c.getIndicesCartesJoueesDefense().get(i))) {
-					System.err.println("le defenseur recupere mal une carte dans la defausse");
-					//remettre jeu comme il etait avant le debut de annuler coup
-				}else {
-					//System.out.println("le defenseur reprend dans la defausse " + defenseur.getCartes()[i]);
-				}
-			}
-			//afficherEtatJeu();
-			//---------------------------------------------------------------------------
-			//l'attaquant recupere ses cartes d'attaques dans la defausse
-			//d'abord remettre les cartes de sa main dans l'ordre
-			for(int i = 0; i < c.getEscrimeur().getNbCartes(); i++) {
-				if(c.getIndicesCartesJouees().contains(i)) {
-					for (int j = c.getEscrimeur().getNbCartes() - 1; j > i; j--) {
-						c.getEscrimeur().getCartes()[j] = c.getEscrimeur().getCartes()[j-1];
-					}
-					c.getEscrimeur().getCartes()[i] = null;
-				}
-			}
-			//System.out.println("l'attaquand remet ses cartes dans l'ordre");
-			//afficherEtatJeu();
-			//puis recuperer les cartes dans la defausse
-			for (int i = c.getIndicesCartesJouees().size()-1; i >= 0; i--) {
-				if(!c.getEscrimeur().ajouterCarteAIndiceVide(deckDefausse.reprendreDerniereCarte(),c.getIndicesCartesJouees().get(i))) {
-					System.err.println("l'attaquant recupere mal une carte dans la defausse");
-					//remettre jeu comme il etait avant le debut de annuler coup
-				}else {
-					//System.out.println("l'attaquant reprend dans la defausse " + c.getCartes()[i]);
-				}
-			}
-			break;
-		 default:
-			break;
-		}
-		
-		if(c.escrimeur == eGaucher) {
-			isTourGaucher = true;
-		}else {
-			isTourGaucher = false;
-		}
-		c.viderCartesJouees();
-		metAJour();
-		historique.ajouterCoupAnnule(c);
-		return true;
-	}
-	
-	*/
-
 }

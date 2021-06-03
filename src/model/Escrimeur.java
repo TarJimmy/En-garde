@@ -133,4 +133,14 @@ public class Escrimeur extends Observable {
 	public void addMancheGagnee() {
 		mancheGagner++;
 	}	
+	
+	public int getNbCartes(int distance) {
+		int res = 0;
+		for (int i = 0; i < cartes.length; i++) {
+			if (cartes[i] != null &&  cartes[i].getDistance()== distance) {
+				res++;
+			}
+		}
+		return res;
+	}
 }

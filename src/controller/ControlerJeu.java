@@ -4,6 +4,9 @@ import java.io.IOException;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import model.Carte;
 import model.Coup;
@@ -12,25 +15,25 @@ import model.DeckPioche;
 import model.Escrimeur;
 import model.Historique;
 import model.IncorrectCarteException;
-import model.IncorrectPlateauException;
 import model.Jeu;
+import model.Jeu.Action;
 import model.Plateau;
 import model.TypeEscrimeur;
+import view.Animation;
 import view.InterfaceGraphiqueJeu;
 
 public class ControlerJeu extends Controler {
 	private Jeu jeu;
-
+	private LinkedList<Animation> animations;
+	boolean animationsActives;
+	
 	public ControlerJeu(Jeu jeu) {
 		this.jeu = jeu;
+		this.animations = new LinkedList<>();
+		animationsActives = false;
 		jeu.getDeckPioche().melanger();
 		piocher(jeu.getEscrimeurGaucher());
 		piocher(jeu.getEscrimeurDroitier());
-	}
-
-	@Override
-	public boolean jouerCartes(ArrayList<Integer> cartesAjouer) {
-		return true;
 	}
 
 	public void piocher(Escrimeur e) {
@@ -50,89 +53,94 @@ public class ControlerJeu extends Controler {
 		int positionNotCurrentEscrimeur = plateau.getPosition(((indiceCurrentEscrimeur + 1) % 2));
 		Coup coupAJouer;
 		Carte[] cartesAJouer;
-		if (x == -1){
-			//passer un tour
-			jeu.changerTour();
-		} else { 
-			if (positionCurrentEscrimeur == x) {
-				//il faut defendre
-				int puissanceAttaque = jeu.getHistorique().voirDernierCoup().getCartes().length;
-				cartesAJouer = new Carte[puissanceAttaque];
-				int i = 0;
-				int nbCartesCurrentEscrimeur = currentEscrimeur.getNbCartes();
-				int distanceAttaque = plateau.getPosition(Escrimeur.GAUCHER) - plateau.getPosition(Escrimeur.DROITIER);
-				while (i < nbCartesCurrentEscrimeur && puissanceAttaque > 0) {
-					if (currentEscrimeur.getCarte(i) != null && currentEscrimeur.getCarte(i).getDistance() == distanceAttaque) {
-						cartesAJouer[puissanceAttaque-1] = currentEscrimeur.getCarte(i);
-						puissanceAttaque --;
-					}
-					i++;
+
+		if (positionCurrentEscrimeur == x) {
+			//il faut defendre
+			int puissanceAttaque = jeu.getHistorique().voirDernierCoup().getCartes().length;
+			cartesAJouer = new Carte[puissanceAttaque];
+			int i = 0;
+			int nbCartesCurrentEscrimeur = currentEscrimeur.getNbCartes();
+			int distanceAttaque = plateau.getPosition(Escrimeur.DROITIER) - plateau.getPosition(Escrimeur.GAUCHER);
+			while (i < nbCartesCurrentEscrimeur && puissanceAttaque > 0) {
+				if (currentEscrimeur.getCarte(i) != null && currentEscrimeur.getCarte(i).getDistance() == distanceAttaque) {
+					cartesAJouer[puissanceAttaque-1] = currentEscrimeur.getCarte(i);
+					puissanceAttaque --;
 				}
-				coupAJouer = new Coup(currentEscrimeur, cartesAJouer, Coup.PARER);
-			} else if(positionNotCurrentEscrimeur == x){
-				//attaquer
-				cartesAJouer = new Carte[nbCartesAttaque];
-				int i = 0;
-				int nbCartesCurrentEscrimeur = currentEscrimeur.getNbCartes();
-				int distanceAttaque = plateau.getPosition(Escrimeur.GAUCHER) - plateau.getPosition(Escrimeur.DROITIER);
-				while (i < nbCartesCurrentEscrimeur && nbCartesAttaque != 0) {
-					if (currentEscrimeur.getCarte(i) != null && currentEscrimeur.getCarte(i).getDistance() == distanceAttaque) {
-						cartesAJouer[nbCartesAttaque] = currentEscrimeur.getCarte(i);
-						nbCartesAttaque--;
-					}
-					i++;
-				}	
-				int typeAttaque;
-				if (dernierCoup != null && dernierCoup.getEscrimeur() == currentEscrimeur && dernierCoup.getAction() == Coup.AVANCER) {
-					typeAttaque = Coup.ATTAQUEINDIRECTE;
-				} else {
-					typeAttaque = Coup.ATTAQUEDIRECTE;
+				i++;
+			}
+			coupAJouer = new Coup(currentEscrimeur, cartesAJouer, Coup.PARER);
+		} else if(positionNotCurrentEscrimeur == x){
+			//attaquer
+			cartesAJouer = new Carte[nbCartesAttaque];
+			int i = 0;
+			int nbCartesCurrentEscrimeur = currentEscrimeur.getNbCartes();
+			int distanceAttaque = plateau.getPosition(Escrimeur.DROITIER) - plateau.getPosition(Escrimeur.GAUCHER);
+			while (i < nbCartesCurrentEscrimeur && nbCartesAttaque != 0) {
+				if (currentEscrimeur.getCarte(i) != null && currentEscrimeur.getCarte(i).getDistance() == distanceAttaque) {
+					cartesAJouer[nbCartesAttaque-1] = currentEscrimeur.getCarte(i);
+					nbCartesAttaque--;
 				}
-				coupAJouer = new Coup(currentEscrimeur, cartesAJouer, typeAttaque);
-			} else if((currentEscrimeur.getIsGaucher() && x > positionCurrentEscrimeur) || (!currentEscrimeur.getIsGaucher() && x < positionCurrentEscrimeur)) {
-				//avancer
-				System.out.println("coup avancer");
-				cartesAJouer = new Carte[1];
-				int distanceClick = Math.abs(x - positionCurrentEscrimeur);
-				int i = 0;
-				int nbCartesCurrentEscrimeur = currentEscrimeur.getNbCartes();
-				while(i < nbCartesCurrentEscrimeur && cartesAJouer[0] == null) {
-					if(currentEscrimeur.getCarte(i) != null && currentEscrimeur.getCarte(i).getDistance() == distanceClick) {
-						cartesAJouer[0] = currentEscrimeur.getCarte(i);
-						System.out.println("ajout de carte");
-					}
-					i++;
+				i++;
+			}	
+			int typeAttaque;
+			if (dernierCoup != null && dernierCoup.getEscrimeur() == currentEscrimeur && dernierCoup.getAction() == Coup.AVANCER) {
+				typeAttaque = Coup.ATTAQUEINDIRECTE;
+			} else {
+				typeAttaque = Coup.ATTAQUEDIRECTE;
+			}
+			coupAJouer = new Coup(currentEscrimeur, cartesAJouer, typeAttaque);
+		} else if((currentEscrimeur.getIsGaucher() && x > positionCurrentEscrimeur) || (!currentEscrimeur.getIsGaucher() && x < positionCurrentEscrimeur)) {
+			//avancer
+			System.out.println("coup avancer");
+			cartesAJouer = new Carte[1];
+			int distanceClick = Math.abs(x - positionCurrentEscrimeur);
+			int i = 0;
+			int nbCartesCurrentEscrimeur = currentEscrimeur.getNbCartes();
+			while(i < nbCartesCurrentEscrimeur && cartesAJouer[0] == null) {
+				if(currentEscrimeur.getCarte(i) != null && currentEscrimeur.getCarte(i).getDistance() == distanceClick) {
+					cartesAJouer[0] = currentEscrimeur.getCarte(i);
+					System.out.println("ajout de carte");
 				}
-				coupAJouer = new Coup(currentEscrimeur, cartesAJouer, Coup.AVANCER);
-			} else{
-				//reculer ou esquiver
-				cartesAJouer = new Carte[1];
-				int distanceClick = Math.abs(x - positionCurrentEscrimeur);
-				int i = 0;
-				int nbCartesCurrentEscrimeur = currentEscrimeur.getNbCartes();
-				while(i < nbCartesCurrentEscrimeur && cartesAJouer[0] == null) {
-					if(currentEscrimeur.getCarte(i) != null && currentEscrimeur.getCarte(i).getDistance() == distanceClick) {
-						cartesAJouer[0] = currentEscrimeur.getCarte(i);
-					}
-					i++;
+				i++;
+			}
+			coupAJouer = new Coup(currentEscrimeur, cartesAJouer, Coup.AVANCER);
+		} else{
+			//reculer ou esquiver
+			cartesAJouer = new Carte[1];
+			int distanceClick = Math.abs(x - positionCurrentEscrimeur);
+			int i = 0;
+			int nbCartesCurrentEscrimeur = currentEscrimeur.getNbCartes();
+			while(i < nbCartesCurrentEscrimeur && cartesAJouer[0] == null) {
+				if(currentEscrimeur.getCarte(i) != null && currentEscrimeur.getCarte(i).getDistance() == distanceClick) {
+					cartesAJouer[0] = currentEscrimeur.getCarte(i);
 				}
-				if(dernierCoup.getAction() == Coup.ATTAQUEINDIRECTE) {
-					coupAJouer = new Coup(currentEscrimeur, cartesAJouer, Coup.ESQUIVER);
-				}else {
-					coupAJouer = new Coup(currentEscrimeur, cartesAJouer, Coup.RECULER);
-				}
+				i++;
+			}
+			if(dernierCoup.getAction() == Coup.ATTAQUEINDIRECTE) {
+				coupAJouer = new Coup(currentEscrimeur, cartesAJouer, Coup.ESQUIVER);
+			}else {
+				coupAJouer = new Coup(currentEscrimeur, cartesAJouer, Coup.RECULER);
 			}
 			jeu.jouer(coupAJouer, false);
 		}
 		
-		if ((!jeu.getDeckPioche().deckVide() && jeu.casesJouables().isEmpty()) || (jeu.casesJouables().isEmpty() && (jeu.getHistorique().voirDernierCoup().getAction() == Coup.ATTAQUEDIRECTE || jeu.getHistorique().voirDernierCoup().getAction() == Coup.ATTAQUEINDIRECTE))) {
-			finDeManche(jeu.getNotCurrentEscrimeur());
-		}
-		if (jeu.isDernierTour() || jeu.getDeckPioche().deckVide()) {
+		if (jeu.isDernierTour()) {
 			finDeManche(null);
+		} else {
+			HashSet<Integer> cj = jeu.casesJouables();
+			if ((!jeu.getDeckPioche().deckVide() && cj.isEmpty()) || (cj.isEmpty() && (jeu.getHistorique().voirDernierCoup().getAction() == Coup.ATTAQUEDIRECTE || jeu.getHistorique().voirDernierCoup().getAction() == Coup.ATTAQUEINDIRECTE))) {
+				System.out.println("aucune case jouable");
+				finDeManche(jeu.getNotCurrentEscrimeur());
+			}else if (jeu.getDeckPioche().deckVide()) {
+				finDeManche(null);
+			}
 		}
 		//------------------------------------------------------------------------------
-		jeu.changerTour();
+		Coup last = jeu.getHistorique().voirDernierCoup();
+		int typeDernierCoup = (last == null) ? null : last.getAction();
+		if (typeDernierCoup != Coup.ATTAQUEDIRECTE && typeDernierCoup != Coup.ATTAQUEINDIRECTE && typeDernierCoup != Coup.PARER && typeDernierCoup != Coup.ESQUIVER) {
+			jeu.changerTour();
+		}
 		return false;
 	}
 	
@@ -144,77 +152,90 @@ public class ControlerJeu extends Controler {
 			Escrimeur gaucher = jeu.getEscrimeurGaucher();
 			Escrimeur droitier = jeu.getEscrimeurDroitier();
 			Plateau plateau = jeu.getPlateau();
-			if (action == Coup.ATTAQUEDIRECTE  || action == Coup.ATTAQUEINDIRECTE) {
-				jeu.setDernierTour(true);
+			if ((action == Coup.ATTAQUEDIRECTE  || action == Coup.ATTAQUEINDIRECTE) && !jeu.casesJouables().isEmpty()) {
+					jeu.setDernierTour(true);
 			} else {
-				
-				int avantageGaucher = 0;
-				int nbCartes = gaucher.getNbCartes();
-				int distanceAttaque = plateau.getPosition(Escrimeur.GAUCHER) - plateau.getPosition(Escrimeur.DROITIER);
-				Carte[] cartesGaucher = gaucher.getCartes();
-				//checker le joueur qui a le plus de carte permettant une attaque directe en main
-				for (int i = 0; i < nbCartes; i++) {
-					if (cartesGaucher[i] != null && cartesGaucher[i].getDistance() == distanceAttaque) {
-						avantageGaucher ++;
+				if (action == Coup.ATTAQUEDIRECTE  || action == Coup.ATTAQUEINDIRECTE) {
+					winner = jeu.getHistorique().voirDernierCoup().getEscrimeur();
+				} else {
+					int avantageGaucher = 0;
+					int nbCartes = gaucher.getNbCartes();
+					int distanceAttaque = plateau.getPosition(Escrimeur.DROITIER) - plateau.getPosition(Escrimeur.GAUCHER);
+					Carte[] cartesGaucher = gaucher.getCartes();
+					//checker le joueur qui a le plus de carte permettant une attaque directe en main
+					for (int i = 0; i < nbCartes; i++) {
+						if (cartesGaucher[i] != null && cartesGaucher[i].getDistance() == distanceAttaque) {
+							avantageGaucher ++;
+						}
+					}
+					nbCartes = droitier.getNbCartes();
+					Carte[] cartesDroitier = droitier.getCartes();
+					for (int i = 0; i < nbCartes; i++) {
+						if (cartesDroitier[i] != null && cartesDroitier[i].getDistance() == distanceAttaque) {
+							avantageGaucher --;
+						}
+					}
+					if (avantageGaucher == 0) {
+						//checker le joueur qui a le plus avanc�
+						avantageGaucher = (plateau.getPosition(Escrimeur.GAUCHER)-1) - (plateau.getNbCase() - plateau.getPosition(Escrimeur.DROITIER));
+					}
+					if (avantageGaucher > 0) {
+						winner = gaucher;
+					} else if (avantageGaucher < 0) {
+						winner = droitier;
 					}
 				}
-				nbCartes = droitier.getNbCartes();
-				Carte[] cartesDroitier = droitier.getCartes();
-				for (int i = 0; i < nbCartes; i++) {
-					if (cartesDroitier[i] != null && cartesDroitier[i].getDistance() == distanceAttaque) {
-						avantageGaucher --;
-					}
-				}
-				if (avantageGaucher == 0) {
-					//checker le joueur qui a le plus avanc�
-					avantageGaucher = (plateau.getPosition(Escrimeur.GAUCHER)-1) - (plateau.getNbCase() - plateau.getPosition(Escrimeur.DROITIER));
-				}
-				if (avantageGaucher > 0) {
-					winner = gaucher;
-				} else if (avantageGaucher < 0) {
-					winner = droitier;
-				}
+			}
 		}
 		if (winner != null) {
 			winner.addMancheGagnee();
 		}
+		System.out.println("Lance nouvelle manche");
 		jeu.nouvelleManche();
-		}
 	} 
 	
-	public static void main(String[] args) {
-		Carte cartes[] = new Carte[25];
-
-		for (int i = 0; i < cartes.length; i++) {
-			try {
-				cartes[i] = new Carte((i % 5) + 1);
-			} catch (IncorrectCarteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	@Override
+	public boolean animation(String commande, Animation anim) {
+		switch (commande) {
+			case "Ajouter":
+				animations.add(anim);
+				jeu.modifieVue(Action.ANIMATION_LANCER);
+				commande("ActionTerminer");
+				return true;
+			case "Terminer":
+				animations.remove(anim);
+				animationsActives = false;
+				commande("ActionTerminer");
+				return true;
+			case "Lancer":
+				if (!animations.isEmpty() && !animationsActives) {
+					animationsActives = true;
+					System.out.println("Lancement de l'animation");
+					animations.peek().demarre();
+				}
+				return true;
+			default:
+				System.out.println("Animation pas traité : " + commande);
+				break;
 			}
+		return false;
+	}
 
+	@Override
+	public boolean commande(String c) {
+		switch (c) {
+			case "ActionTerminer":
+				jeu.actionTerminer();
+				return true;
+			case "ActionLancer":
+				jeu.demarreActionSuivante();
+				return true;
+			case "PasserTour":
+				jeu.changerTour();
+				return true;
+			default:
+				System.out.println("Animation pas traité : " + c);
+				return false;
 		}
-		DeckPioche deckPioche = new DeckPioche(cartes);
-		deckPioche.melanger();
-		DeckDefausse deckDefausse = new DeckDefausse();
-		for(int i = 0; i < 5; i ++) {
-			deckDefausse.addCarte(deckPioche.piocher());
-		}
-		Escrimeur eGaucher = new Escrimeur("Gaucher", TypeEscrimeur.HUMAIN, Escrimeur.GAUCHER, 7);
-		eGaucher.addMancheGagnee();
-		eGaucher.addMancheGagnee();
-		eGaucher.addMancheGagnee();
-		Escrimeur eDroitier = new Escrimeur("Droitier", TypeEscrimeur.HUMAIN, Escrimeur.DROITIER, 7);
-		eDroitier.addMancheGagnee();
-		Jeu jeu = null;
-		jeu = null;//new Jeu(true, new Plateau(25), deckPioche, deckDefausse, eGaucher, eDroitier);
-		jeu.setHistorique(new Historique(jeu));
-		
-		ControlerJeu cJeu = new ControlerJeu(jeu);
-
-		jeu.piocher(eDroitier);
-		jeu.piocher(eGaucher);
-		
-		InterfaceGraphiqueJeu.demarrer(cJeu, jeu);
 	}
 }

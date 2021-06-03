@@ -131,9 +131,13 @@ public class Plateau extends Observable {
 				if (mouvementPossible(e, -distance) && (typesCoupsPossibles | 0x10) == typesCoupsPossibles) {
 					res.add(getPosition(escrimeur) - getValeurOrientation(e, distance));
 				}
-				if (escrimeurPeutAttaquer(e, distance) && (typesCoupsPossibles | 0x100) == typesCoupsPossibles) {
-					res.add(getPosition(escrimeur) + getValeurOrientation(e, distance));
-					cartesDefense += 1;
+				if (escrimeurPeutAttaquer(e, distance)) {
+					if ((typesCoupsPossibles | 0x100) == typesCoupsPossibles) {
+						res.add(getPosition(escrimeur) + getValeurOrientation(e, distance));
+					}
+					if ((typesCoupsPossibles | 0x1000) == typesCoupsPossibles) {
+						cartesDefense += 1;
+					}
 				}
 			}
 		}
@@ -143,7 +147,6 @@ public class Plateau extends Observable {
 		if ((typesCoupsPossibles | 0x10000) == typesCoupsPossibles) {
 			res.add(-1);
 		}
-		System.out.println(res);
 		return res;
 	}
 }
