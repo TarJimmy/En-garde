@@ -15,9 +15,9 @@ import model.Jeu;
 
 public class SauvegarderPartie_DAO {
 	
-	private final String url = "jdbc:sqlite:src/Database/En_garde.db";
+	private final static String url = "jdbc:sqlite:src/Database/En_garde.db";
 
-	private Connection connect() {  
+	private static Connection connect() {  
         // SQLite connection string  
         Connection conn = null;  
         try {  
@@ -58,11 +58,11 @@ public class SauvegarderPartie_DAO {
         }  
     }
 	
-	public ResultSet getAll() {
+	public static ResultSet getAll() {
 		String sql = "SELECT * FROM SauvegarderPartie";
         
         try {
-        	Connection conn = this.connect();
+        	Connection conn = connect();
             Statement stmt  = conn.createStatement();
             ResultSet rs    = stmt.executeQuery(sql);
             // return results
@@ -79,7 +79,7 @@ public class SauvegarderPartie_DAO {
 		String sql = "SELECT * FROM SauvegarderPartie WHERE id = '" + idJeu + "'";
         
         try {
-        	Connection conn = this.connect();
+        	Connection conn = connect();
             Statement stmt  = conn.createStatement();
             ResultSet rs    = stmt.executeQuery(sql);
             // return results

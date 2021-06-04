@@ -147,8 +147,4 @@ public class InterfaceGraphiqueMenu implements Runnable {
 		fenetreMenu.setVisible(true);
 		
 	}
-	
-	public static void main(String[] args) {
-		InterfaceGraphiqueMenu.demarrer(new ControlerAutre());
-	}
 }

@@ -4,6 +4,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -17,11 +21,14 @@ import javax.swing.border.EmptyBorder;
 
 import Global.Configuration;
 import Patterns.Observateur;
+import Database.SauvegarderPartie_DAO;
 
 public class InterfaceGraphiqueChargerPartie implements Runnable, Observateur {
 
 	private static JFrame fenetreChargerPartie;
 	private static CollecteurEvenements controle;
+	private static List<JButton> parties = new ArrayList<JButton>();
+	ResultSet rs;
 	
 	private InterfaceGraphiqueChargerPartie(CollecteurEvenements controle) {
 		InterfaceGraphiqueChargerPartie.controle = controle;
@@ -50,7 +57,7 @@ public class InterfaceGraphiqueChargerPartie implements Runnable, Observateur {
 	 * @param id : l'identifiant de la partie
 	 * @return le bouton genere
 	 */
-	private static JButton Button (String id) {
+	private static JButton Button (String id, int x, int y) {
 		JButton button = null;
 		ImageIcon banner;
 		
@@ -59,14 +66,17 @@ public class InterfaceGraphiqueChargerPartie implements Runnable, Observateur {
 				banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre4.png", Configuration.MENU))).getImage().getScaledInstance(150, 40, Image.SCALE_SMOOTH));
 				button = new JButton(id, banner);
 				button.setForeground(Color.WHITE);
+				button.setBounds(35, 500, 150, 40);
 				button.addMouseListener(new AdaptateurBouton(controle, "cadre4", button, 150));
 				button.addActionListener(new AdaptateurCommande(controle, "annuler"));
 			} else {
 				banner = new ImageIcon(ImageIO.read(Configuration.charge("contourChargePartie.png", Configuration.MENU)));
 				button = new JButton(id, banner);
+				button.setBounds(x, y, 150, 150);
 				button.addMouseListener(new AdaptateurBouton(controle, "contourChargePartie", button, 0));
 			}
 			
+			parties.add(button);
 			button.setFont(new Font(Configuration.Century.getFamily(), Font.PLAIN, 15));	
 			button.setHorizontalTextPosition(SwingConstants.CENTER);
 			button.setFocusPainted(false);
@@ -90,6 +100,7 @@ public class InterfaceGraphiqueChargerPartie implements Runnable, Observateur {
 	public void run() {
 		fenetreChargerPartie = new JFrame("EN GARDE ! - CHARGER UNE PARTIE");
 		JLabel contentPane = null;
+		String id = "Vide";
 		try {
 			contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("fondChargePartie.png", Configuration.MENU))));
 		} catch (IOException e) {
@@ -99,34 +110,30 @@ public class InterfaceGraphiqueChargerPartie implements Runnable, Observateur {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		fenetreChargerPartie.setContentPane(contentPane);
 		contentPane.setLayout(null);
-		// TODO récupérer les informations des parties sauvegardées (dates et joueurs) -> id
-		// si un emplacement de partie est vide id = "Vide"
-		JButton Partie1 = Button("id1");
-		Partie1.setBounds(35, 161, 150, 150);
-		contentPane.add(Partie1);
 		
-		JButton Partie2 = Button("id2");
-		Partie2.setBounds(217, 161, 150, 150);
-		contentPane.add(Partie2);
+		JButton Partie1 = Button(id, 395, 322);
+		JButton Partie2 = Button(id, 217, 322);
+		JButton Partie3 = Button(id, 35, 322);
+		JButton Partie4 = Button(id, 395, 161);
+		JButton Partie5 = Button(id, 217, 161);
+		JButton Partie6 = Button(id, 35, 161);
+		JButton annuler = Button("Annuler", 0, 0);
+		try {
+			rs = SauvegarderPartie_DAO.getAll();
+			for(int i=0; i<6; i++) {
+				rs.next();
+				id = rs.getString("idPartie")+"\n"+rs.getString("nomJoueurG")+"\n"+rs.getString("nomJoueurD");
+				parties.get(i).setText(id);
+				// TODO charger la partie voulue
+				// parties.get(i).addActionListener();
+			}
+		} catch (SQLException e) {
+			System.out.println("Pas plus de parties enregistrees");
+		}
 		
-		JButton Partie3 = Button("id3");
-		Partie3.setBounds(395, 161, 150, 150);
-		contentPane.add(Partie3);
-		
-		JButton Partie4 = Button("id4");
-		Partie4.setBounds(35, 322, 150, 150);
-		contentPane.add(Partie4);
-		
-		JButton Partie5 = Button("id5");
-		Partie5.setBounds(217, 322, 150, 150);
-		contentPane.add(Partie5);
-		
-		JButton Partie6 = Button("id6");
-		Partie6.setBounds(395, 322, 150, 150);
-		contentPane.add(Partie6);
-		
-		JButton annuler = Button("Annuler");
-		annuler.setBounds(35, 500, 150, 40);
+		for(JButton Partie : parties) {
+			contentPane.add(Partie);
+		}
 		contentPane.add(annuler);
 
 		fenetreChargerPartie.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
