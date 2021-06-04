@@ -33,6 +33,7 @@ public class Jeu extends Observable {
 	private DeckDefausse deckDefausse;
 	private int indiceCurrentEscrimeur;
 	private int indicePremierJoueur;
+	private Boolean animationActive;
 	
 	private Escrimeur[] escrimeurs;
 	private int winner;
@@ -49,7 +50,7 @@ public class Jeu extends Observable {
 	public static final int NONE = 3;
 
 	private int lastWinner;
-	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier) {
+	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, Boolean animation) {
 		super();
 		this.indiceCurrentEscrimeur = 0;
 		setHistorique(new Historique(this));
@@ -57,9 +58,10 @@ public class Jeu extends Observable {
 		modifieVue(Action.ACTUALISER_JEU);
 		indicePremierJoueur = indiceCurrentEscrimeur;
 		peutPasserTour = false;
+		animationActive = animation;
 	}
 
-	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, Action action, Historique historique) {
+	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, Action action, Historique historique, Boolean animation) {
 		super();
 		this.indiceCurrentEscrimeur = indiceCurrentEscrimeur;
 		setHistorique(historique);
@@ -67,6 +69,7 @@ public class Jeu extends Observable {
 		modifieVue(action);
 		indicePremierJoueur = indiceCurrentEscrimeur;
 		peutPasserTour = false;
+		animationActive = animation;
 	}
 	
 	private void init(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, Escrimeur gaucher, Escrimeur droitier) {
@@ -139,6 +142,10 @@ public class Jeu extends Observable {
 
 	public Escrimeur getEscrimeurDroitier() {
 		return escrimeurs[1];
+	}
+	
+	public Boolean getAnimation() {
+		return animationActive;
 	}
 
 	public void piocher(Escrimeur e) {

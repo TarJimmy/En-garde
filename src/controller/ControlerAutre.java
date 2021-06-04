@@ -86,8 +86,12 @@ public class ControlerAutre extends Controler {
 					DeckPioche deckPioche = new DeckPioche(cartesDeck);
 					DeckDefausse deckDefausse = new DeckDefausse();
 					
+					String anim = it.next();
+					Boolean animation;
+					if (anim=="Actif"){animation = true;} else {animation = false;}
+					
 					Plateau plateau = new Plateau(posJ1, posJ2, nbDalles);
-					Jeu jeu = new Jeu(modeSimple, plateau, deckPioche, deckDefausse, nbManches, Escrimeur.GAUCHER, eGaucher, eDroitier);
+					Jeu jeu = new Jeu(modeSimple, plateau, deckPioche, deckDefausse, nbManches, Escrimeur.GAUCHER, eGaucher, eDroitier, animation);
 					
 					ControlerJeu cJeu = new ControlerJeu(jeu);
 					
@@ -115,7 +119,7 @@ public class ControlerAutre extends Controler {
 				InterfaceGraphiqueParametres.demarrer(settings, new ControlerAutre());
 				break;
 			case "sauvePara":
-				SauvegardeParametre.sauvegarderParametres(InterfaceGraphiqueParametres.getParametre("map"), InterfaceGraphiqueParametres.getParametre("nomJ1"), InterfaceGraphiqueParametres.getParametre("typeJ1"), InterfaceGraphiqueParametres.getParametre("posJ1"), InterfaceGraphiqueParametres.getParametre("nomJ2"), InterfaceGraphiqueParametres.getParametre("typeJ2"), InterfaceGraphiqueParametres.getParametre("posJ2"), InterfaceGraphiqueParametres.getParametre("modeAttaque"), InterfaceGraphiqueParametres.getParametre("manches"), InterfaceGraphiqueParametres.getParametre("carteMax"), InterfaceGraphiqueParametres.getParametre("carte1"), InterfaceGraphiqueParametres.getParametre("carte2"), InterfaceGraphiqueParametres.getParametre("carte3"), InterfaceGraphiqueParametres.getParametre("carte4"), InterfaceGraphiqueParametres.getParametre("carte5"));
+				SauvegardeParametre.sauvegarderParametres(InterfaceGraphiqueParametres.getParametre("map"), InterfaceGraphiqueParametres.getParametre("nomJ1"), InterfaceGraphiqueParametres.getParametre("typeJ1"), InterfaceGraphiqueParametres.getParametre("posJ1"), InterfaceGraphiqueParametres.getParametre("nomJ2"), InterfaceGraphiqueParametres.getParametre("typeJ2"), InterfaceGraphiqueParametres.getParametre("posJ2"), InterfaceGraphiqueParametres.getParametre("modeAttaque"), InterfaceGraphiqueParametres.getParametre("manches"), InterfaceGraphiqueParametres.getParametre("carteMax"), InterfaceGraphiqueParametres.getParametre("carte1"), InterfaceGraphiqueParametres.getParametre("carte2"), InterfaceGraphiqueParametres.getParametre("carte3"), InterfaceGraphiqueParametres.getParametre("carte4"), InterfaceGraphiqueParametres.getParametre("carte5"), InterfaceGraphiqueParametres.getParametre("animation"));
 				break;
 			case "restaurePara":
 				SauvegardeParametre.chargerParametres();
