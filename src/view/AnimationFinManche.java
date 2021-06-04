@@ -7,14 +7,15 @@ public class AnimationFinManche extends Animation {
 	int depart, distance;
 	PanelAnimation panelAnimation;
 	AnimationFinManche(CollecteurEvenements collecteur, Animateur animateur, int depart, int distance) {
-		super(collecteur, animateur, Animation.ANIM_FIN_MANCHE, 100, 0.05f);
+		super(collecteur, animateur, Animation.ANIM_FIN_MANCHE, 5, 0.005f);
+		System.out.println("vgtfrd");
 		this.panelAnimation = (PanelAnimation)animateur;
 		this.distance = distance;
 	}
 
 	@Override
 	public void anim(double progres) {
-		if (progres > 0.48d && progres < 0.52d) {
+		if (progres > 0.4999d && progres < 0.5001d) {
 			timer.stop();
 			try {
 				Thread.sleep(2000);

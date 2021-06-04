@@ -201,9 +201,8 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		}
 		
 		public Animation generateAnimationFinManche() {
-			ptFinDeManche.x = -600;
-			int distance = 1600 + sizeImgWinner.width / 2;
-			System.out.println("Nouvelle distance" + distance);
+			ptFinDeManche.x = -sizeImgWinner.width;
+			int distance = 1600;
 			return new AnimationFinManche(controle, this, ptFinDeManche.x, distance);
 		}
 
@@ -219,10 +218,10 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 			System.out.println("Type animation : " + typeAnimation);
 			animActif = typeAnimation;
 		};
+		
 		public void deplaceFinDeManche(int newX) {
-			ptFinDeManche.x = newX - 300;
+			ptFinDeManche.x = newX - sizeImgWinner.width / 2;
 			repaint();
-			System.out.println("On deplace de " + newX);
 		}
 		
 		public void deplaceCartes(ArrayList<Point> newPoints) {

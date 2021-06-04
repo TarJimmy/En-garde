@@ -23,7 +23,7 @@ public abstract class Animation implements ActionListener {
 	 */
 	Animation(CollecteurEvenements collecteur, Animateur animateur, int typeAnimation) {
 		this.collecteur = collecteur;
-		this.vitesseAnim = 0.1d;
+		this.vitesseAnim = 0.02d;
 		this.progres = 0;
 		this.animateur = animateur;
 		this.typeAnimation = typeAnimation;

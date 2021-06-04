@@ -8,6 +8,7 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -28,8 +29,9 @@ public class VueMain extends JComponent {
 	private final int hauteurSocle = 203;
 	private Graphics2D drawable;
 	private Boolean showFace;
-	private Image imgSocle;
-	
+	private BufferedImage imgSocle;
+	private BufferedImage[] imgCartes;
+	private BufferedImage imgDos;
 	public VueMain(Carte[] cartes, Boolean showFace) {
 		this.showFace = showFace;
 		this.cartes = cartes;
@@ -37,6 +39,11 @@ public class VueMain extends JComponent {
 		setPreferredSize(new Dimension(120, 150));
 		try {
 			imgSocle = ImageIO.read(Configuration.charge("socle.png", Configuration.CARTES));
+			imgDos = ImageIO.read(Configuration.charge("Dos.png", Configuration.CARTES));
+			imgCartes = new BufferedImage[5];
+			for (int i = 0; i < 5; i++) {
+				imgCartes[i] = ImageIO.read(Configuration.charge((i + 1) + ".png", Configuration.CARTES));
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -67,7 +74,7 @@ public class VueMain extends JComponent {
 		if (distance > 0) {
 			int largeurCarte = 98;
 			int hauteurCarte = 150;
-			Image img = ImageIO.read(Configuration.charge((showFace ? distance + ".png" : "Dos.png"), Configuration.CARTES));
+			Image img = showFace ? imgCartes[distance - 1] : imgDos;
 			drawable.drawImage(img, posXSocle + ((largeurSocle - largeurCarte) / 2), posYSocle + ((hauteurSocle - hauteurCarte) / 2), largeurCarte, hauteurCarte, null);
 		}
 	}

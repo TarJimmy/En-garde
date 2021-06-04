@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,6 +62,8 @@ public class VuePlateau extends JPanel implements Animateur {
 	private int espaceCase;
 	private JSpinner spinner;
 	
+	private BufferedImage[] imgSelect;
+	private BufferedImage[] imgNormal;
 	VuePlateau(Plateau p, CollecteurEvenements controle) {
 		caseClickable = new HashSet<>();
 		indiceEcrimeursCourant = Escrimeur.GAUCHER;
@@ -78,6 +81,17 @@ public class VuePlateau extends JPanel implements Animateur {
 		this.controle = controle;
 		this.p = p;
 		this.NBCases = p.getNbCase();
+		imgNormal = new BufferedImage[NBCases];
+		imgSelect = new BufferedImage[NBCases];
+		for (int i = 0; i < NBCases; i++) {
+			try {
+				imgNormal[i] = ImageIO.read(Configuration.charge("D" + (i + 1) + ".png", Configuration.DALLES));
+				imgSelect[i] = ImageIO.read(Configuration.charge("#D" + (i + 1) + ".png", Configuration.DALLES));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		this.positionEscrimeurs = new Point[2];
 		this.positionEscrimeurs[0] = new Point(-1, posYComponent);
 		this.positionEscrimeurs[1] = new Point(-1, posYComponent);
@@ -124,7 +138,7 @@ public class VuePlateau extends JPanel implements Animateur {
 			int posX = (i - 1) * espaceCase;
 			int posXImage = posX + (espaceCase - widthDalle) / 2;
 			int num = i;
-			Image imgDalle = ImageIO.read(Configuration.charge((caseClickable.contains(num) ? "#" : "") + "D" + num + ".png", Configuration.DALLES));
+			Image imgDalle = caseClickable.contains(num) ? imgSelect[i - 1] : imgNormal[i - 1];
 			
 			drawable.drawImage(imgDalle, posXImage, posYComponent, widthDalle, heightDalle, null);
 			

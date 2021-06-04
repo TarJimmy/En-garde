@@ -102,7 +102,7 @@ public class ControlerJeu extends Controler {
 			while(i < nbCartesCurrentEscrimeur && cartesAJouer[0] == null) {
 				if(currentEscrimeur.getCarte(i) != null && currentEscrimeur.getCarte(i).getDistance() == distanceClick) {
 					cartesAJouer[0] = currentEscrimeur.getCarte(i);
-					System.out.println("ajout de carte");
+					System.out.println("Ajout de carte");
 				}
 				i++;
 			}
