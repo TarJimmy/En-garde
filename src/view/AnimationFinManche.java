@@ -8,7 +8,7 @@ public class AnimationFinManche extends Animation {
 	PanelAnimation panelAnimation;
 	AnimationFinManche(CollecteurEvenements collecteur, Animateur animateur, int depart, int distance) {
 		super(collecteur, animateur, Animation.ANIM_FIN_MANCHE, 5, 0.005f);
-		System.out.println("vgtfrd");
+		this.depart = depart;
 		this.panelAnimation = (PanelAnimation)animateur;
 		this.distance = distance;
 	}

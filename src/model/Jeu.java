@@ -45,9 +45,10 @@ public class Jeu extends Observable {
 	
 	public static final int EGAUCHER = 0;
 	public static final int EDROITIER = 1;
-	public static final int NONE = 2;
-	public static final int EGALITE = 3;
+	public static final int EGALITE = 2;
+	public static final int NONE = 3;
 
+	private int lastWinner;
 	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier) {
 		super();
 		this.indiceCurrentEscrimeur = 0;
@@ -78,6 +79,7 @@ public class Jeu extends Observable {
 		this.escrimeurs[0] = gaucher;
 		this.escrimeurs[1] = droitier;
 		this.listeActions = new LinkedList<>();
+		this.lastWinner = NONE;
 		this.actionEnCours = false;
 		this.dernierTour = false;
 		this.winner = NONE;
@@ -210,12 +212,12 @@ public class Jeu extends Observable {
 						if (!rejoueCoupAnnule) {
 							historique.viderCoupsAnnules();
 						}
-						modifieVue(Action.ACTUALISER_ESCRIMEUR);
-						modifieVue(Action.ACTUALISER_DECK);
-						modifieVue(Action.ANIMATION_DEPLACER_ESCRIMEUR);
 						if(c.getAction() != Coup.ESQUIVER) {
 							peutPasserTour = true;
 						}
+						modifieVue(Action.ACTUALISER_ESCRIMEUR);
+						modifieVue(Action.ACTUALISER_DECK);
+						modifieVue(Action.ANIMATION_DEPLACER_ESCRIMEUR);
 						modifieVue(Action.ACTUALISER_PLATEAU);
 						return true;
 					} else {
@@ -445,5 +447,13 @@ public class Jeu extends Observable {
 	
 	public int getNbManchesPourVictoire() {
 		return nbManchesPourVictoire;
+	}
+	
+	public int getIndiceWinnerManche() {
+		return lastWinner;
+	}
+	
+	public void setIndiceWinnerManche(int lastWinner ) {
+		this.lastWinner = lastWinner;
 	}
 }

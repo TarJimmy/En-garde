@@ -71,15 +71,16 @@ public class DB_DAO {
 
         String sqlSauvegarderPartie = "CREATE TABLE IF NOT EXISTS SauvegarderPartie (\n"
         		+ " idPartie integer PRIMARY KEY AUTOINCREMENT,\n"
-                + " IdJoueurG integer NOT NULL,\n"
-                + " IdJoueurD integer NOT NULL,\n"
+                + " nomJoueurG integer NOT NULL,\n"
+                + " nomJoueurD integer NOT NULL,\n"
                 + " mancheGagnerGauche integer NOT NULL,\n"
                 + " mancheGagnerDroit integer NOT NULL,\n"
                 + " posJoueurG integer NOT NULL,\n"
                 + " posJoueurD integer NOT NULL,\n"
                 + " DefausseJSON text NOT NULL,\n"
                 + " PiocheJSON text NOT NULL,\n"
-                + " CoupsAnnulesJSON text NOT NULL\n"
+                + " mainGaucherJSON text NOT NULL,\n"
+                + " mainDroitierJSON text NOT NULL\n"
                 + ");";
 
 

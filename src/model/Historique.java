@@ -1,5 +1,6 @@
 package model;
 
+import java.util.HashSet;
 import java.util.Stack;
 
 import model.Jeu.Action;
@@ -40,7 +41,14 @@ public class Historique {
 			System.out.println("coup rejou� :");
 		}
 		Coup c = coupsAnnules.pop();
-		return jeu.jouer(c,true);
+		
+		
+		Boolean res = jeu.jouer(c,true);
+        HashSet<Integer> cases = jeu.casesJouables();
+        if(cases.size() == 1 && cases.contains(-1)) {
+            jeu.changerTour();
+        }
+        return res;	
 	}
 	
 	public Coup voirDernierCoup() {
@@ -109,9 +117,13 @@ public class Historique {
 		default :
 			break;
 		}
-		jeu.modifieVue(Action.ACTUALISER_ESCRIMEUR);
-		jeu.modifieVue(Action.ACTUALISER_DECK);
+		
+		ajouterCoupAnnule(dernierCoup);
 		jeu.setIndiceCurrentEscrimeur(escrimeurCoup.getIndice());
+        jeu.modifieVue(Action.ACTUALISER_ESCRIMEUR);
+        jeu.modifieVue(Action.ACTUALISER_DECK);
+        jeu.modifieVue(Action.ACTUALISER_PLATEAU);
+		
 		return false;
 	}
 }

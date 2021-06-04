@@ -186,15 +186,20 @@ public class ControlerJeu extends Controler {
 				}
 				if (winner != null) {
 					winner.addMancheGagnee();
+					jeu.setIndiceWinnerManche(winner.getIndice());
 					if(winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
 						jeu.nouvelleManche();
-					}else {
+					} else {
 						//fin de partie, winner gagne
 					}
+				} else {
+					jeu.setIndiceWinnerManche(jeu.NONE);
+					jeu.nouvelleManche();
 				}
 			}
 		} else {
 			winner.addMancheGagnee();
+			jeu.setIndiceWinnerManche(winner.getIndice());
 			if(winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
 				jeu.nouvelleManche();
 			}else {

@@ -24,13 +24,11 @@ public class VueEscrimeur extends JPanel {
 	private Boolean showFace;
 	private VueManche vueManche;
 	private VueMain vueMain;
-	private Boolean peutPasserTour;
 	private JButton btnPasserTour;
-	public VueEscrimeur(CollecteurEvenements controle, Plateau p, Escrimeur e, Boolean showFace, Boolean peutPasserTour, int nbMancheMax) {
+	public VueEscrimeur(CollecteurEvenements controle, Plateau p, Escrimeur e, Boolean showFace, int nbMancheMax) {
 		this.controle = controle;
 		this.e = e;
 		this.showFace = showFace;
-		this.peutPasserTour = peutPasserTour;
 		start(nbMancheMax);
 	}
 	
@@ -70,11 +68,11 @@ public class VueEscrimeur extends JPanel {
 		
 	}
 	
-	public void actualise(Boolean showFace) {
+	public void actualise(Boolean showFace, Boolean peutPasserTour) {
 		System.out.println("Actualiser escrimeurs");
 		this.showFace = showFace;
 		vueManche.setNbWins(e.getMancheGagner());
 		vueMain.actualise(showFace);
-		btnPasserTour.setVisible(peutPasserTour);
+		btnPasserTour.setVisible(showFace && peutPasserTour);
 	}
 }

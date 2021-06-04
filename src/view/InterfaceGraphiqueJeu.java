@@ -2,11 +2,13 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -21,6 +23,7 @@ import javax.swing.SwingUtilities;
 
 import Global.Configuration;
 import Patterns.Observateur;
+import model.Escrimeur;
 import model.Jeu;
 import model.Jeu.Action;
 
@@ -83,13 +86,16 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				}
 			case ACTUALISER_ESCRIMEUR:
 			case ACTUALISER_ESCRIMEUR_DROITIER :
-				mainDroitier.actualise(jeu.getIsTourGaucher() == false);
+				System.out.println("Droitier passer tour " + jeu.getPeutPasserTour());
+				mainDroitier.actualise(jeu.getIsTourGaucher() == false, jeu.getPeutPasserTour());
 				if (action != Action.ACTUALISER_JEU && action != Action.ACTUALISER_ESCRIMEUR) { // Stop si ce n'est pas  un changement de tour ou l'actualisation des 2 mains
 					controle.commande("ActionTerminer");
 					break;
 				}
 			case ACTUALISER_ESCRIMEUR_GAUCHER:
-				mainGaucher.actualise(jeu.getIsTourGaucher());
+				System.out.println("Gaucher passer tour " + jeu.getPeutPasserTour());
+
+				mainGaucher.actualise(jeu.getIsTourGaucher(), jeu.getPeutPasserTour());
 				controle.commande("ActionTerminer");
 				break;
 			case ANIMATION_DEPLACER_ESCRIMEUR:
@@ -98,7 +104,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 			case ANIMATION_PIOCHER:
 				controle.animation("Ajouter", panelAnimation.generateAnimationDeplacerCartes());
 			case ANIMATION_FIN_MANCHE:
-				controle.animation("Ajouter", panelAnimation.generateAnimationFinManche());
+				controle.animation("Ajouter", panelAnimation.generateAnimationFinManche(jeu.getIndiceWinnerManche()));
 				break;
 			case ANIMATION_LANCER:
 				controle.animation("Lancer", null);
@@ -130,7 +136,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		// Haut -> Gauche
 		panelTop.add(new VueInfoJeu(jeu.getEscrimeurGaucher().getNom(), jeu.getEscrimeurDroitier().getNom(), controle), BorderLayout.WEST);
 		// Haut -> Droit
-		mainDroitier = new VueEscrimeur(controle, jeu.getPlateau(), jeu.getEscrimeurDroitier(), !jeu.getIsTourGaucher(), jeu.getPeutPasserTour(), jeu.getNbManchesPourVictoire());
+		mainDroitier = new VueEscrimeur(controle, jeu.getPlateau(), jeu.getEscrimeurDroitier(), !jeu.getIsTourGaucher(), jeu.getNbManchesPourVictoire());
 		panelTop.add(mainDroitier,BorderLayout.EAST);
 		
 		// Centre
@@ -141,7 +147,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		panelBot.setOpaque(false);
 		
 		// Bas -> Gauche
-		mainGaucher = new VueEscrimeur(controle, jeu.getPlateau(), jeu.getEscrimeurGaucher(), jeu.getIsTourGaucher(), jeu.getPeutPasserTour(), jeu.getNbManchesPourVictoire());
+		mainGaucher = new VueEscrimeur(controle, jeu.getPlateau(), jeu.getEscrimeurGaucher(), jeu.getIsTourGaucher(), jeu.getNbManchesPourVictoire());
 		panelBot.add(mainGaucher, BorderLayout.WEST);
 		
 		// Bas -> Droite
@@ -169,11 +175,23 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		private Point ptFinDeManche;
 		private final Dimension sizeImgWinner = new Dimension(600, 400);
 		private LinkedList<Integer> listeAnimation;
+		private BufferedImage[] imgFinDeManche;
+		private int winnerManche;
+		
 		public PanelAnimation(int largeur, int hauteur) {
 			super();
 			setPreferredSize(new Dimension(largeur, hauteur));
 			setVisible(true);
 			setOpaque(false);
+			try {
+				imgFinDeManche = new BufferedImage[3];
+				imgFinDeManche[Jeu.EGAUCHER] = ImageIO.read(Configuration.charge("findeManche_Gaucher.png" , Configuration.AUTRES));
+				imgFinDeManche[Jeu.EDROITIER] = ImageIO.read(Configuration.charge("findeManche_Droitier.png" , Configuration.AUTRES));
+				imgFinDeManche[Jeu.EGALITE] = ImageIO.read(Configuration.charge("findeManche_Nulle.png" , Configuration.AUTRES));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			ptFinDeManche = new Point();
 			ptFinDeManche.y = 250;
 		}
@@ -184,9 +202,14 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 			super.paintComponent(g);
 			Graphics2D drawable = (Graphics2D)g;
 			if (animActif == Animation.ANIM_FIN_MANCHE) {
-				drawable.fillRect(ptFinDeManche.x, ptFinDeManche.y, sizeImgWinner.width, sizeImgWinner.height);
+				drawable.drawImage(imgFinDeManche[winnerManche], ptFinDeManche.x, ptFinDeManche.y, sizeImgWinner.width, sizeImgWinner.height, null);
+				drawable.setFont(new Font("Century", Font.PLAIN, 50));
+				if (winnerManche == Jeu.NONE) {
+					drawable.drawString("Manche nulle", ptFinDeManche.x + 200, ptFinDeManche.y + 150);
+				} else {
+					drawable.drawString(jeu.getEscrimeurs()[winnerManche].getNom(), ptFinDeManche.x + 220, ptFinDeManche.y + 150);
+				}
 			}
-			//drawable.fillRect(getWidth() / 2 -  250, getHeight() / 2 - 250, 500, 500);
 		}
 		
 		public Animation generateAnimationDeplacerCartes() {
@@ -200,9 +223,10 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 			};
 		}
 		
-		public Animation generateAnimationFinManche() {
+		public Animation generateAnimationFinManche(int winnerManche) {
+			this.winnerManche = winnerManche;
 			ptFinDeManche.x = -sizeImgWinner.width;
-			int distance = 1600;
+			int distance = 1600 + sizeImgWinner.width;
 			return new AnimationFinManche(controle, this, ptFinDeManche.x, distance);
 		}
 
@@ -220,7 +244,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		};
 		
 		public void deplaceFinDeManche(int newX) {
-			ptFinDeManche.x = newX - sizeImgWinner.width / 2;
+			ptFinDeManche.x = newX;
 			repaint();
 		}
 		
