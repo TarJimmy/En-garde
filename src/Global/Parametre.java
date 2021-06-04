@@ -6,7 +6,7 @@ import java.io.IOException;
 
 /**
  * 
- * @author La�titia & Delphine
+ * @author Laetitia & Delphine
  *
  */
 public class Parametre {
@@ -15,13 +15,13 @@ public class Parametre {
 	private static Parametre instance = null;
 	
 	/**
-	 * Cr�ation d'un dossier et fichier de parametres
+	 * Creation d'un dossier et fichier de parametres
 	 */
 	private Parametre() {
 		File dossier = new File("Parametres"); 
 	    boolean res = dossier.mkdir();
 	    if (res) {
-	    	System.out.println("Le dossier Parametres a été crée.");
+	    	System.out.println("Le dossier Parametres a \u00E9t\u00E9 cr\u00E9\u00E9.");
 	      	String filePath = dirPara + "/parametres.txt";
 			try {
 				// Create new file if needed

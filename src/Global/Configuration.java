@@ -1,6 +1,10 @@
 package Global;
 
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 public class Configuration {
@@ -13,8 +17,17 @@ public class Configuration {
 	public final static int DALLES = 5;
 	public final static int MANCHES = 6;
 	public final static int ESCRIMEURS = 7;
+	public static Font Century;
 	
-	private Configuration() {}
+	private Configuration() {
+		try {
+			Century = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(new File("res/CENTURY.TTF")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (FontFormatException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public static Configuration instance() {
 		if (instance == null) {

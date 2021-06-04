@@ -36,13 +36,11 @@ public class AdaptateurBouton extends MouseAdapter {
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		try {
-			if (commande == "pasCadre") {
-				image = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre4.png", Configuration.MENU))).getImage().getScaledInstance(width, 40, Image.SCALE_SMOOTH));
-				bouton.setForeground(new Color(250,250,250));
-			} else {
-				image = new ImageIcon(ImageIO.read(Configuration.charge(commande+"_actif.png", Configuration.MENU)));
-				if (commande != "cadre"){image = new ImageIcon(image.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH));}
-			}
+			String cmd = commande;
+			if (commande == "pasCadre") {cmd = "cadre3.png";}
+			else {cmd += "_actif.png";}
+			image = new ImageIcon(ImageIO.read(Configuration.charge(cmd, Configuration.MENU)));
+			if (commande != "cadre" && commande != "contourChargePartie"){image = new ImageIcon(image.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH));}
 			bouton.setIcon(image);
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -55,13 +53,10 @@ public class AdaptateurBouton extends MouseAdapter {
 	@Override
 	public void mouseExited(MouseEvent e) {
 		try {
-			if (commande == "pasCadre") {
-				image = null;
-				bouton.setForeground(new Color(51,51,51));
-			}
+			if (commande == "pasCadre") {image = null;}
 			else {
 				image = new ImageIcon(ImageIO.read(Configuration.charge(commande+".png", Configuration.MENU)));
-				if (commande != "cadre"){image = new ImageIcon(image.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH));}
+				if (commande != "cadre" && commande != "contourChargePartie"){image = new ImageIcon(image.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH));}
 			}
 			bouton.setIcon(image);
 		} catch (IOException e1) {

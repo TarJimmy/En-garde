@@ -142,7 +142,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	}
 
 	/**
-	 * Mise e jour des valeurs par defaut du formulaire
+	 * Mise a jour des valeurs par defaut du formulaire
 	 * @param settings : liste des valeurs du formulaire
 	 */
 	public static void majParametres(List<String> settings) {
@@ -163,7 +163,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	}
 	
 	/**
-	 * Mise e true du radio bouton selon la valeur du parametre
+	 * Mise a true du radio bouton selon la valeur du parametre
 	 * @param typeJ1 : valeur du type du joueur 1 (humain ou IA)
 	 * @param typeJ2 : valeur du type du joueur 2 (humain ou IA)
 	 * @param modeAttaque : valeur par defaut du mode d'attaque (basique ou avance)
@@ -238,14 +238,14 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 				case "FERMER":
 					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre4.png", Configuration.MENU))).getImage().getScaledInstance(195, 40, Image.SCALE_SMOOTH));
 					button = new JButton(name, banner);
-					button.setFont(new Font("Century", Font.PLAIN, 15));
+					button.setFont(new Font(Configuration.Century.getFamily(), Font.PLAIN, 15));
 					button.setForeground(Color.WHITE);
 					button.addMouseListener(new AdaptateurBouton(controle, "cadre4", button, 195));
 					break;
 				default:
 					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre3.png", Configuration.MENU))).getImage().getScaledInstance(266, 40, Image.SCALE_SMOOTH));
 					button = new JButton(name, banner);
-					button.setFont(new Font("Century", Font.PLAIN, 11));
+					button.setFont(new Font(Configuration.Century.getFamily(), Font.PLAIN, 11));
 					button.addMouseListener(new AdaptateurBouton(controle, "cadre3", button, 266));
 					break;
 			}
@@ -344,7 +344,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		contentPane.add(btnRadioJ1_Difficile);
 		
 		/////emplacement du joueur 1 au debut de la partie
-		labelPositionJ1 = new JLabel("D�part :");
+		labelPositionJ1 = new JLabel("D\u00E9part :");
 		labelPositionJ1.setBounds(600, 170, 50, 20);
 		contentPane.add(labelPositionJ1);
 		spinner_positionJ1 = new JSpinner();
@@ -396,7 +396,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		contentPane.add(btnRadioJ2_Difficile);
 		
 		/////emplacement du joueur 2 au debut de la partie
-		labelPositionJ2 = new JLabel("D�part :");
+		labelPositionJ2 = new JLabel("D\u00E9part :");
 		labelPositionJ2.setBounds(600, 237, 50, 20);
 		contentPane.add(labelPositionJ2);
 		spinner_positionJ2 = new JSpinner();

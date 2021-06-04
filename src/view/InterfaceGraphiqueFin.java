@@ -56,7 +56,7 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 		try {
 			banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre2.png", Configuration.MENU))).getImage().getScaledInstance(195, 40, Image.SCALE_SMOOTH));
 			button = new JButton(name, banner);
-			button.setFont(new Font("Century", Font.PLAIN, 15));	
+			button.setFont(new Font(Configuration.Century.getFamily(), Font.PLAIN, 15));	
 			button.setHorizontalTextPosition(SwingConstants.CENTER);
 			button.addMouseListener(new AdaptateurBouton(controle, "cadre2", button, 195));
 			button.setFocusPainted(false);

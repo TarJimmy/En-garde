@@ -71,7 +71,7 @@ public class InterfaceGraphiqueMenu implements Runnable {
 			
 			button.setHorizontalTextPosition(SwingConstants.CENTER);
 			button.setVerticalAlignment(SwingConstants.TOP);
-			button.setFont(new Font("Century", Font.PLAIN, 40));
+			button.setFont(new Font(Configuration.Century.getFamily(), Font.PLAIN, 40));
 			button.setFocusPainted(false);
 			button.setBorderPainted(false);
 			button.setContentAreaFilled(false);

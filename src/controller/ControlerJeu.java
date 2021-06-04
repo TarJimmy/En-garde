@@ -21,6 +21,7 @@ import model.Plateau;
 import model.TypeEscrimeur;
 import view.Animation;
 import view.InterfaceGraphiqueActionAnnexe;
+import view.InterfaceGraphiqueChargerPartie;
 import view.InterfaceGraphiqueJeu;
 import view.InterfaceGraphiqueMenu;
 
@@ -240,6 +241,7 @@ public class ControlerJeu extends Controler {
 			case "sauvPartie":
 				return false;
 			case "chargePartie":
+				InterfaceGraphiqueChargerPartie.demarrer(new ControlerJeu(jeu));
 				return true;
 			case "annuleCoup":
 				jeu.getHistorique().annulerCoup();
@@ -247,6 +249,9 @@ public class ControlerJeu extends Controler {
 			case "refaireCoup":
 				jeu.getHistorique().rejouerCoupAnnule();
 				return true;
+			case "annuler":
+				InterfaceGraphiqueChargerPartie.close();
+				return false;
 			case "close":
 				InterfaceGraphiqueActionAnnexe.close();
 				return false;

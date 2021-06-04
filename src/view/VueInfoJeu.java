@@ -46,7 +46,7 @@ public class VueInfoJeu extends JPanel {
 				
 				@Override
 				protected void paintComponent(Graphics g) {
-					g.setFont(new Font("Century", Font.PLAIN, 40));
+					g.setFont(new Font(Configuration.Century.getFamily(), Font.PLAIN, 40));
 					g.drawString("Ouvrir la fene^tre de triche", 140, getHeight() / 2 + 10);
 				}
 				
@@ -86,7 +86,7 @@ public class VueInfoJeu extends JPanel {
 			@Override
 			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);
-				g.setFont(new Font("Century", Font.PLAIN, 40));
+				g.setFont(new Font(Configuration.Century.getFamily(), Font.PLAIN, 40));
 				g.drawString(nom, 140, getHeight() / 2 + 10);
 			}
 			
@@ -105,14 +105,14 @@ public class VueInfoJeu extends JPanel {
 				case "Actions Annexes":
 					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre4.png", Configuration.MENU))).getImage().getScaledInstance(190, 40, Image.SCALE_SMOOTH));
 					button = new JButton(name, banner);
-					button.setFont(new Font("Century", Font.PLAIN, 15));
+					button.setFont(new Font(Configuration.Century.getFamily(), Font.PLAIN, 15));
 					button.setForeground(Color.WHITE);
 					button.addMouseListener(new AdaptateurBouton(controle, "cadre4", button, 190));
 					break;
 				default:
 					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre3.png", Configuration.MENU))).getImage().getScaledInstance(190, 40, Image.SCALE_SMOOTH));
 					button = new JButton(name, banner);
-					button.setFont(new Font("Century", Font.PLAIN, 15));
+					button.setFont(new Font(Configuration.Century.getFamily(), Font.PLAIN, 15));
 					button.addMouseListener(new AdaptateurBouton(controle, "cadre3", button, 190));
 					break;
 			}
