@@ -21,7 +21,9 @@ import model.Jeu.Action;
 import model.Plateau;
 import model.TypeEscrimeur;
 import view.Animation;
+import view.InterfaceGraphiqueActionAnnexe;
 import view.InterfaceGraphiqueJeu;
+import view.InterfaceGraphiqueMenu;
 
 public class ControlerJeu extends Controler {
 	private Jeu jeu;
@@ -173,7 +175,7 @@ public class ControlerJeu extends Controler {
 						}
 					}
 					if (avantageGaucher == 0) {
-						//checker le joueur qui a le plus avanc�
+						//checker le joueur qui a le plus avance
 						avantageGaucher = (plateau.getPosition(Escrimeur.GAUCHER)-1) - (plateau.getNbCase() - plateau.getPosition(Escrimeur.DROITIER));
 					}
 					if (avantageGaucher > 0) {
@@ -239,14 +241,31 @@ public class ControlerJeu extends Controler {
 			case "PasserTour":
 				jeu.changerTour();
 				return true;
+			case "Menu":
+				InterfaceGraphiqueActionAnnexe.close();
+				InterfaceGraphiqueJeu.close();
+				InterfaceGraphiqueMenu.demarrer(new ControlerAutre());
+				return true;
+			case "QuitterJeu":
+				System.exit(0);
+				return false;
+			case "nouvellePartie":
+				return true;
+			case "sauvPartie":
+				return false;
+			case "chargePartie":
+				return true;
 			case "annuleCoup":
 				jeu.getHistorique().annulerCoup();
 				return false;
 			case "refaireCoup":
 				jeu.getHistorique().rejouerCoupAnnule();
 				return true;
+			case "close":
+				InterfaceGraphiqueActionAnnexe.close();
+				return false;
 			default:
-				System.out.println("Commande pas traité : " + c);
+				System.out.println("Commande pas traitee : " + c);
 				return false;
 		}
 	}

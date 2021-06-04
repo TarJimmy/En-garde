@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import Global.Configuration;
 
@@ -23,7 +25,7 @@ public class VueInfoJeu extends JPanel {
 	
 	private String nomEscrimeurGaucher;
 	private String nomEscrimeurDroitier;
-	
+	private CollecteurEvenements controle;
 	private JButton btnOpenPanelAnnexe;
 	private JButton quitterJeu;
 	private JButton menu;
@@ -32,6 +34,7 @@ public class VueInfoJeu extends JPanel {
 	public VueInfoJeu(String nomEscrimeurGaucher, String nomEscrimeurDroitier, CollecteurEvenements controle) {
 		this.nomEscrimeurGaucher = nomEscrimeurGaucher;
 		this.nomEscrimeurDroitier = nomEscrimeurDroitier;
+		this.controle = controle;
 		setLayout(new GridLayout(3, 1));
 		setOpaque(false);
 		JPanel bottom = new JPanel(new GridLayout(1, 3));
@@ -53,7 +56,7 @@ public class VueInfoJeu extends JPanel {
 			e.printStackTrace();
 		}
 		
-		btnOpenPanelAnnexe = new JButton("Fenêtre de triche");
+		btnOpenPanelAnnexe = Button("Actions Annexes");
 		btnOpenPanelAnnexe.addActionListener(new ActionListener() {
 			
 			@Override
@@ -62,15 +65,16 @@ public class VueInfoJeu extends JPanel {
 			}
 		});
 		
-		menu = new JButton("Menu");
+		menu = Button("Retour au menu");
 		menu.addActionListener(new AdaptateurCommande(controle, "Menu"));
 		
-		quitterJeu = new JButton("Quitter Jeu");
-		menu.addActionListener(new AdaptateurCommande(controle, "QuitterJeu"));
+		quitterJeu = Button("Quitter le jeu");
+		quitterJeu.addActionListener(new AdaptateurCommande(controle, "QuitterJeu"));
 		
 		bottom.add(btnOpenPanelAnnexe);
 		bottom.add(menu);
 		bottom.add(quitterJeu);
+		bottom.setOpaque(false);
 		setBackground(Color.red);
 		setPreferredSize(new Dimension(600, 300));
 		repaint();
@@ -92,5 +96,37 @@ public class VueInfoJeu extends JPanel {
 		return label;
 	}
 
-	
+	private JButton Button (String name) {
+		JButton button;
+		ImageIcon banner;
+		
+		try {
+			switch (name){
+				case "Actions Annexes":
+					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre4.png", Configuration.MENU))).getImage().getScaledInstance(190, 40, Image.SCALE_SMOOTH));
+					button = new JButton(name, banner);
+					button.setFont(new Font("Century", Font.PLAIN, 15));
+					button.setForeground(Color.WHITE);
+					button.addMouseListener(new AdaptateurBouton(controle, "cadre4", button, 190));
+					break;
+				default:
+					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre3.png", Configuration.MENU))).getImage().getScaledInstance(190, 40, Image.SCALE_SMOOTH));
+					button = new JButton(name, banner);
+					button.setFont(new Font("Century", Font.PLAIN, 15));
+					button.addMouseListener(new AdaptateurBouton(controle, "cadre3", button, 190));
+					break;
+			}
+			
+			button.setHorizontalTextPosition(SwingConstants.CENTER);
+			button.setFocusPainted(false);
+			button.setBorderPainted(false);
+			button.setContentAreaFilled(false);
+			button.setOpaque(false);
+			
+			return button;
+		} catch (IOException e) {
+			System.err.println("An error as occured");
+			return null;
+		}
+	}
 }
