@@ -1,21 +1,26 @@
 package view;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.Timer;
+import javax.swing.border.EmptyBorder;
 
 import Global.Configuration;
 import Patterns.Observateur;
@@ -57,6 +62,8 @@ public class VuePlateau extends JPanel implements Animateur {
 	private int espaceCase;
 	private JSpinner spinner;
 	
+	private BufferedImage[] imgSelect;
+	private BufferedImage[] imgNormal;
 	VuePlateau(Plateau p, CollecteurEvenements controle) {
 		caseClickable = new HashSet<>();
 		indiceEcrimeursCourant = Escrimeur.GAUCHER;
@@ -74,6 +81,17 @@ public class VuePlateau extends JPanel implements Animateur {
 		this.controle = controle;
 		this.p = p;
 		this.NBCases = p.getNbCase();
+		imgNormal = new BufferedImage[NBCases];
+		imgSelect = new BufferedImage[NBCases];
+		for (int i = 0; i < NBCases; i++) {
+			try {
+				imgNormal[i] = ImageIO.read(Configuration.charge("D" + (i + 1) + ".png", Configuration.DALLES));
+				imgSelect[i] = ImageIO.read(Configuration.charge("#D" + (i + 1) + ".png", Configuration.DALLES));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		this.positionEscrimeurs = new Point[2];
 		this.positionEscrimeurs[0] = new Point(-1, posYComponent);
 		this.positionEscrimeurs[1] = new Point(-1, posYComponent);
@@ -120,7 +138,7 @@ public class VuePlateau extends JPanel implements Animateur {
 			int posX = (i - 1) * espaceCase;
 			int posXImage = posX + (espaceCase - widthDalle) / 2;
 			int num = i;
-			Image imgDalle = ImageIO.read(Configuration.charge((caseClickable.contains(num) ? "#" : "") + "D" + num + ".png", Configuration.DALLES));
+			Image imgDalle = caseClickable.contains(num) ? imgSelect[i - 1] : imgNormal[i - 1];
 			
 			drawable.drawImage(imgDalle, posXImage, posYComponent, widthDalle, heightDalle, null);
 			
@@ -141,7 +159,12 @@ public class VuePlateau extends JPanel implements Animateur {
 			drawable.drawImage(imgGaucherBlack, positionEscrimeurs[Escrimeur.GAUCHER].x, posYComponent, widthEs, heightEs, null);
 			drawable.drawImage(imgDroitier, positionEscrimeurs[Escrimeur.DROITIER].x, posYComponent, widthEs, heightEs, null);
 		}
-	}
+		/*drawable.fillRect((p.getPosition(indiceEcrimeursCourant) - 1) * espaceCase + espaceCase / 2 - 65, posYComponent + 150 - 65, 100, 130);
+		drawable.setColor(Color.red);
+		drawable.fillRect((p.getPosition(indiceEcrimeursCourant) - 1) * espaceCase + espaceCase / 2 - 15, posYComponent + 150 - 65 + 100 - 70 + 30, 50, 35);
+		drawable.setColor(Color.green);
+		drawable.fillRect((p.getPosition(indiceEcrimeursCourant) - 1) * espaceCase + espaceCase / 2 -15, posYComponent + 150 - 65 + 100 - 35 + 30, 50, 35);*/
+	}//spinner.setBounds((p.getPosition(otherIndiceEscrimeur) - 1) * espaceCase + espaceCase / 2 - 18, posYComponent + 150 - 15, 40, 50)
 
 	public void actualise(HashSet<Integer> caseClickable, Escrimeur e) {
 		this.indiceEcrimeursCourant = e.getIndice();
@@ -155,12 +178,11 @@ public class VuePlateau extends JPanel implements Animateur {
 	    if (atkPossible) {
 	    	int max = p.getNbCartesAttaque(e);
 			spinner.setModel(new SpinnerNumberModel(max, 1, max, 1));
-			System.out.println(p.getPosition(otherIndiceEscrimeur) * espaceCase + espaceCase / 2);
-			spinner.setBounds((p.getPosition(otherIndiceEscrimeur) - 1) * espaceCase + espaceCase / 2 - 18, posYComponent + 150 - 15, 36, 30);
+			spinner.setBounds((p.getPosition(otherIndiceEscrimeur) - 1) * espaceCase + espaceCase / 2 - 18, posYComponent + 150 - 15, 40, 50);
 			spinner.setVisible(true);
 	    } else {
-	    	  spinner.setVisible(false);
-	      }
+	    	spinner.setVisible(false);
+	    }
 	      repaint();
 	}
 	
@@ -191,11 +213,42 @@ public class VuePlateau extends JPanel implements Animateur {
 		controle.animation("Terminer", animation);
 	}
 	
-	public void activeModeAnimation() {
+	@Override
+	public void debutAnimation(int type) {
 		animActif = true;
 	}
 	
 	public int getNbCarteSelect() {
 		return (int)spinner.getValue();
+	}
+	
+	private class CustomJSinner extends JPanel {
+		private final int largeurBtn = 50;
+		private final int hauteurBtn = 35;
+		private final int hauteurPanel = 130;
+		private final int largeurPanel = 100;
+		int min, max, value;
+		
+		public CustomJSinner() {
+			this.min = 1;
+			this.value = 0;
+			this.max = 0;
+			setLayout(new BorderLayout());
+			setBorder(new EmptyBorder(30, 0, 0, 0));
+			
+			JButton btnPlus = createBtnNavigation();
+			
+		}
+		
+		public void setMax(int max) {
+			this.max = max;
+		}
+		
+		public JButton createBtnNavigation() {
+			JButton btn = new JButton();
+			btn.setOpaque(false);
+			btn.setPreferredSize(new Dimension(largeurBtn, hauteurBtn));
+			return btn;
+		}
 	}
 }

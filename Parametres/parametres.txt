@@ -5,7 +5,7 @@ HUMAIN
 Joueur 2
 IA_FACILE
 23
-Avance
+Basique
 7
 7
 7

@@ -11,6 +11,7 @@ public class Escrimeur extends Observable {
 	public static final int GAUCHER = 0;
 	public static final int DROITIER = 1;
 	private int mancheGagner;
+	
 	/**
 	 * Constructeur lors d'unne nouvelle partie
 	 * @param nom

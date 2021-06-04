@@ -17,6 +17,7 @@ public class Configuration {
 	public final static int DALLES = 5;
 	public final static int MANCHES = 6;
 	public final static int ESCRIMEURS = 7;
+	public final static int AUTRES = 8;
 	public static Font Century;
 	
 	private Configuration() {
@@ -62,6 +63,9 @@ public class Configuration {
 				break;
 			case ESCRIMEURS: 
 				path += "Escrimeurs";
+				break;
+			case AUTRES:
+				path += "Autres";
 				break;
 			default:
 				throw new IllegalArgumentException("Unexpected value: " + type);

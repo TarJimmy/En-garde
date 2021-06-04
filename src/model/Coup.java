@@ -35,10 +35,10 @@ public class Coup {
 	 * equivaut a annuler le decallage qui se fait chaque fois qu'on defausse une carte
 	 */
 	public void remettreCartesDansLordre() {
-		for (int i = indicesCartesJouees.size() -1; i >= 0; i--) {
-			for (int j = indicesCartesJouees.get(i); j < getEscrimeur().getNbCartes() - 1; j++) {
-				getEscrimeur().getCartes()[j+1] = getEscrimeur().getCartes()[j];
-			}
+		for (int i = indicesCartesJouees.size() -1; i >= 0; i--) {					
+			for (int j = getEscrimeur().getNbCartes() - 1; j > indicesCartesJouees.get(i); j--) {
+                getEscrimeur().getCartes()[j] = getEscrimeur().getCartes()[j-1];
+            }		
 			getEscrimeur().getCartes()[indicesCartesJouees.get(i)] = null;
 		}
 	}
