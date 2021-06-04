@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import Database.SauvegarderPartie_DAO;
 import model.Carte;
 import model.Coup;
 import model.DeckDefausse;
@@ -26,6 +27,7 @@ public class ControlerJeu extends Controler {
 	private Jeu jeu;
 	private LinkedList<Animation> animations;
 	boolean animationsActives;
+	private SauvegarderPartie_DAO partieSauvegardee;
 	
 	public ControlerJeu(Jeu jeu) {
 		this.jeu = jeu;
@@ -34,6 +36,8 @@ public class ControlerJeu extends Controler {
 		jeu.getDeckPioche().melanger();
 		piocher(jeu.getEscrimeurGaucher());
 		piocher(jeu.getEscrimeurDroitier());
+		partieSauvegardee = new SauvegarderPartie_DAO();
+		partieSauvegardee.sauvegardeJeu(jeu);
 	}
 
 	public void piocher(Escrimeur e) {
@@ -107,13 +111,13 @@ public class ControlerJeu extends Controler {
 			int distanceClick = Math.abs(x - positionCurrentEscrimeur);
 			int i = 0;
 			int nbCartesCurrentEscrimeur = currentEscrimeur.getNbCartes();
-			while(i < nbCartesCurrentEscrimeur && cartesAJouer[0] == null) {
-				if(currentEscrimeur.getCarte(i) != null && currentEscrimeur.getCarte(i).getDistance() == distanceClick) {
+			while (i < nbCartesCurrentEscrimeur && cartesAJouer[0] == null) {
+				if (currentEscrimeur.getCarte(i) != null && currentEscrimeur.getCarte(i).getDistance() == distanceClick) {
 					cartesAJouer[0] = currentEscrimeur.getCarte(i);
 				}
 				i++;
 			}
-			if (dernierCoup.getAction() == Coup.ATTAQUEINDIRECTE) {
+			if (dernierCoup != null && dernierCoup.getAction() == Coup.ATTAQUEINDIRECTE) {
 				coupAJouer = new Coup(currentEscrimeur, cartesAJouer, Coup.ESQUIVER);
 			} else {
 				coupAJouer = new Coup(currentEscrimeur, cartesAJouer, Coup.RECULER);
@@ -139,7 +143,6 @@ public class ControlerJeu extends Controler {
 	}
 	
 	public void finDeManche(Escrimeur w) {
-		System.out.println("fin de manche");
 		Escrimeur winner = w;
 		if (winner == null) {
 			int action = jeu.getHistorique().voirDernierCoup().getAction();
@@ -179,13 +182,24 @@ public class ControlerJeu extends Controler {
 						winner = droitier;
 					}
 				}
+				if (winner != null) {
+					winner.addMancheGagnee();
+					if(winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
+						jeu.nouvelleManche();
+					}else {
+						//fin de partie, winner gagne
+					}
+				}
+			}
+		} else {
+			winner.addMancheGagnee();
+			if(winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
+				jeu.nouvelleManche();
+			}else {
+				//fin de partie, winner gagne
 			}
 		}
-		if (winner != null) {
-			winner.addMancheGagnee();
-		}
-		jeu.nouvelleManche();
-	} 
+	}
 	
 	@Override
 	public boolean animation(String commande, Animation anim) {

@@ -12,19 +12,18 @@ import model.Jeu.Action;
 public class Jeu extends Observable {
 	
 	public enum Action {
-		CHANGER_TOUR,
+		ACTUALISER_JEU,
 		ACTUALISER_DECK,
 		ACTUALISER_PLATEAU,
-		ACTUALISER_MAINS,
-		ACTUALISER_MAIN_DROITIER,
-		ACTUALISER_MAIN_GAUCHER,
-		PIOCHER,
-		DEFAUSSER,
-		DEBUT_MANCHE,
-		FIN_MANCHE,
+		ACTUALISER_ESCRIMEUR,
+		ACTUALISER_ESCRIMEUR_DROITIER,
+		ACTUALISER_ESCRIMEUR_GAUCHER,
+		ANIMATION_PIOCHER,
+		ANIMATION_DEFAUSSER,
+		ANIMATION_DEBUT_MANCHE,
+		ANIMATION_FIN_MANCHE,
 		ANIMATION_LANCER,
 		ANIMATION_DEPLACER_ESCRIMEUR,
-		ANIMATION_PIOCHER
 	}
 	
 	private Boolean modeSimple; 
@@ -54,7 +53,7 @@ public class Jeu extends Observable {
 		this.indiceCurrentEscrimeur = 0;
 		setHistorique(new Historique(this));
 		init(modeSimple, plateau, deckPioche, deckDefausse, nbManchesPourVictoire, gaucher, droitier);
-		modifieVue(Action.CHANGER_TOUR);
+		modifieVue(Action.ACTUALISER_JEU);
 		indicePremierJoueur = indiceCurrentEscrimeur;
 		peutPasserTour = false;
 	}
@@ -143,7 +142,8 @@ public class Jeu extends Observable {
 	public void piocher(Escrimeur e) {
 		while (e.manqueCarte() && !deckPioche.deckVide()) {
 			e.ajouterCarte(deckPioche.piocher());
-			modifieVue(Action.PIOCHER);
+			//modifieVue(Action.ANIMATION_PIOCHER);
+			modifieVue(Action.ACTUALISER_DECK);
 		}
 	}
 
@@ -151,7 +151,7 @@ public class Jeu extends Observable {
 		piocher(getCurrentEscrimeur());
 		indiceCurrentEscrimeur = (indiceCurrentEscrimeur + 1) % 2;
 		peutPasserTour = false;
-		modifieVue(Action.CHANGER_TOUR);
+		modifieVue(Action.ACTUALISER_JEU);
 		return 1;
 	}
 
@@ -169,7 +169,8 @@ public class Jeu extends Observable {
 			return res;
 		}
 		deckDefausse.defausser(c);
-		modifieVue(Action.DEFAUSSER);
+		//modifieVue(Action.DEFAUSSER);
+		modifieVue(Action.ACTUALISER_DECK);
 		return res;
 	}
 
@@ -209,13 +210,13 @@ public class Jeu extends Observable {
 						if (!rejoueCoupAnnule) {
 							historique.viderCoupsAnnules();
 						}
-						modifieVue(Action.ACTUALISER_MAINS);
+						modifieVue(Action.ACTUALISER_ESCRIMEUR);
 						modifieVue(Action.ACTUALISER_DECK);
 						modifieVue(Action.ANIMATION_DEPLACER_ESCRIMEUR);
 						if(c.getAction() != Coup.ESQUIVER) {
 							peutPasserTour = true;
-							modifieVue(Action.ACTUALISER_PLATEAU);
 						}
+						modifieVue(Action.ACTUALISER_PLATEAU);
 						return true;
 					} else {
 						// le coup ne va pas etre joué, on ramene donc le joueur a sa position initiale
@@ -291,7 +292,7 @@ public class Jeu extends Observable {
 					return false;
 				}
 				modifieVue(Action.ACTUALISER_PLATEAU);
-				modifieVue(Action.ACTUALISER_MAINS);
+				modifieVue(Action.ACTUALISER_ESCRIMEUR);
 				return true;
 			
 			default : 
@@ -373,9 +374,10 @@ public class Jeu extends Observable {
 
 
 	public void nouvelleManche() {
+		modifieVue(Action.ANIMATION_FIN_MANCHE);
 		while(!deckDefausse.deckVide()) {
 			deckPioche.reposerCarte(deckDefausse.reprendreDerniereCarte());
-		}
+		}		
 		int nbCartesMain = getCurrentEscrimeur().getNbCartes();
 		for (int i = 0; i < nbCartesMain; i++) {
 			for (int j = 0; j < 2; j++) {
@@ -390,15 +392,17 @@ public class Jeu extends Observable {
 		piocher(getEscrimeurDroitier());
 		piocher(getEscrimeurGaucher());
 		try {
-		plateau.setPosition(1, Escrimeur.GAUCHER);
-		plateau.setPosition(plateau.getNbCase(), Escrimeur.DROITIER);
-		}catch (IncorrectPlateauException e) {
+			plateau.setPosition(1, Escrimeur.GAUCHER);
+			plateau.setPosition(plateau.getNbCase(), Escrimeur.DROITIER);
+		} catch (IncorrectPlateauException e) {
 			System.err.println(e.getMessage());
 		};
 		indicePremierJoueur = (indicePremierJoueur + 1) % 2;
 		indiceCurrentEscrimeur = indicePremierJoueur;
+		historique.vider();
 		//mettre a jour toute la vue (mains, pioche, defausse, plateau, manches gagn�es)
-		modifieVue(Action.FIN_MANCHE); 
+		modifieVue(Action.ACTUALISER_JEU);
+		System.out.println("Jeu actualiser");
 	}
 	
 	public void modifieVue(Action action) {
@@ -437,5 +441,9 @@ public class Jeu extends Observable {
 	
 	public Escrimeur[] getEscrimeurs() {
 		return escrimeurs;
+	}
+	
+	public int getNbManchesPourVictoire() {
+		return nbManchesPourVictoire;
 	}
 }

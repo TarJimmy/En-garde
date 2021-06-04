@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -57,29 +58,27 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	public void miseAJour() {
 		Action action = jeu.getActionCourante();
 		switch (action) {
-			case CHANGER_TOUR:
+			case ACTUALISER_JEU:
 			case ACTUALISER_PLATEAU: // Actualise les cases accessibles du plateau
 				vuePlateau.actualise(jeu.casesJouables(), jeu.getCurrentEscrimeur());
-				if (action != Action.CHANGER_TOUR) { // Stop si ce n'est pas  un changement de tour
+				if (action != Action.ACTUALISER_JEU) { // Stop si ce n'est pas  un changement de tour
 					controle.commande("ActionTerminer");
 					break;
 				}
-			case DEFAUSSER:
-			case PIOCHER:
 			case ACTUALISER_DECK: // Actualise les decks
 				vueDecks.repaint();
-				if (action != Action.CHANGER_TOUR) { // Stop si ce n'est pas  un changement de tour
+				if (action != Action.ACTUALISER_JEU) { // Stop si ce n'est pas  un changement de tour
 					controle.commande("ActionTerminer");
 					break;
 				}
-			case ACTUALISER_MAINS:
-			case ACTUALISER_MAIN_DROITIER:
+			case ACTUALISER_ESCRIMEUR:
+			case ACTUALISER_ESCRIMEUR_DROITIER :
 				mainDroitier.actualise(jeu.getIsTourGaucher() == false);
-				if (action != Action.CHANGER_TOUR && action != Action.ACTUALISER_MAINS) { // Stop si ce n'est pas  un changement de tour ou l'actualisation des 2 mains
+				if (action != Action.ACTUALISER_JEU && action != Action.ACTUALISER_ESCRIMEUR) { // Stop si ce n'est pas  un changement de tour ou l'actualisation des 2 mains
 					controle.commande("ActionTerminer");
 					break;
 				}
-			case ACTUALISER_MAIN_GAUCHER:
+			case ACTUALISER_ESCRIMEUR_GAUCHER:
 				mainGaucher.actualise(jeu.getIsTourGaucher());
 				controle.commande("ActionTerminer");
 				break;
@@ -88,9 +87,13 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				break;
 			case ANIMATION_PIOCHER:
 				controle.animation("Ajouter", panelAnimation.generateAnimationDeplacerCartes());
+			case ANIMATION_FIN_MANCHE:
+				controle.animation("Ajouter", panelAnimation.generateAnimationFinManche());
+				break;
 			case ANIMATION_LANCER:
 				controle.animation("Lancer", null);
 				break;
+			
 			default:
 				System.out.println("Action non reconnu");
 				break;
@@ -117,7 +120,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		// Haut -> Gauche
 		panelTop.add(new VueInfoJeu(jeu.getEscrimeurGaucher().getNom(), jeu.getEscrimeurDroitier().getNom(), controle), BorderLayout.WEST);
 		// Haut -> Droit
-		mainDroitier = new VueEscrimeur(controle, jeu.getPlateau(), jeu.getEscrimeurDroitier(), !jeu.getIsTourGaucher(), jeu.getPeutPasserTour());
+		mainDroitier = new VueEscrimeur(controle, jeu.getPlateau(), jeu.getEscrimeurDroitier(), !jeu.getIsTourGaucher(), jeu.getPeutPasserTour(), jeu.getNbManchesPourVictoire());
 		panelTop.add(mainDroitier,BorderLayout.EAST);
 		
 		// Centre
@@ -128,7 +131,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		panelBot.setOpaque(false);
 		
 		// Bas -> Gauche
-		mainGaucher = new VueEscrimeur(controle, jeu.getPlateau(), jeu.getEscrimeurGaucher(), jeu.getIsTourGaucher(), jeu.getPeutPasserTour());
+		mainGaucher = new VueEscrimeur(controle, jeu.getPlateau(), jeu.getEscrimeurGaucher(), jeu.getIsTourGaucher(), jeu.getPeutPasserTour(), jeu.getNbManchesPourVictoire());
 		panelBot.add(mainGaucher, BorderLayout.WEST);
 		
 		// Bas -> Droite
@@ -141,7 +144,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		background.add(panelBot);
 		
 		panelAnimation = new PanelAnimation(largeurFenetre, hauteurFenetre);
-		panelAnimation.setVisible(false);
+		//panelAnimation.setVisible(false);
 		final JPanel glass = (JPanel) frame.getGlassPane();
 		glass.setLayout(new GridBagLayout());
 	    glass.setVisible(true);
@@ -151,13 +154,18 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		frame.setVisible(true);
 	}
 	@SuppressWarnings("serial")
-	public class PanelAnimation extends JComponent implements Animateur{
-		
+	public class PanelAnimation extends JComponent implements Animateur {
+		private int animActif;
+		private Point ptFinDeManche;
+		private final Dimension sizeImgWinner = new Dimension(600, 400);
+		private LinkedList<Integer> listeAnimation;
 		public PanelAnimation(int largeur, int hauteur) {
 			super();
 			setPreferredSize(new Dimension(largeur, hauteur));
 			setVisible(true);
 			setOpaque(false);
+			ptFinDeManche = new Point();
+			ptFinDeManche.y = 250;
 		}
 		
 		@Override
@@ -165,11 +173,14 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 			// TODO Auto-generated method stub
 			super.paintComponent(g);
 			Graphics2D drawable = (Graphics2D)g;
-			drawable.fillRect(getWidth() / 2 -  250, getHeight() / 2 - 250, 500, 500);
+			if (animActif == Animation.ANIM_FIN_MANCHE) {
+				drawable.fillRect(ptFinDeManche.x, ptFinDeManche.y, sizeImgWinner.width, sizeImgWinner.height);
+			}
+			//drawable.fillRect(getWidth() / 2 -  250, getHeight() / 2 - 250, 500, 500);
 		}
 		
 		public Animation generateAnimationDeplacerCartes() {
-			return new Animation(controle, panelAnimation) {
+			return new Animation(controle, panelAnimation, Animation.ANIM_NONE) {
 				
 				@Override
 				public void anim(double progres) {
@@ -179,15 +190,33 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 			};
 		}
 		
-		public void deplaceCartes(ArrayList<Point> newPoints) {
-			
+		public Animation generateAnimationFinManche() {
+			ptFinDeManche.x = -600;
+			int distance = 1600 + sizeImgWinner.width / 2;
+			System.out.println("Nouvelle distance" + distance);
+			return new AnimationFinManche(controle, this, ptFinDeManche.x, distance);
 		}
 
 		@Override
 		public void finAnimation(Animation animation) {
-			frame.repaint();
+			animActif = animation.ANIM_NONE;
+			repaint();
 			controle.animation("Terminer", animation);
 		}
+
+		@Override
+		public void debutAnimation(int typeAnimation) {
+			System.out.println("Type animation : " + typeAnimation);
+			animActif = typeAnimation;
+		};
+		public void deplaceFinDeManche(int newX) {
+			ptFinDeManche.x = newX - 300;
+			repaint();
+			System.out.println("On deplace de " + newX);
+		}
 		
+		public void deplaceCartes(ArrayList<Point> newPoints) {
+			
+		}
 	}
 }

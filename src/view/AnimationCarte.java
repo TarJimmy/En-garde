@@ -12,7 +12,7 @@ public class AnimationCarte extends Animation {
 	private List<Point> distances;
 	private PanelAnimation panelAnimation;
 	AnimationCarte(CollecteurEvenements collecteur, Animateur animateur, List<Point> departs, List<Point> distances) {
-		super(collecteur, animateur);
+		super(collecteur, animateur, Animation.ANIM_CARTES);
 		if (departs.size() != distances.size()) {
 			throw new IllegalArgumentException("La taille des départs et destinations doivent être égal");
 		}

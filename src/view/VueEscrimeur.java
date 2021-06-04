@@ -26,15 +26,15 @@ public class VueEscrimeur extends JPanel {
 	private VueMain vueMain;
 	private Boolean peutPasserTour;
 	private JButton btnPasserTour;
-	public VueEscrimeur(CollecteurEvenements controle, Plateau p, Escrimeur e, Boolean showFace, Boolean peutPasserTour) {
+	public VueEscrimeur(CollecteurEvenements controle, Plateau p, Escrimeur e, Boolean showFace, Boolean peutPasserTour, int nbMancheMax) {
 		this.controle = controle;
 		this.e = e;
 		this.showFace = showFace;
 		this.peutPasserTour = peutPasserTour;
-		start();
+		start(nbMancheMax);
 	}
 	
-	public void start() {
+	public void start(int nbMancheMax) {
 		setOpaque(false);
 		setPreferredSize(new Dimension(1000, 300));
 		setLayout(new BorderLayout());
@@ -54,7 +54,7 @@ public class VueEscrimeur extends JPanel {
 		btnPasserTour.setPreferredSize(new Dimension(300, 70));
 		System.out.println(controle.getClass());
 		btnPasserTour.addActionListener(new AdaptateurCommande(controle, "PasserTour"));
-		vueManche = new VueManche(5, e.getMancheGagner(), e.getIsGaucher());
+		vueManche = new VueManche(nbMancheMax, e.getMancheGagner(), e.getIsGaucher());
 		
 		if (e.getIndice() == Escrimeur.GAUCHER) {
 			panelBtn.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -71,8 +71,9 @@ public class VueEscrimeur extends JPanel {
 	}
 	
 	public void actualise(Boolean showFace) {
+		System.out.println("Actualiser escrimeurs");
 		this.showFace = showFace;
-		vueManche.repaint();
+		vueManche.setNbWins(e.getMancheGagner());
 		vueMain.actualise(showFace);
 		btnPasserTour.setVisible(peutPasserTour);
 	}

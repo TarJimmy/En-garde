@@ -30,4 +30,13 @@ public abstract class Deck {
 	public void addCarte(Carte c) {
 		cartes.push(c);
 	}
+	
+	public int[] getArray() {
+		Carte[] arrayCartes = (Carte[]) cartes.toArray();
+		int [] res = new int[arrayCartes.length];
+		for (int i = 0; i < arrayCartes.length; i++) {
+			res[i] = arrayCartes[i].getDistance();
+		}
+		return res;
+	}
 }

@@ -6,29 +6,46 @@ import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
 public abstract class Animation implements ActionListener {
+	public static final int ANIM_NONE = 0;
+	public static final int ANIM_CARTES = 1;
+	public static final int ANIM_FIN_MANCHE = 2;
+	public static final int ANIM_ESCRIMEUR = 3;
+	
 	protected Timer timer;
 	protected CollecteurEvenements collecteur;
 	protected double progres, vitesseAnim;;
 	protected Animateur animateur;
+	protected int typeAnimation;
 	/**
 	 * 
 	 * @param collecteur
 	 * @param vitesseAnim, entre 0 et 1, correspond le pas d'avancement jusqu'à 1 (= fin animation)
 	 */
-	Animation(CollecteurEvenements collecteur, Animateur animateur, float vitesseAnim) {
-		this.collecteur = collecteur;
-		this.vitesseAnim = vitesseAnim;
-		this.progres = 0;
-		this.animateur = animateur;
-		timer = new Timer(10, this);
-	}
-	
-	Animation(CollecteurEvenements collecteur, Animateur animateur) {
+	Animation(CollecteurEvenements collecteur, Animateur animateur, int typeAnimation) {
 		this.collecteur = collecteur;
 		this.vitesseAnim = 0.1d;
 		this.progres = 0;
 		this.animateur = animateur;
+		this.typeAnimation = typeAnimation;
 		timer = new Timer(10, this);
+	}
+	
+	Animation(CollecteurEvenements collecteur, Animateur animateur, int typeAnimation, int delay) {
+		this.collecteur = collecteur;
+		this.vitesseAnim = 0.1d;
+		this.progres = 0;
+		this.animateur = animateur;
+		this.typeAnimation = typeAnimation;
+		timer = new Timer(delay, this);
+	}
+	
+	Animation(CollecteurEvenements collecteur, Animateur animateur, int typeAnimation, int delay, float vitesseAnim) {
+		this.collecteur = collecteur;
+		this.vitesseAnim = vitesseAnim;
+		this.progres = 0;
+		this.animateur = animateur;
+		this.typeAnimation = typeAnimation;
+		timer = new Timer(delay, this);
 	}
 
 	/**
@@ -39,6 +56,7 @@ public abstract class Animation implements ActionListener {
 	
 	public void demarre() {
 		timer.start();
+		animateur.debutAnimation(typeAnimation);
 		progres = 0;
 	}
 	

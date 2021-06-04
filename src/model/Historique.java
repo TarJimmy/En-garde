@@ -19,6 +19,11 @@ public class Historique {
 		historique.push(c);
 	}
 	
+	public void vider() {
+		historique.clear();
+		coupsAnnules.clear();
+	}
+	
 	public void ajouterCoupAnnule(Coup c) {
 		coupsAnnules.push(c);
 	}
@@ -80,7 +85,7 @@ public class Historique {
 				nb--;
 				boucle--;
 			}
-			jeu.modifieVue(Action.PIOCHER);
+			jeu.modifieVue(Action.ACTUALISER_DECK);
 		}
 		//recuperer les cartes dans la defausse
 		dernierCoup.remettreCartesDansLordre();
@@ -104,8 +109,8 @@ public class Historique {
 		default :
 			break;
 		}
-		jeu.modifieVue(Action.ACTUALISER_MAINS);
-		jeu.modifieVue(Action.DEFAUSSER);
+		jeu.modifieVue(Action.ACTUALISER_ESCRIMEUR);
+		jeu.modifieVue(Action.ACTUALISER_DECK);
 		jeu.setIndiceCurrentEscrimeur(escrimeurCoup.getIndice());
 		return false;
 	}

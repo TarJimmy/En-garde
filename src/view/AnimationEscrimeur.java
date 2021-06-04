@@ -12,7 +12,7 @@ public class AnimationEscrimeur extends Animation {
 	private int indiceEcrimeursCourant;
 	
 	public AnimationEscrimeur(CollecteurEvenements collecteur,  Animateur animateur, int depart, int distance, int indiceEcrimeursCourant) {
-		super(collecteur, animateur);
+		super(collecteur, animateur, Animation.ANIM_ESCRIMEUR);
 		this.vuePlateau = (VuePlateau)animateur;
 		this.depart = depart;
 		this.distance = distance;
@@ -21,7 +21,6 @@ public class AnimationEscrimeur extends Animation {
 	
 	@Override
 	public void anim(double progres) {
-		vuePlateau.activeModeAnimation();
 		int distanceAjouter = (int) Math.round((progres * distance));
 		int newX = (int) Math.round(depart + distanceAjouter);
 		vuePlateau.deplace(newX, indiceEcrimeursCourant);
