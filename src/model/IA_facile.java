@@ -2,7 +2,7 @@ package model;
 
 import java.util.Random;
 
-public class IA_facile implements IA{
+public class IA_facile {
 	Coup coup;
 	Plateau plateau;
 	
@@ -13,37 +13,14 @@ public class IA_facile implements IA{
 	
 	/**
 	 * choixCarteIA : permet a l'IA de choisir une carte parmis sa main.
-	 * Parametre : (Coup)coup.
-	 * Retour : (int)valeurCarte. (un int representant la valeur de la carte choisie.) 
+	 * Parametre :/
+	 * Retour : un tableau de int : valeurCarte et indice . (un int representant la valeur de la carte choisie.) 
 	 */
-	public int choixCarteIA(Coup coup) {
+	public int choixCarteIA() {
 		Carte[] cartes = coup.getCartes();
 		Random rand = new Random();
-	    int indice = rand.nextInt(coup.escrimeur.getNbCartes());	
+	    int indice = rand.nextInt(coup.escrimeur.getNbCartes());
 	    return cartes[indice].getDistance();
-	}
-	
-	/**
-	 * actionIA : permet a l'IA de choisir une action a jouer en fonction de la carte choisie.
-	 * Parametre : (Coup)coup.
-	 * Retour : un tableau de deux int : (int)action et (int)valeurCarteChoisie. (un int representant l'action a effectuer, compris entre 0 et 3 
-	 * et un int representant la carte jouee.) 
-	 */
-	public int[] actionIA( Coup coup ){
-		int[] intArray = new int[2];
-		int valeurCarteChoisie;
-		Random rand = new Random();
-	    int action = rand.nextInt(4);
-	    valeurCarteChoisie = choixCarteIA(coup);
-	    
-	    while (!estBonCoup(coup.escrimeur, valeurCarteChoisie , action)) {
-	    	action = rand.nextInt(4);
-	    	valeurCarteChoisie = choixCarteIA(coup);
-	    }
-	    intArray[0] = action;
-	    intArray[1] = valeurCarteChoisie;
-	    
-		return intArray ;
 	}
 	
 	/**
@@ -52,36 +29,115 @@ public class IA_facile implements IA{
 	 * Retour : boolean. (True si action possible, false sinon.) 
 	 */
 	public boolean estBonCoup (Escrimeur e, int valeurCarte, int action) {
-		
+		boolean var;
 		if( action == 1 || action == 0) {
 			if (action == 1) {
 				valeurCarte = valeurCarte * -1;
 			}
-			System.out.println("verif : " + plateau.deplacerEscrimeur( e, valeurCarte));
-			return plateau.deplacerEscrimeur( e, valeurCarte);
+			var =  plateau.mouvementPossible( e, valeurCarte);
+			return var;
 		}
-		System.out.println("verif : " + plateau.attaquerEscrimeur(e, valeurCarte));
-		return plateau.attaquerEscrimeur(e, valeurCarte);
+		var =  plateau.escrimeurPeutAttaquer( e, valeurCarte);
+		return var;
 		
 	}
 	
-	//TODO : possibilite d attaques indirectes, parades.
+	/**
+	 * transfoEnCase : permet de transformer une action et une valeurCarte en une case d'arrivee de l escrimeur.
+	 * Parametre : (int) action, (int) valeurCarte.
+	 * Retour : (int) caseArrivee : la case atteinte apres avoir effectuer l action "action" avec la carte "valeurCarte". 
+	 */	
+	public int transfoEnCase(int action, int valeurCarte, int valeurCarte2, boolean estGaucher, int positionG, int positionD) {
+		int position;
+		if (estGaucher) {
+			if (action == 1) { // reculer
+				position = positionG - valeurCarte - valeurCarte2;
+			}else { // autres actions qui ne font qu avancer
+				position = positionG + valeurCarte + valeurCarte2;
+			}
+		}else {
+			if (action == 1) { // reculer
+				position = positionD + valeurCarte + valeurCarte2;
+			}else { // autres actions qui ne font qu avancer
+				position = positionD - valeurCarte - valeurCarte2;
+			}
+		}
+		return position;
+	}
+
+	/**
+	 * choisirComplementaire : permet de choisir la deuxieme carte de l attaque indirecte.
+	 * Parametre : int valeurCarte , int distanceManquante
+	 * Retour : (int) carteChoisie : la valeur de la carte choisie si elle existe, -1 sinon.
+	 */
+	public int choisirComplementaire(int valeurCarte , int distanceManquante ) {
+		Carte[] cartes = coup.cartes;
+		int compt = 0, carteChoisie = -50, carte;
+		for(int k=0 ; k < cartes.length ; k++) {
+			carte = cartes[k].getDistance();
+			
+			if (carte == distanceManquante) {
+				if (valeurCarte == carte && compt == 1 ) { // si elle a la meme valeur que la premiere mais que s en est une autre on peut la choisir
+					return carte;
+				}else if (valeurCarte == carte && compt == 0) {// si elle a la meme valeur que la premiere et que c est la premiere qu on voit on ne peut pas la choisir
+					compt ++;
+				}else { // c est la bonne carte et elle ne correspond pas a la premiere carte choisie, on peut la choisir.
+					return carte;
+				}
+			}
+		}
+		return carteChoisie;
+	}
+	
+	/**
+	 * actionIA : permet a l'IA de choisir une action a jouer en fonction de la carte choisie.
+	 * Parametre : /
+	 * Retour : un tableau de deux int : (int)action et (int)valeurCarteChoisie. (un int representant l'action a effectuer, compris entre 0 et 3 
+	 * et un int representant la carte jouee.) 
+	 * ATTENTION : LE RETOUR EST A CHANGER EN FONCTION DE CE QUI EST ATTENDU PAR LE JEU.
+	 */
+	public int actionIA( ){
+		int valeurCarteChoisie, valeurCarteChoisie2=0, valeurTotale;
+		Random rand = new Random();
+	    int action = rand.nextInt(4);
+	    int posG = plateau.getPosition(0);
+	    int posD = plateau.getPosition(1);
+	    valeurCarteChoisie = choixCarteIA();
+	    if (action == 3) {
+	    	valeurCarteChoisie2 = choisirComplementaire(valeurCarteChoisie , posD - posG - valeurCarteChoisie );
+	    }
+	    valeurTotale = valeurCarteChoisie + valeurCarteChoisie2;
+	    while (!estBonCoup(coup.escrimeur, valeurTotale , action) ) {
+	    	action = rand.nextInt(4);
+	    	valeurCarteChoisie = choixCarteIA();
+	    	valeurCarteChoisie2 = 0;
+		    if (action == 3) {
+		    	valeurCarteChoisie2 =  choisirComplementaire(valeurCarteChoisie , posD - posG - valeurCarteChoisie );
+		    }
+		    valeurTotale = valeurCarteChoisie + valeurCarteChoisie2;
+	    }
+	    System.out.println("action choisie :" + action + "   carte choisie :"+valeurCarteChoisie + "   carte choisie2 :"+valeurCarteChoisie2);
+
+		return transfoEnCase(action, valeurCarteChoisie, valeurCarteChoisie2, coup.escrimeur.getIsGaucher(), posG , posD) ;
+	}
+	
+	//TODO : parades ??
 	
 	/*public static void main(String[] args) throws IncorrectCarteException, IncorrectPlateauException {
-		Plateau p = new Plateau(7, 9, 24) ;
-		
-		Escrimeur esc1 = new Escrimeur("IA", TypeEscrimeur.IAFACILE, true , 5);
-		Carte[] cartes1 = {new Carte(2), new Carte(2), new Carte(2),new Carte(2),new Carte(2) };
+		Plateau p = new Plateau(18, 20, 24) ;
+	
+		Escrimeur esc1 = new Escrimeur("IA", TypeEscrimeur.IA_FACILE, 1 , 5);
+		Carte[] cartes1 = {new Carte(1), new Carte(1), new Carte(1),new Carte(2),new Carte(2) };
 		Coup coup1 = new Coup(esc1,cartes1, 0);
 	
 		
-		Escrimeur esc2 = new Escrimeur("Humain", TypeEscrimeur.HUMAIN, false, 5);
-		Carte[] cartes2 = {new Carte(1), new Carte(2), new Carte(3),new Carte(4),new Carte(5) };
+		Escrimeur esc2 = new Escrimeur("Humain", TypeEscrimeur.HUMAIN, 0, 5);
+		Carte[] cartes2 = {new Carte(1), new Carte(2), new Carte(1),new Carte(3),new Carte(2) };
 		Coup coup2 = new Coup(esc2, cartes2, 0);
 		
 		IA_facile IA = new IA_facile(coup1, p);
-		int[] act_IA = IA.actionIA(coup1);
+		int case_IA = IA.actionIA();
 		
-		System.out.println("action choisie :" + act_IA[0] + "carte choisie :"+act_IA[1]);
+		System.out.println("case d arrivee :"+ case_IA );
 	} */
 }
