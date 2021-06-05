@@ -71,7 +71,7 @@ public class ButtonCustom extends JButton {
 		}
 	}
 	private void initButton(Dimension dimension) {
-		setFont(new Font("Century", Font.PLAIN, 40));
+		setFont(new Font(Configuration.Century.getFamily(), Font.PLAIN, 40));
 		setHorizontalTextPosition(SwingConstants.CENTER);
 		setFocusPainted(false);
 		setBorderPainted(false);

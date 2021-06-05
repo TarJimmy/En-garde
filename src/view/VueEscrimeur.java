@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
+import Global.Configuration;
 import Patterns.Observateur;
 import model.Escrimeur;
 import model.Plateau;
@@ -48,7 +49,7 @@ public class VueEscrimeur extends JPanel {
 		panelBtn.setPreferredSize(new Dimension(1000, 74));
 		panelBtn.setOpaque(false);
 		
-		btnPasserTour = new ButtonCustom("Passer tour", "cadre2", new Dimension(300, 70), new Font("Century", Font.PLAIN, 30));
+		btnPasserTour = new ButtonCustom("Passer tour", "cadre2", new Dimension(300, 70), new Font(Configuration.Century.getFamily(), Font.PLAIN, 30));
 		//btnPasserTour.setPreferredSize(new Dimension(300, 70));
 		System.out.println(controle.getClass());
 		btnPasserTour.addActionListener(new AdaptateurCommande(controle, "PasserTour"));

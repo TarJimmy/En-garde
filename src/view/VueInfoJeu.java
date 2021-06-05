@@ -42,7 +42,7 @@ public class VueInfoJeu extends JPanel {
 		setOpaque(false);
 		JPanel bottom = new JPanel(new GridLayout(1, 3));
 		Dimension dimensionBtn = new Dimension(190, 40);
-		Font fontBtn = new Font("Century", Font.PLAIN, 15);
+		Font fontBtn = new Font(Configuration.Century.getFamily(), Font.PLAIN, 15);
 		try {
 			add(createLabelEscrimeur(nomEscrimeurGaucher));
 			add(createLabelEscrimeur(nomEscrimeurDroitier));

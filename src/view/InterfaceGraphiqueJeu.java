@@ -202,7 +202,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 			Graphics2D drawable = (Graphics2D)g;
 			if (animActif == Animation.ANIM_FIN_MANCHE) {
 				drawable.drawImage(imgFinDeManche[winnerManche], ptFinDeManche.x, ptFinDeManche.y, sizeImgWinner.width, sizeImgWinner.height, null);
-				drawable.setFont(new Font("Century", Font.PLAIN, 50));
+				drawable.setFont(new Font(Configuration.Century.getFamily(), Font.PLAIN, 50));
 				if (winnerManche == Jeu.NONE) {
 					drawable.drawString("Manche nulle", ptFinDeManche.x + 200, ptFinDeManche.y + 150);
 				} else {

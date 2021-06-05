@@ -106,7 +106,7 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		fenetreActionAnnexe.setContentPane(contentPane);
 		contentPane.setLayout(null);
-		Font font = new Font("Century", Font.PLAIN, 15);
+		Font font = new Font(Configuration.Century.getFamily(), Font.PLAIN, 15);
 		JLabel titre = Label("Titre");
 		contentPane.add(titre);
 		
