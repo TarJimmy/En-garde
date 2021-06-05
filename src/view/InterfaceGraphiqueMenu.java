@@ -115,8 +115,4 @@ public class InterfaceGraphiqueMenu implements Runnable {
 		}
 		
 	}
-	
-	public static void main(String[] args) {
-		InterfaceGraphiqueMenu.demarrer(new ControlerAutre());
-	}
 }

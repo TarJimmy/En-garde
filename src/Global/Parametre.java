@@ -6,7 +6,7 @@ import java.io.IOException;
 
 /**
  * 
- * @author La�titia & Delphine
+ * @author Laetitia & Delphine
  *
  */
 public class Parametre {
@@ -15,13 +15,13 @@ public class Parametre {
 	private static Parametre instance = null;
 	
 	/**
-	 * Cr�ation d'un dossier et fichier de parametres
+	 * Creation d'un dossier et fichier de parametres
 	 */
 	private Parametre() {
 		File dossier = new File("Parametres"); 
 	    boolean res = dossier.mkdir();
 	    if (res) {
-	    	System.out.println("Le dossier Parametres a été crée.");
+	    	System.out.println("Le dossier Parametres a \u00E9t\u00E9 cr\u00E9\u00E9.");
 	      	String filePath = dirPara + "/parametres.txt";
 			try {
 				// Create new file if needed
@@ -31,12 +31,13 @@ public class Parametre {
 				FileWriter fWriter = new FileWriter(filePath);
 				
 				/*Taille terrian*/fWriter.write("23\n");
-				/*Escrimeur Gauche*/fWriter.write("Joueur 1\nHumain\n1\n");
-				/*Escrimeur Droit*/fWriter.write("Joueur 2\nIA Facile\n23\n");
+				/*Escrimeur Gauche*/fWriter.write("Joueur 1\nHUMAIN\n1\n");
+				/*Escrimeur Droit*/fWriter.write("Joueur 2\nIA_FACILE\n23\n");
 				/*Mode d'attaque*/fWriter.write("Basique\n");
 				/*Nombre de manches*/fWriter.write("5\n");
 				/*Nombre maximum de cartes en mains*/fWriter.write("5\n");
 				/*Nombre de cartes par valeurs (1,2,3,4,5)*/fWriter.write("5\n5\n5\n5\n5\n");
+				/*Activer ou desactiver les animations*/fWriter.write("Actif\n");
 				
 				fWriter.close();
 			} catch (IOException e) {

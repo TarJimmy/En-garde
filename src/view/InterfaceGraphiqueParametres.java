@@ -54,6 +54,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	private static JSpinner spinner_positionJ2;
 	//Jeu
 	private JLabel titreSectionJeu;
+	private static JCheckBox btn_animation;
 	private JLabel labelModeAttaque;
 	private static ButtonGroup buttonGroup_ModeAttaque;
 	private static JRadioButton modeAttaque_Basique;
@@ -94,6 +95,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	private static int cartes3;
 	private static int cartes4;
 	private static int cartes5;
+	private static String animation;
 	private Boolean canEnregistrer;
 	
 	private InterfaceGraphiqueParametres(CollecteurEvenements controle) {
@@ -120,6 +122,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		cartes3 = Integer.parseInt(settings.get(12));
 		cartes4 = Integer.parseInt(settings.get(13));
 		cartes5 = Integer.parseInt(settings.get(14));
+		animation = settings.get(15);
 	}
 	
 	/**
@@ -143,12 +146,12 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	}
 
 	/**
-	 * Mise e jour des valeurs par defaut du formulaire
+	 * Mise a jour des valeurs par defaut du formulaire
 	 * @param settings : liste des valeurs du formulaire
 	 */
 	public static void majParametres(List<String> settings) {
 		settings(settings);
-		setRadioButtons(typeJ1,typeJ2,modeAttaque);
+		setRadioButtons(typeJ1,typeJ2,modeAttaque,animation);
 		spinner_map.setValue(map);
 		txtJoueur1.setText(nomJoueur1);
 		spinner_positionJ1.setValue(posJ1);
@@ -164,12 +167,12 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	}
 	
 	/**
-	 * Mise e true du radio bouton selon la valeur du parametre
+	 * Mise a true du radio bouton selon la valeur du parametre
 	 * @param typeJ1 : valeur du type du joueur 1 (humain ou IA)
 	 * @param typeJ2 : valeur du type du joueur 2 (humain ou IA)
 	 * @param modeAttaque : valeur par defaut du mode d'attaque (basique ou avance)
 	 */
-	private static void setRadioButtons(String typeJ1, String typeJ2, String modeAttaque) {
+	private static void setRadioButtons(String typeJ1, String typeJ2, String modeAttaque, String animation) {
 		switch (typeJ1) {
 			case "HUMAIN" : btnRadioJ1_Humain.setSelected(true);break;
 			case "IA_FACILE" : btnRadioJ1_Facile.setSelected(true);break;
@@ -185,6 +188,10 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		switch (modeAttaque) {
 			case "Basique" : modeAttaque_Basique.setSelected(true);break;
 			case "Avance" : modeAttaque_Avance.setSelected(true);break;
+		}
+		switch (animation) {
+			case "Actif" : btn_animation.setSelected(true);break;
+			case "NonActif" : btn_animation.setSelected(false);break;
 		}
 		
 	}
@@ -304,7 +311,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		contentPane.add(btnRadioJ1_Difficile);
 		
 		/////emplacement du joueur 1 au debut de la partie
-		labelPositionJ1 = new JLabel("D�part :");
+		labelPositionJ1 = new JLabel("D\u00E9part :");
 		labelPositionJ1.setBounds(600, 170, 50, 20);
 		contentPane.add(labelPositionJ1);
 		spinner_positionJ1 = new JSpinner();
@@ -356,7 +363,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		contentPane.add(btnRadioJ2_Difficile);
 		
 		/////emplacement du joueur 2 au debut de la partie
-		labelPositionJ2 = new JLabel("D�part :");
+		labelPositionJ2 = new JLabel("D\u00E9part :");
 		labelPositionJ2.setBounds(600, 237, 50, 20);
 		contentPane.add(labelPositionJ2);
 		spinner_positionJ2 = new JSpinner();
@@ -369,8 +376,13 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		/// Section 2 - Jeu
 		titreSectionJeu = new JLabel("Jeu");
 		titreSectionJeu.setFont(new Font("Tahoma", Font.BOLD, 14));
-		titreSectionJeu.setBounds(55, 310, 46, 14);
+		titreSectionJeu.setBounds(55, 280, 46, 14);
 		contentPane.add(titreSectionJeu);
+		
+		////Option - Animations actives
+		btn_animation = new JCheckBox("Activer les animations");
+		btn_animation.setBounds(50, 305, 200, 23);
+		contentPane.add(btn_animation);
 		
 		////Option - Mode d'attaque
 		labelModeAttaque = new JLabel("Mode d'attaque :");
@@ -487,7 +499,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		contentPane.add(btnPlay);
 		
 		//setRadioButtons
-		setRadioButtons(typeJ1,typeJ2,modeAttaque);
+		setRadioButtons(typeJ1,typeJ2,modeAttaque,animation);
 		
 		//warningField
 		warningField(txtJoueur1, warning_J1);
@@ -569,6 +581,9 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 				return String.valueOf(spinner_cartes4.getValue());
 			case "carte5":
 				return String.valueOf(spinner_cartes5.getValue());
+			case "animation":
+				if(btn_animation.isSelected()) {return "Actif";}
+				else {return "NonActif";}
 			default:
 				System.err.println("Parametre introuvable !");
 				return "";

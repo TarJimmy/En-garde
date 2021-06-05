@@ -65,7 +65,7 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre.png", Configuration.MENU))).getImage().getScaledInstance(250, 75, Image.SCALE_SMOOTH));
 					label = new JLabel(banner);
 					label.setText("Actions annexes");
-					label.setFont(new Font("Century", Font.PLAIN, 25));
+					label.setFont(new Font(Configuration.Century.getFamily(), Font.PLAIN, 25));
 					label.setBounds(67, 15, 250, 75);
 					break;
 				default:
@@ -73,7 +73,7 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 					label = new JLabel(banner);
 					label.setText(name);
 					label.setForeground(Color.WHITE);
-					label.setFont(new Font("Century", Font.PLAIN, 20));
+					label.setFont(new Font(Configuration.Century.getFamily(), Font.PLAIN, 20));
 					break;
 			}
 			
@@ -154,7 +154,6 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		fenetreActionAnnexe.setVisible(true);
 		
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
