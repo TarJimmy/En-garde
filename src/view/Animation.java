@@ -68,7 +68,7 @@ public abstract class Animation implements ActionListener {
 			timer.stop();
 			animateur.finAnimation(this);
 		}
-		anim(progres);
+		anim(Math.round(progres*1000.0)/1000.0);
 	}
 
 

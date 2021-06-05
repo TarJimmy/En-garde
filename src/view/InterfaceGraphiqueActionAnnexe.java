@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.WindowAdapter;
@@ -86,45 +87,6 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		}
 	}
 	
-	/**
-	 * Cree un bouton JButton
-	 * @param name : le nom du bouton
-	 * @return le bouton name genere
-	 */
-	private static JButton Button (String name) {
-		JButton button;
-		ImageIcon banner;
-		
-		try {
-			switch (name){
-				case "FERMER":
-					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre3.png", Configuration.MENU))).getImage().getScaledInstance(150, 40, Image.SCALE_SMOOTH));
-					button = new JButton(name, banner);
-					button.addMouseListener(new AdaptateurBouton(controle,"cadre3", button, 150));
-					button.setFont(new Font("Century", Font.PLAIN, 15));
-					button.setBounds(10, 650, 150, 50);
-					break;
-				default:
-					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre2.png", Configuration.MENU))).getImage().getScaledInstance(200, 40, Image.SCALE_SMOOTH));
-					button = new JButton(name, banner);
-					button.addMouseListener(new AdaptateurBouton(controle, "cadre2", button, 200));
-					button.setFont(new Font("Century", Font.PLAIN, 12));
-					break;
-			}
-			
-			button.setHorizontalTextPosition(SwingConstants.CENTER);
-			button.setFocusPainted(false);
-			button.setBorderPainted(false);
-			button.setContentAreaFilled(false);
-			button.setOpaque(false);
-			
-			return button;
-		} catch (IOException e) {
-			System.err.println("An error as occured");
-			return null;
-		}
-	}
-	
 	@Override
 	public void miseAJour() {
 		// TODO Auto-generated method stub
@@ -144,7 +106,7 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		fenetreActionAnnexe.setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+		Font font = new Font("Century", Font.PLAIN, 15);
 		JLabel titre = Label("Titre");
 		contentPane.add(titre);
 		
@@ -152,17 +114,17 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		partieEnCours.setBounds(92, 180, 200, 50);
 		contentPane.add(partieEnCours);
 		
-		JButton nouvellePartie = Button("Nouvelle la partie");
+		JButton nouvellePartie = new ButtonCustom("Nouvelle la partie", "cadre2", new Dimension(200, 50), font);
 		nouvellePartie.addActionListener(new AdaptateurCommande(controle, "nouvellePartie"));
 		nouvellePartie.setBounds(92, 240, 200, 50);
 		contentPane.add(nouvellePartie);
 		
-		JButton sauvPartie = Button("Sauvegarder la partie");
+		JButton sauvPartie = new ButtonCustom("Sauvegarder la partie", "cadre2", new Dimension(200, 50), font);
 		sauvPartie.addActionListener(new AdaptateurCommande(controle, "sauvPartie"));
 		sauvPartie.setBounds(92, 300, 200, 50);
 		contentPane.add(sauvPartie);
 		
-		JButton chargePartie = Button("Charger une partie");
+		JButton chargePartie = new ButtonCustom("Charger une partie", "cadre2", new Dimension(200, 50), font);
 		chargePartie.addActionListener(new AdaptateurCommande(controle, "chargePartie"));
 		chargePartie.setBounds(92, 360, 200, 50);
 		contentPane.add(chargePartie);
@@ -171,17 +133,18 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		dernierCoup.setBounds(92, 430, 200, 50);
 		contentPane.add(dernierCoup);
 		
-		JButton annuleCoup = Button("Annuler le coup");
+		JButton annuleCoup = new ButtonCustom("Annuler le coup", "cadre2", new Dimension(200, 50), font);
 		annuleCoup.addActionListener(new AdaptateurCommande(controle, "annuleCoup"));
 		annuleCoup.setBounds(92, 490, 200, 50);
 		contentPane.add(annuleCoup);
 		
-		JButton refaireCoup = Button("Refaire le dernier coup");
+		JButton refaireCoup = new ButtonCustom("Refaire le dernier coup", "cadre2", new Dimension(200, 50), font);
 		refaireCoup.addActionListener(new AdaptateurCommande(controle, "refaireCoup"));
 		refaireCoup.setBounds(92, 550, 200, 50);
 		contentPane.add(refaireCoup);
 		
-		JButton fermer = Button("FERMER");
+		JButton fermer = new ButtonCustom("FERMER", "cadre3", new Dimension(150, 50), font);
+		fermer.setBounds(10, 650, 150, 50);
 		fermer.addActionListener(new AdaptateurCommande(controle, "close"));
 		contentPane.add(fermer);
 		

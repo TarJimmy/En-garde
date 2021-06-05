@@ -1,11 +1,26 @@
 package view;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Timer;
+
 import view.InterfaceGraphiqueJeu.PanelAnimation;
 
 public class AnimationFinManche extends Animation {
 
 	int depart, distance;
 	PanelAnimation panelAnimation;
+	Timer timerPause;
+	final ActionListener listenerPause = new ActionListener() {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			timerPause.stop();
+			timer.restart();
+			System.out.println("cocuou");
+		}
+	};
 	AnimationFinManche(CollecteurEvenements collecteur, Animateur animateur, int depart, int distance) {
 		super(collecteur, animateur, Animation.ANIM_FIN_MANCHE, 5, 0.005f);
 		this.depart = depart;
@@ -15,15 +30,12 @@ public class AnimationFinManche extends Animation {
 
 	@Override
 	public void anim(double progres) {
-		if (progres > 0.4999d && progres < 0.5001d) {
+		if (progres == 0.5) {
 			timer.stop();
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			timer.start();
+			super.progres += 0.005f;
+			timerPause = new Timer(2000, listenerPause); 
+			timerPause.setRepeats(false);
+		    timerPause.start();
 		}
 		int distanceAjouter = (int) Math.round((progres * distance));
 		int newX = (int) Math.round(depart + distanceAjouter);

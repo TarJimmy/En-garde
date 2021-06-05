@@ -105,17 +105,17 @@ public class Historique {
 			}
 		}
 		switch(dernierCoup.getAction()) {
-		case Coup.AVANCER :
-			jeu.getPlateau().deplacerEscrimeur(escrimeurCoup, -dernierCoup.getCartes()[0].getDistance());
-			jeu.modifieVue(Action.ANIMATION_DEPLACER_ESCRIMEUR);
-			break;
-		case Coup.RECULER :
-		case Coup.ESQUIVER :
-			jeu.getPlateau().deplacerEscrimeur(escrimeurCoup, dernierCoup.getCartes()[0].getDistance());
-			jeu.modifieVue(Action.ANIMATION_DEPLACER_ESCRIMEUR);
-			break;
-		default :
-			break;
+			case Coup.AVANCER :
+				jeu.getPlateau().deplacerEscrimeur(escrimeurCoup, -dernierCoup.getCartes()[0].getDistance());
+				jeu.modifieVue(Action.ANIMATION_DEPLACER_ESCRIMEUR);
+				break;
+			case Coup.RECULER :
+			case Coup.ESQUIVER :
+				jeu.getPlateau().deplacerEscrimeur(escrimeurCoup, dernierCoup.getCartes()[0].getDistance());
+				jeu.modifieVue(Action.ANIMATION_DEPLACER_ESCRIMEUR);
+				break;
+			default :
+				break;
 		}
 		
 		ajouterCoupAnnule(dernierCoup);

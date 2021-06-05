@@ -38,7 +38,6 @@ public class VueEscrimeur extends JPanel {
 		setLayout(new BorderLayout());
 		JPanel carteGrid = new JPanel(new GridLayout());
 		carteGrid.setOpaque(false);
-		carteGrid.setPreferredSize(new Dimension(1000, 210));
 		carteGrid.setBorder(new EmptyBorder(30, 30, 30, 30));
 		//add(carteGrid, BorderLayout.WEST);
 		vueMain = new VueMain(e.getCartes(), showFace);
@@ -74,5 +73,9 @@ public class VueEscrimeur extends JPanel {
 		vueManche.setNbWins(e.getMancheGagner());
 		vueMain.actualise(showFace);
 		btnPasserTour.setVisible(showFace && peutPasserTour);
+	}
+	
+	public VueMain getVueMain() {
+		return vueMain;
 	}
 }

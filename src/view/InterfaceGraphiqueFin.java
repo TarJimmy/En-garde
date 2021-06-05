@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.io.IOException;
@@ -43,32 +44,6 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 			fenetreFin.dispose();
 		}
 	}
-	
-	/**
-	 * Cree un bouton JButton
-	 * @param name : le nom du bouton
-	 * @return le bouton "name" genere
-	 */
-	private static JButton Button (String name) {
-		JButton button = null;
-		ImageIcon banner;
-		
-		try {
-			banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre2.png", Configuration.MENU))).getImage().getScaledInstance(195, 40, Image.SCALE_SMOOTH));
-			button = new JButton(name, banner);
-			button.setFont(new Font("Century", Font.PLAIN, 15));	
-			button.setHorizontalTextPosition(SwingConstants.CENTER);
-			button.addMouseListener(new AdaptateurBouton(controle, "cadre2", button, 195));
-			button.setFocusPainted(false);
-			button.setBorderPainted(false);
-			button.setContentAreaFilled(false);
-			button.setOpaque(false);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return button;
-	}
 
 	@Override
 	public void miseAJour() {
@@ -88,17 +63,17 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 		contentPane.setLayout(null);
 		
 		///Boutons
-		JButton btnMenu = Button("MENU");
+		JButton btnMenu = new ButtonCustom("MENU", "cadre2", new Dimension(200, 40), new Font("Century", Font.PLAIN, 15));
 		btnMenu.addActionListener(new AdaptateurCommande(controle, "menu"));
 		btnMenu.setBounds(50, 350, 200, 40);
 		contentPane.add(btnMenu);
 		
-		JButton btnRecommencer = Button("Recommencer");
+		JButton btnRecommencer = new ButtonCustom("Recommencer", "cadre2", new Dimension(200, 40), new Font("Century", Font.PLAIN, 15));
 		btnRecommencer.addActionListener(new AdaptateurCommande(controle, "rejouer"));
 		btnRecommencer.setBounds(342, 350, 200, 40);
 		contentPane.add(btnRecommencer);
 		
-		JButton btnQuit = Button("Quitter");
+		JButton btnQuit = new ButtonCustom("Quitter", "cadre2", new Dimension(200, 40), new Font("Century", Font.PLAIN, 15));
 		btnQuit.addActionListener(new AdaptateurCommande(controle, "exit"));
 		btnQuit.setBounds(634, 350, 200, 40);
 		contentPane.add(btnQuit);

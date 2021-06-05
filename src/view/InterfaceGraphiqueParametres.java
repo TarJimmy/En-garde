@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.io.IOException;
@@ -220,47 +221,6 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 			}
 			
 		});
-	}
-	
-	/**
-	 * Cree un bouton JButton
-	 * @param name : le nom du bouton
-	 * @return le bouton name genere
-	 */
-	private static JButton Button (String name) {
-		JButton button;
-		ImageIcon banner;
-		
-		try {
-			switch (name){
-				case "JOUER":
-				case "MENU":
-				case "FERMER":
-					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre4.png", Configuration.MENU))).getImage().getScaledInstance(195, 40, Image.SCALE_SMOOTH));
-					button = new JButton(name, banner);
-					button.setFont(new Font("Century", Font.PLAIN, 15));
-					button.setForeground(Color.WHITE);
-					button.addMouseListener(new AdaptateurBouton(controle, "cadre4", button, 195));
-					break;
-				default:
-					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre3.png", Configuration.MENU))).getImage().getScaledInstance(266, 40, Image.SCALE_SMOOTH));
-					button = new JButton(name, banner);
-					button.setFont(new Font("Century", Font.PLAIN, 11));
-					button.addMouseListener(new AdaptateurBouton(controle, "cadre3", button, 266));
-					break;
-			}
-			
-			button.setHorizontalTextPosition(SwingConstants.CENTER);
-			button.setFocusPainted(false);
-			button.setBorderPainted(false);
-			button.setContentAreaFilled(false);
-			button.setOpaque(false);
-			
-			return button;
-		} catch (IOException e) {
-			System.err.println("An error as occured");
-			return null;
-		}
 	}
 
 	@Override
@@ -510,17 +470,18 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		warnEnregistrement.setBounds(70, 540, 300, 40);
 		warnEnregistrement.setVisible(false);
 		contentPane.add(warnEnregistrement);
-		btnSaveSettings = Button("Enregistrer comme parametres par defaut");
+		btnSaveSettings = new ButtonCustom("Enregistrer comme parametres par defaut", "cadre3", new Dimension(266, 37), new Font("Century", Font.PLAIN, 11));
 		btnSaveSettings.addActionListener(new AdaptateurCommande(controle, "sauvePara", canEnregistrer));
 		btnSaveSettings.setBounds(55, 540, 266, 37);
 		contentPane.add(btnSaveSettings);
 		
-		JButton btnRestoreSettings = Button("Retablir les parametres par defaut");
+		JButton btnRestoreSettings = new ButtonCustom("Retablir les parametres par defaut","cadre3", new Dimension(266, 37), new Font("Century", Font.PLAIN, 11));
 		btnRestoreSettings.addActionListener(new AdaptateurCommande(controle, "restaurePara"));
 		btnRestoreSettings.setBounds(331, 540, 266, 37);
 		contentPane.add(btnRestoreSettings);
 		
-		JButton btnPlay = Button("MENU");
+		JButton btnPlay = new ButtonCustom("MENU", "cadre4", new Dimension(195, 37), new Font("Century", Font.PLAIN, 15));
+		btnPlay.setForeground(Color.white);
 		btnPlay.addActionListener(new AdaptateurCommande(controle, "menu"));
 		btnPlay.setBounds(634, 540, 195, 37);
 		contentPane.add(btnPlay);

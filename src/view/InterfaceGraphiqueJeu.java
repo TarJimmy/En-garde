@@ -139,9 +139,6 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		mainDroitier = new VueEscrimeur(controle, jeu.getPlateau(), jeu.getEscrimeurDroitier(), !jeu.getIsTourGaucher(), jeu.getNbManchesPourVictoire());
 		panelTop.add(mainDroitier,BorderLayout.EAST);
 		
-		// Centre
-		vuePlateau = new VuePlateau(jeu.getPlateau(), controle);
-		
 		// Bas
 		JPanel panelBot = new JPanel(new BorderLayout());
 		panelBot.setOpaque(false);
@@ -154,7 +151,9 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		vueDecks = new VueDeck(jeu.getDeckPioche(), jeu.getDeckDefausse());	
 		panelBot.add(vueDecks, BorderLayout.EAST);
 		
-		
+		// Centre
+		vuePlateau = new VuePlateau(jeu.getPlateau(), controle, mainGaucher.getVueMain(), mainDroitier.getVueMain());
+				
 		background.add(panelTop);
 		background.add(vuePlateau);
 		background.add(panelBot);

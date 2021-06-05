@@ -19,6 +19,7 @@ public class AnimationCarte extends Animation {
 		this.departs = departs;
 		this.distances = distances;
 		this.panelAnimation = (PanelAnimation)animateur;
+		demarre();
 	}
 
 	@Override
