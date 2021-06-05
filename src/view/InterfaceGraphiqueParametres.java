@@ -76,6 +76,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	private JLabel labelCartes5;
 	private static JSpinner spinner_cartes5;
 	//Boutons
+	private JLabel warning_J1;
+	private JLabel warning_J2;
 	private JLabel warnEnregistrement;
 	private JButton btnSaveSettings;
 	
@@ -97,6 +99,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	private static int cartes5;
 	private static String animation;
 	private Boolean canEnregistrer;
+	private Boolean J1;
+	private Boolean J2;
 	
 	private InterfaceGraphiqueParametres(CollecteurEvenements controle) {
 		InterfaceGraphiqueParametres.controle = controle;
@@ -201,7 +205,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	 * @param txtJoueur : zone de texte e verifier
 	 * @param warning : le text e afficher
 	 */
-	private void warningField(JTextField txtJoueur, JLabel warning) {
+	private void warningField(String j,JTextField txtJoueur, JLabel warning) {
 		txtJoueur.getDocument().addDocumentListener(new DocumentListener() {
 
 			@Override
@@ -215,15 +219,21 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 
 			private void warn() {
 				if (txtJoueur.getText().isEmpty()) {
+					if (j == "j1"){J1 = false;}
+					else if (j == "j2"){J2 = false;}
 					canEnregistrer = false;
 					warnEnregistrement.setVisible(true);
 					btnSaveSettings.setVisible(false);
 					warning.setVisible(true);
 				} else {
+					if (j == "j1"){J1 = true;}
+					else if (j == "j2"){J2 = true;}
+					warning.setVisible(false);
+				}
+				if(J1&&J2) {
 					canEnregistrer = true;
 					warnEnregistrement.setVisible(false);
 					btnSaveSettings.setVisible(true);
-					warning.setVisible(false);
 				}
 			}
 			
@@ -241,6 +251,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	@Override
 	public void run() {
 		canEnregistrer = true;
+		J1 = true;
+		J2 = true;
 		fenetreParametres = new JFrame("EN GARDE ! - PARAMETRES");
 		JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -280,7 +292,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		txtJoueur1.setBounds(175, 140, 130, 20);
 		contentPane.add(txtJoueur1);
 		txtJoueur1.setColumns(10);
-		JLabel warning_J1 = new JLabel("ATTENTION : le nom du joueur ne peut pas \u00EAtre vide");
+		warning_J1 = new JLabel("ATTENTION : le nom du joueur ne peut pas \u00EAtre vide");
 		warning_J1.setFont(new Font("Tahoma", Font.BOLD, 11));
 		warning_J1.setForeground(new Color(128, 0, 0));
 		warning_J1.setBounds(330, 140, 300, 20);
@@ -332,7 +344,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		txtJoueur2.setColumns(10);
 		txtJoueur2.setBounds(175, 204, 130, 20);
 		contentPane.add(txtJoueur2);
-		JLabel warning_J2 = new JLabel("ATTENTION : le nom du joueur ne peut pas \u00EAtre vide");
+		warning_J2 = new JLabel("ATTENTION : le nom du joueur ne peut pas \u00EAtre vide");
 		warning_J2.setFont(new Font("Tahoma", Font.BOLD, 11));
 		warning_J2.setForeground(new Color(128, 0, 0));
 		warning_J2.setBounds(330, 204, 300, 14);
@@ -502,8 +514,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		setRadioButtons(typeJ1,typeJ2,modeAttaque,animation);
 		
 		//warningField
-		warningField(txtJoueur1, warning_J1);
-		warningField(txtJoueur2, warning_J2);
+		warningField("j1",txtJoueur1, warning_J1);
+		warningField("j2",txtJoueur2, warning_J2);
 		
 		//bornesSpinnersTerrain
 		spinner_map.addChangeListener(new ChangeListener() {

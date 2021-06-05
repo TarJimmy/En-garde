@@ -49,13 +49,13 @@ public class ButtonCustom extends JButton {
 		setFont(font);
 	}
 	
-	public ButtonCustom(String text, BufferedImage imgExited, BufferedImage imgEnterred, Dimension dimension) {
+	public ButtonCustom(String text, ImageIcon imgExited, ImageIcon imgEnterred, Dimension dimension) {
 		super(text);
 		if (imgExited != null) {
-			this.imgIconExited = new ImageIcon(imgExited);
+			this.imgIconExited = imgExited;
 		} 
 		if (imgEnterred != null) {
-			this.imgIconEnterred = new ImageIcon(imgEnterred);
+			this.imgIconEnterred = imgEnterred;
 		}
 		initButton(dimension);
 	}

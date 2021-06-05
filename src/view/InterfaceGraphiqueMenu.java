@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -79,7 +80,7 @@ public class InterfaceGraphiqueMenu implements Runnable {
 			menu_fond.setBorder(new EmptyBorder(0, 0, 0, 0));
 			JButton play = new ButtonCustom("JOUER", "cadre", new Dimension(400, 100));
 			play.addActionListener(new AdaptateurCommande(collecteurMenu, "jouerMenu"));
-			BufferedImage imgBtnBanal = ImageIO.read(Configuration.charge("cadre3.png", Configuration.MENU));
+			ImageIcon imgBtnBanal = new ImageIcon(ImageIO.read(Configuration.charge("cadre3.png", Configuration.MENU)).getScaledInstance(400, 50, Image.SCALE_SMOOTH));
 			JButton charge = new ButtonCustom("Charger Partie", null, imgBtnBanal, new Dimension(400, 50));
 			JButton demo = new ButtonCustom("Tutoriel", null, imgBtnBanal, new Dimension(400, 50));
 			demo.addActionListener(new AdaptateurCommande(collecteurMenu, "tuto"));
