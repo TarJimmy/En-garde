@@ -147,15 +147,15 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		aide.setBounds(92, 590, 200, 50);
 		contentPane.add(aide);
 		
-		JButton activeIA = new ButtonCustom("Activer l'IA", "cadre2", new Dimension(200, 50), font);
-		activeIA.addActionListener(new AdaptateurCommande(controle, "activeIA"));
-		activeIA.setBounds(92, 650, 200, 50);
-		contentPane.add(activeIA);
+		JButton activeAide = new ButtonCustom("Activer l'aide", "cadre2", new Dimension(200, 50), font);
+		activeAide.addActionListener(new AdaptateurCommande(controle, "activeAide"));
+		activeAide.setBounds(92, 650, 200, 50);
+		contentPane.add(activeAide);
 		
-		JButton desactiveIA = new ButtonCustom("Desactiver l'IA", "cadre2", new Dimension(200, 50), font);
-		desactiveIA.addActionListener(new AdaptateurCommande(controle, "desactiveIA"));
-		desactiveIA.setBounds(92, 650, 200, 50);
-		contentPane.add(desactiveIA);
+		JButton desactiveAide = new ButtonCustom("Desactiver l'aide", "cadre2", new Dimension(200, 50), font);
+		desactiveAide.addActionListener(new AdaptateurCommande(controle, "desactiveAide"));
+		desactiveAide.setBounds(92, 650, 200, 50);
+		contentPane.add(desactiveAide);
 		
 		JButton montrerCartes = new ButtonCustom("Montrer les cartes", "cadre2", new Dimension(200, 50), font);
 		montrerCartes.addActionListener(new AdaptateurCommande(controle, "montrerCartes"));
