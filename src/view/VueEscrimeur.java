@@ -3,6 +3,7 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Insets;
@@ -47,8 +48,8 @@ public class VueEscrimeur extends JPanel {
 		panelBtn.setPreferredSize(new Dimension(1000, 74));
 		panelBtn.setOpaque(false);
 		
-		btnPasserTour = new JButton("Passer tour");
-		btnPasserTour.setPreferredSize(new Dimension(300, 70));
+		btnPasserTour = new ButtonCustom("Passer tour", "cadre2", new Dimension(300, 70), new Font("Century", Font.PLAIN, 30));
+		//btnPasserTour.setPreferredSize(new Dimension(300, 70));
 		System.out.println(controle.getClass());
 		btnPasserTour.addActionListener(new AdaptateurCommande(controle, "PasserTour"));
 		vueManche = new VueManche(nbMancheMax, e.getMancheGagner(), e.getIsGaucher());

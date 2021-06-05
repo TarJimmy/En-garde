@@ -111,45 +111,64 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		contentPane.add(titre);
 		
 		JLabel partieEnCours = Label("Partie en cours :");
-		partieEnCours.setBounds(92, 180, 200, 50);
+		partieEnCours.setBounds(92, 150, 200, 50);
 		contentPane.add(partieEnCours);
 		
 		JButton nouvellePartie = new ButtonCustom("Nouvelle la partie", "cadre2", new Dimension(200, 50), font);
 		nouvellePartie.addActionListener(new AdaptateurCommande(controle, "nouvellePartie"));
-		nouvellePartie.setBounds(92, 240, 200, 50);
+		nouvellePartie.setBounds(92, 210, 200, 50);
 		contentPane.add(nouvellePartie);
 		
 		JButton sauvPartie = new ButtonCustom("Sauvegarder la partie", "cadre2", new Dimension(200, 50), font);
 		sauvPartie.addActionListener(new AdaptateurCommande(controle, "sauvPartie"));
-		sauvPartie.setBounds(92, 300, 200, 50);
+		sauvPartie.setBounds(92, 270, 200, 50);
 		contentPane.add(sauvPartie);
 		
 		JButton chargePartie = new ButtonCustom("Charger une partie", "cadre2", new Dimension(200, 50), font);
 		chargePartie.addActionListener(new AdaptateurCommande(controle, "chargePartie"));
-		chargePartie.setBounds(92, 360, 200, 50);
+		chargePartie.setBounds(92, 330, 200, 50);
 		contentPane.add(chargePartie);
 		
 		JLabel dernierCoup = Label("Dernier coup :");
-		dernierCoup.setBounds(92, 430, 200, 50);
+		dernierCoup.setBounds(92, 400, 200, 50);
 		contentPane.add(dernierCoup);
 		
 		JButton annuleCoup = new ButtonCustom("Annuler le coup", "cadre2", new Dimension(200, 50), font);
 		annuleCoup.addActionListener(new AdaptateurCommande(controle, "annuleCoup"));
-		annuleCoup.setBounds(92, 490, 200, 50);
+		annuleCoup.setBounds(92, 460, 200, 50);
 		contentPane.add(annuleCoup);
 		
 		JButton refaireCoup = new ButtonCustom("Refaire le dernier coup", "cadre2", new Dimension(200, 50), font);
 		refaireCoup.addActionListener(new AdaptateurCommande(controle, "refaireCoup"));
-		refaireCoup.setBounds(92, 550, 200, 50);
+		refaireCoup.setBounds(92, 520, 200, 50);
 		contentPane.add(refaireCoup);
 		
+		JLabel aide = Label("Aide :");
+		aide.setBounds(92, 590, 200, 50);
+		contentPane.add(aide);
+		
+		JButton activeIA = new ButtonCustom("Activer l'IA", "cadre2", new Dimension(200, 50), font);
+		activeIA.addActionListener(new AdaptateurCommande(controle, "activeIA"));
+		activeIA.setBounds(92, 650, 200, 50);
+		contentPane.add(activeIA);
+		
+		JButton desactiveIA = new ButtonCustom("Desactiver l'IA", "cadre2", new Dimension(200, 50), font);
+		desactiveIA.addActionListener(new AdaptateurCommande(controle, "desactiveIA"));
+		desactiveIA.setBounds(92, 650, 200, 50);
+		contentPane.add(desactiveIA);
+		
+		JButton montrerCartes = new ButtonCustom("Montrer les cartes", "cadre2", new Dimension(200, 50), font);
+		montrerCartes.addActionListener(new AdaptateurCommande(controle, "montrerCartes"));
+		montrerCartes.setBounds(92, 710, 200, 50);
+		contentPane.add(montrerCartes);
+		
 		JButton fermer = new ButtonCustom("FERMER", "cadre3", new Dimension(150, 50), font);
-		fermer.setBounds(10, 650, 150, 50);
+		fermer.setBounds(10, 790, 150, 50);
 		fermer.addActionListener(new AdaptateurCommande(controle, "close"));
 		contentPane.add(fermer);
 		
 		fenetreActionAnnexe.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		fenetreActionAnnexe.setBounds(100, 100, 400, 750);
+		fenetreActionAnnexe.setBounds(100, 100, 400, 900);
 		fenetreActionAnnexe.setResizable(false);
 		fenetreActionAnnexe.setVisible(true);
 		
