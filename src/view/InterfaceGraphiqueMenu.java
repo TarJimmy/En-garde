@@ -4,7 +4,10 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -75,6 +78,7 @@ public class InterfaceGraphiqueMenu implements Runnable {
 		fenetreMenu = new JFrame("EN GARDE ! - MENU PRINCIPAL");
 		JLabel menu_fond = null;
 		try {
+			fenetreMenu.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
 			menu_fond = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("Menu_EnGarde.png", Configuration.MENU))));
 			menu_fond.setLayout( new GridBagLayout());
 			menu_fond.setBorder(new EmptyBorder(0, 0, 0, 0));

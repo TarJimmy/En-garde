@@ -9,7 +9,10 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
+import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -87,6 +90,12 @@ public class InterfaceGraphiqueRegles implements Runnable {
         frame.setBackground(Color.white);
         frame.setSize(906, 900);
         frame.setResizable(false);
+        try {
+			frame.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
+		} catch (HeadlessException | IndexOutOfBoundsException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         JPanel panelBoutons = new JPanel(new GridLayout(1,2));
         panelBoutons.setPreferredSize(new Dimension(frame.getWidth(),100));
         frame.add(panelBoutons,BorderLayout.NORTH);

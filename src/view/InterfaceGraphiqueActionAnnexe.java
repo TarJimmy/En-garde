@@ -3,7 +3,10 @@ package view;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -102,10 +105,16 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		fenetreActionAnnexe = new JFrame("EN GARDE ! - Panel de triche");
 		JLabel contentPane = null;
 		contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("ActionAnnexe.png", Configuration.MENU))));
-		
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		fenetreActionAnnexe.setContentPane(contentPane);
+		try {
+			fenetreActionAnnexe.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
+		} catch (HeadlessException | IndexOutOfBoundsException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		contentPane.setLayout(null);
+		
 		Font font = new Font(Configuration.Century.getFamily(), Font.PLAIN, 15);
 		JLabel titre = Label("Titre");
 		contentPane.add(titre);

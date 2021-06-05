@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -67,6 +69,7 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 		String id = "Vide";
 		try {
 			contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("fondChargePartie.png", Configuration.MENU))));
+			fenetreChargerPartie.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

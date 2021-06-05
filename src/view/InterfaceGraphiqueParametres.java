@@ -3,7 +3,10 @@ package view;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.List;
 
@@ -257,6 +260,14 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		fenetreParametres.setContentPane(contentPane);
+
+		try {
+			fenetreParametres.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
+		} catch (HeadlessException | IndexOutOfBoundsException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	
 		contentPane.setLayout(null);
 		
 		// Titre principal - PAREMETRES

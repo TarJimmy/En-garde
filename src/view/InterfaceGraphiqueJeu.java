@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -127,6 +128,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 			background.setLayout(new GridLayout(3, 1));
 			background.setPreferredSize(new Dimension(largeurFenetre, hauteurFenetre));
 			frame.add(background);
+			frame.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
