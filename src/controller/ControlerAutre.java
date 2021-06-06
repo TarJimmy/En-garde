@@ -21,6 +21,7 @@ import view.InterfaceGraphiqueJeu;
 import view.InterfaceGraphiqueMenu;
 import view.InterfaceGraphiqueParametres;
 import view.InterfaceGraphiqueRegles;
+import view.InterfaceGraphiqueTutoriel;
 
 /**
  * 
@@ -127,6 +128,7 @@ public class ControlerAutre extends Controler {
 				InterfaceGraphiqueParametres.majParametres(settings);
 				break;
 			case "tuto":
+		        InterfaceGraphiqueTutoriel.demarrer();
 				break;
 			case "regles":
 				InterfaceGraphiqueRegles.demarrer();
