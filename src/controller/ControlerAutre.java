@@ -87,15 +87,17 @@ public class ControlerAutre extends Controler {
 					DeckDefausse deckDefausse = new DeckDefausse();
 					
 					String anim = it.next();
-					Boolean animation;
-					if (anim=="Actif"){animation = true;} else {animation = false;}
-					
+					Boolean animationAutoriser;
+					if (anim.equals("Actif")) { 
+						animationAutoriser = true;
+					} else {
+						animationAutoriser = false;
+					}
+					int[] positonDepart = {posJ1, posJ2};
 					Plateau plateau = new Plateau(posJ1, posJ2, nbDalles);
-					Jeu jeu = new Jeu(modeSimple, plateau, deckPioche, deckDefausse, nbManches, Escrimeur.GAUCHER, eGaucher, eDroitier, animation);
+					Jeu jeu = new Jeu(modeSimple, plateau, deckPioche, deckDefausse, nbManches, Escrimeur.GAUCHER, eGaucher, eDroitier, positonDepart, animationAutoriser);
 					
-					ControlerJeu cJeu = new ControlerJeu(jeu);
-					
-					InterfaceGraphiqueJeu.demarrer(cJeu, jeu);
+					new ControlerJeu(jeu);
 				} catch (IncorrectPlateauException e) {
 					e.printStackTrace();
 				} catch (IncorrectCarteException e) {

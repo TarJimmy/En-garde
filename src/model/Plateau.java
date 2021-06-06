@@ -68,7 +68,6 @@ public class Plateau extends Observable {
 		
 		if (mouvementPossible(e, distance)) {
 			positionJoueurs[currentIndice] += casesADeplacer;
-			metAJour();
 			return true;
 		} else {
 			System.err.println("dans plateau.deplacerEscrimeur : deplacementImpossible");

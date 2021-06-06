@@ -75,12 +75,20 @@ public class DB_DAO {
                 + " nomJoueurD integer NOT NULL,\n"
                 + " mancheGagnerGauche integer NOT NULL,\n"
                 + " mancheGagnerDroit integer NOT NULL,\n"
+                
                 + " posJoueurG integer NOT NULL,\n"
                 + " posJoueurD integer NOT NULL,\n"
-                + " DefausseJSON text NOT NULL,\n"
-                + " PiocheJSON text NOT NULL,\n"
+                
+                
                 + " mainGaucherJSON text NOT NULL,\n"
-                + " mainDroitierJSON text NOT NULL\n"
+                + " mainDroitierJSON text NOT NULL,\n"
+                + " piocheJSON text NOT NULL,\n"
+                + " DefausseJSON text NOT NULL,\n"
+                
+                + " posDepartGauche integer NOT NULL,\n"
+                + " posDepartDroit integer NOT NULL\n"
+
+                
                 + ");";
 
 

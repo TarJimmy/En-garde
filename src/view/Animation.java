@@ -10,6 +10,7 @@ public abstract class Animation implements ActionListener {
 	public static final int ANIM_CARTES = 1;
 	public static final int ANIM_FIN_MANCHE = 2;
 	public static final int ANIM_ESCRIMEUR = 3;
+	public static final int CHANGEMENT_JOUEUR = 4;
 	
 	protected Timer timer;
 	protected CollecteurEvenements collecteur;
@@ -58,6 +59,10 @@ public abstract class Animation implements ActionListener {
 		timer.start();
 		animateur.debutAnimation(typeAnimation);
 		progres = 0;
+	}
+	
+	public void termine() {
+		timer.stop();
 	}
 	
 	@Override

@@ -6,7 +6,7 @@ import java.io.IOException;
 import Global.Configuration;
 
 public class Carte {	
-	private int distance;
+	public int distance;
 	
 	public Carte(int distance) throws IncorrectCarteException {
 		if (distance < 0) {

@@ -44,11 +44,18 @@ public class Historique {
 		
 		
 		Boolean res = jeu.jouer(c,true);
-        HashSet<Integer> cases = jeu.casesJouables();
-        if(cases.size() == 1 && cases.contains(-1)) {
-            jeu.changerTour();
-        }
-        return res;	
+		if (res == false) {
+			return false;
+		}
+		HashSet<Integer> cases = jeu.casesJouables();
+		int action = c.getAction();
+		if ((action == Coup.ATTAQUEDIRECTE  || action == Coup.ATTAQUEINDIRECTE) && !cases.isEmpty() && jeu.getDeckPioche().deckVide()) {
+			jeu.setDernierTour(true);
+		}
+		if(cases.size() == 1 && cases.contains(-1)) {
+			jeu.changerTour();
+		}
+		return true;
 	}
 	
 	public Coup voirDernierCoup() {
@@ -119,6 +126,9 @@ public class Historique {
 		}
 		
 		ajouterCoupAnnule(dernierCoup);
+		if (jeu.isDernierTour()) {
+			jeu.setDernierTour(false);
+		}
 		jeu.setIndiceCurrentEscrimeur(escrimeurCoup.getIndice());
         jeu.modifieVue(Action.ACTUALISER_ESCRIMEUR);
         jeu.modifieVue(Action.ACTUALISER_DECK);

@@ -25,11 +25,13 @@ public class AdaptateurCase extends MouseAdapter {
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
 		super.mousePressed(e);
-		int espaceCase = vuePlateau.getWidth() / nbCase;
-		int x = e.getX() / espaceCase + 1;
-		
-		if (caseClickable.contains(x)) {
-			controle.clickCase(x, (int)vuePlateau.getNbCarteSelect());
+		if (vuePlateau.estCaseClickable()) {
+			int espaceCase = vuePlateau.getWidth() / nbCase;
+			int x = e.getX() / espaceCase + 1;
+			
+			if (caseClickable.contains(x)) {
+				controle.clickCase(x, (int)vuePlateau.getNbCarteSelect());
+			}
 		}
 	}
 }

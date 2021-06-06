@@ -29,7 +29,7 @@ public class SauvegarderPartie_DAO {
     }
 	
 	public void sauvegardeJeu(Jeu jeu) {  
-        String sql = "INSERT OR REPLACE INTO SauvegarderPartie(nomJoueurG,nomJoueurD,mancheGagnerGauche,mancheGagnerDroit,posJoueurG,posJoueurD,mainGaucherJSON,mainDroitierJSON,DefausseJSON,PiocheJSON) VALUES(?,?,?,?,?,?,?,?)";  
+        String sql = "INSERT OR REPLACE INTO SauvegarderPartie(nomJoueurG,nomJoueurD,mancheGagnerGauche,mancheGagnerDroit,posJoueurG,posJoueurD,mainGaucherJSON,mainDroitierJSON,DefausseJSON,PiocheJSON,posDepartGauche,posDepartDroit) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";  
    
         try{  
             Connection conn = this.connect();  
@@ -40,16 +40,25 @@ public class SauvegarderPartie_DAO {
             pstmt.setInt(4, jeu.getEscrimeurDroitier().getMancheGagner());
             pstmt.setInt(5, jeu.getPlateau().getPosition(0));  
             pstmt.setInt(6, jeu.getPlateau().getPosition(1));  
-          
+            pstmt.setInt(7, jeu.getPlateau().getNbCase());  
+            pstmt.setInt(8, jeu.getNbManchesPourVictoire());  
             
             
             try {
+            	JSONArray mainGaucherjsArray = new JSONArray(jeu.getEscrimeurGaucher().getArrayCartes());
+            	JSONArray mainDroitierjsArray = new JSONArray(jeu.getEscrimeurDroitier().getArrayCartes());
 				JSONArray DefaussejsArray = new JSONArray(jeu.getDeckDefausse().getArray());
-				JSONArray DeckjsArray = new JSONArray(jeu.getDeckPioche().getArray());
+				JSONArray PiochejsArray = new JSONArray(jeu.getDeckPioche().getArray());
+				pstmt.setString(9, mainGaucherjsArray.toString());  
+	            pstmt.setString(10, mainDroitierjsArray.toString());  
+	            pstmt.setString(11, DefaussejsArray.toString());  
+	            pstmt.setString(12, PiochejsArray.toString()); 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+            pstmt.setInt(13, jeu.getPositionsDepart()[0]);
+            pstmt.setInt(14, jeu.getPositionsDepart()[1]);  
             
             
             pstmt.executeUpdate();  

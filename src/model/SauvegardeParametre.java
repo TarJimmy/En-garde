@@ -109,7 +109,7 @@ public class SauvegardeParametre {
 				vc.add(s);
 			}
 			valeurs_cartes = vc;
-			//animation = fReader.nextLine().trim();
+			animation = fReader.nextLine().trim();
 			
 			fReader.close();
 			

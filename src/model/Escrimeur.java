@@ -1,17 +1,20 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import Patterns.Observable;
 
-public class Escrimeur extends Observable {
+public class Escrimeur {
 	private String nom;
 	private TypeEscrimeur type;
 	private int indice; //0 si l'escrimeur est gaucher, 1 sinon
 	private Carte[] cartes;
-	private int nbCartes;
 	public static final int GAUCHER = 0;
 	public static final int DROITIER = 1;
 	private int mancheGagner;
-	
+	private ArrayList<Integer> indicesCartesModifierRecemment;
+	private ArrayList<Integer> distancesCartesModifierRecemment;
 	/**
 	 * Constructeur lors d'unne nouvelle partie
 	 * @param nom
@@ -24,8 +27,9 @@ public class Escrimeur extends Observable {
 		this.type = type;
 		this.indice = indice;
 		this.cartes = new Carte[nbCarte];
-		this.nbCartes = nbCarte;
 		this.mancheGagner = 0;
+		this.indicesCartesModifierRecemment = new ArrayList<>();
+		this.distancesCartesModifierRecemment = new ArrayList<>();
 	}
 	
 	/**
@@ -41,15 +45,15 @@ public class Escrimeur extends Observable {
 	}
 	
 	public int getNbCartes() {
-		return this.nbCartes;
+		return this.cartes.length;
 	}
 	
 	public boolean manqueCarte() {
 		int i = 0;
-		while (i < nbCartes && cartes[i] != null) {
+		while (i < cartes.length && cartes[i] != null) {
 			i++;
 		}
-		return i < nbCartes;
+		return i < cartes.length;
 	}
 	
 	private void setNom(String nom) {
@@ -64,7 +68,8 @@ public class Escrimeur extends Observable {
 		for (int i = 0; i < cartes.length; i++) {
 			if (cartes[i] == null) {
 				cartes[i] = c;
-				metAJour();
+				indicesCartesModifierRecemment.add(i);
+				distancesCartesModifierRecemment.add(cartes[i].getDistance());
 				return true;
 			}
 		}
@@ -84,11 +89,12 @@ public class Escrimeur extends Observable {
 	public int supprimerCarte(Carte c) {
 		for (int i = 0; i < cartes.length; i++) {
 			if (cartes[i] == c) {
+				distancesCartesModifierRecemment.add(cartes[i].getDistance());
 				for (int j = i; j < cartes.length - 1; j++) {
-					cartes[j] = cartes [j+1];
+					cartes[j] = cartes [j + 1];
 				}
+				indicesCartesModifierRecemment.add(i);
 				cartes[cartes.length - 1] = null;
-				metAJour();
 				return i;
 			}
 		}
@@ -101,6 +107,14 @@ public class Escrimeur extends Observable {
 	
 	public Carte getCarte(int i) {
 		return cartes[i];
+	}
+	
+	public int[] getArrayCartes() {
+		int [] res = new int[cartes.length];
+		for (int i = 0; i < cartes.length; i++) {
+			res[i] = cartes[i].getDistance();
+		}
+		return res;
 	}
 
 	public String getNom() {
@@ -143,5 +157,22 @@ public class Escrimeur extends Observable {
 			}
 		}
 		return res;
+	}
+	
+	public void prepareChangeCartes() {
+		indicesCartesModifierRecemment.clear();
+		distancesCartesModifierRecemment.clear();
+	}
+	
+	public ArrayList<Integer> getIndicesCartesModifierRecemment() {
+		return indicesCartesModifierRecemment;
+	}
+	
+	public ArrayList<Integer> getDistancesCartesModifierRecemment() {
+		return distancesCartesModifierRecemment;
+	}
+	
+	public void resetMancheGagner() {
+		mancheGagner = 0;
 	}
 }

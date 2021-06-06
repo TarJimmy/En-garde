@@ -11,6 +11,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -22,6 +24,7 @@ import javax.swing.border.LineBorder;
 import Global.Configuration;
 import Patterns.Observateur;
 import model.Carte;
+import model.Escrimeur;
 
 public class VueMain extends JComponent {
 	
@@ -31,7 +34,7 @@ public class VueMain extends JComponent {
 	public final static int largeurCarte = 98;
 	public final static int hauteurCarte = 150;
 	
-	private Carte[] cartes;
+	private int[] cartes;
 	private final int largeurSocle = 160;
 	private final int hauteurSocle = 203;
 	private Graphics2D drawable;
@@ -50,9 +53,9 @@ public class VueMain extends JComponent {
 	
 	private int espaceCarte;
 	
-	public VueMain(Carte[] cartes, Boolean showFace) {
+	public VueMain(int nbCartes, Boolean showFace) {
 		this.showFace = showFace;
-		this.cartes = cartes;
+		this.cartes = new int[nbCartes];
 		this.distanceSelect = -1;
 		this.isAttaqueDefense = false;
 		this.setPreferredSize(new Dimension(largeurPanel, hauteurPanel));
@@ -76,6 +79,7 @@ public class VueMain extends JComponent {
 		this.posCartes = new Point[cartes.length];
 		this.posSocles = new Point[cartes.length];
 		for (int i = 0; i < cartes.length; i++) {
+			this.cartes[i] = -1;
 			int posXSocle = 15 + i * espaceCarte + (espaceCarte - espaceCarte) / 2;
 			this.posSocles[i] = new Point(posXSocle, posYSocle);
 			this.posCartes[i] = new Point(posXSocle + ((espaceCarte - largeurCarte) / 2), posYSocle + ((hauteurSocle - hauteurCarte) / 2));
@@ -85,14 +89,13 @@ public class VueMain extends JComponent {
 	@Override
 	protected void paintComponent(Graphics g) {
 	    drawable = (Graphics2D)g;
-	    
 	    for (int i = 0; i < this.cartes.length; i++) {
 			int posXSocle = 15 + i * espaceCarte + (espaceCarte - espaceCarte) / 2;
 			//int posYSocle = (hauteurPanel - hauteurSocle) / 2;
 			// Dessine Socle
 			drawable.drawImage(imgSocle, posSocles[i].x, posSocles[i].y, espaceCarte, hauteurSocle, null);
-			if (this.cartes[i] != null) {
-				int distance = this.cartes[i].getDistance();
+			if (this.cartes[i] > 0) {
+				int distance = this.cartes[i];
 				Image img;
 				if (showFace) {
 					if (distance == distanceSelect) {
@@ -115,7 +118,33 @@ public class VueMain extends JComponent {
 	}
 	
 	public void actualise(Boolean showFace) {
+		setDistanceSelect(-1, false);
 		this.showFace = showFace;
 		repaint();
+	}
+	
+	public void actualise(Carte[] cartes, Boolean showFace) {
+		for (int i = 0; i < cartes.length; i++) {
+			this.cartes[i] = cartes[i] != null ? cartes[i].getDistance() : -1;
+		}
+ 		actualise(showFace);
+	}
+	
+	public Point[] extractPosCarte(ArrayList<Integer> listI, int ajoutY) {
+		Point[] points = new Point[listI.size()];
+		Iterator<Integer> it = listI.iterator();
+		int i = 0;
+		Integer indiceCarte;
+		while (it.hasNext()) {
+			indiceCarte = it.next();
+			points[i] = new Point(posCartes[indiceCarte].x, posCartes[indiceCarte].y + ajoutY);
+			cartes[indiceCarte] = -1;
+			i++;
+		}
+		return points;
+	}
+	
+	public boolean getShowFace() {
+		return showFace;
 	}
 }

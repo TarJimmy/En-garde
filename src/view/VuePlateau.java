@@ -58,7 +58,7 @@ public class VuePlateau extends JPanel implements Animateur {
 	private CollecteurEvenements controle;
 	
 	private HashSet<Integer> caseClickable;
-	private int indiceEcrimeursCourant;
+	private int indiceEscrimeurCourant;
 	
 	private Point[] positionEscrimeurs;
 	
@@ -84,14 +84,16 @@ public class VuePlateau extends JPanel implements Animateur {
 	
 	private int numCaseMouse;
 	private int numCaseConseil;
+	
+	private boolean showCaseClickable;
 	VuePlateau(Plateau p, CollecteurEvenements controle, VueMain mainGaucher, VueMain mainDroitier) {
 		caseClickable = new HashSet<>();
-		indiceEcrimeursCourant = Escrimeur.GAUCHER;
+		indiceEscrimeurCourant = Escrimeur.GAUCHER;
 		init(p, controle, mainGaucher, mainDroitier);
 	}
 	
-	VuePlateau(Plateau p, CollecteurEvenements controle, HashSet<Integer> caseAccessible, int indiceEcrimeursCourant, VueMain mainGaucher, VueMain mainDroitier) {
-		this.indiceEcrimeursCourant = indiceEcrimeursCourant;
+	VuePlateau(Plateau p, CollecteurEvenements controle, HashSet<Integer> caseAccessible, int indiceEscrimeurCourant, VueMain mainGaucher, VueMain mainDroitier) {
+		this.indiceEscrimeurCourant = indiceEscrimeurCourant;
 		this.controle = controle;
 		caseClickable = caseAccessible;
 		init(p, controle, mainGaucher, mainDroitier);
@@ -102,6 +104,7 @@ public class VuePlateau extends JPanel implements Animateur {
 		this.p = p;
 		this.NBCases = p.getNbCase();
 		numCaseMouse = -1;
+		showCaseClickable = false;
 		vueMains = new VueMain[2];
 		vueMains[Escrimeur.GAUCHER] = mainGaucher;
 		vueMains[Escrimeur.DROITIER] = mainDroitier;
@@ -197,24 +200,28 @@ public class VuePlateau extends JPanel implements Animateur {
 		numCaseMouse = numCase;
 		repaint();
 		if (caseClickable.contains(numCase)) {	
-			int newDistanceSelect = Math.abs(numCase - p.getPosition(indiceEcrimeursCourant));
-			vueMains[indiceEcrimeursCourant].setDistanceSelect(newDistanceSelect, p.getPosition((indiceEcrimeursCourant + 1) % 2) == numCaseMouse || p.getPosition(indiceEcrimeursCourant) == numCaseMouse);
+			int posECourant = p.getPosition(indiceEscrimeurCourant);
+			int posEAutre = p.getPosition((indiceEscrimeurCourant + 1) % 2);
+			
+			int newDistanceSelect = Math.abs(numCase - (posECourant == numCase ? posEAutre : posECourant));
+			
+			vueMains[indiceEscrimeurCourant].setDistanceSelect(newDistanceSelect, posEAutre == numCaseMouse || posECourant == numCaseMouse);
 		} else {
-			vueMains[indiceEcrimeursCourant].setDistanceSelect(-1, false);
+			vueMains[indiceEscrimeurCourant].setDistanceSelect(-1, false);
 		}
 	}
 	
 	void tracerPlateau() throws IOException {
 		int posGaucher = p.getPosition(Escrimeur.GAUCHER);
 		int posDroitier =  p.getPosition(Escrimeur.DROITIER);
-		int indiceOtherEscrimeur = (indiceEcrimeursCourant + 1) % 2;
+		int indiceOtherEscrimeur = (indiceEscrimeurCourant + 1) % 2;
 		for (int i = 1; i <= NBCases; i++) {
 			int posX = (i - 1) * espaceCase;
 			int posXImage = posX + (espaceCase - widthDalle) / 2;
 			BufferedImage imgDalle;
-			if(caseClickable.contains(i)) {
+			if(showCaseClickable && !animActif && caseClickable.contains(i)) {
 				if (numCaseMouse == i) {
-					imgDalle = p.getPosition(indiceOtherEscrimeur) == i || (!animActif && p.getPosition(indiceEcrimeursCourant) == i) ? imgAttaqueDefense[i - 1] : imgOver[i - 1];
+					imgDalle = p.getPosition(indiceOtherEscrimeur) == i || (!animActif && p.getPosition(indiceEscrimeurCourant) == i) ? imgAttaqueDefense[i - 1] : imgOver[i - 1];
 				} else {
 					imgDalle = imgSelect[i - 1];
 				}
@@ -234,7 +241,7 @@ public class VuePlateau extends JPanel implements Animateur {
 				}
 			}
 		}
-		if (indiceEcrimeursCourant == Escrimeur.GAUCHER) {
+		if (indiceEscrimeurCourant == Escrimeur.GAUCHER) {
 			drawable.drawImage(imgGaucher, positionEscrimeurs[Escrimeur.GAUCHER].x, posYComponent, widthEs, heightEs, null);
 			drawable.drawImage(imgDroitierBlack, positionEscrimeurs[Escrimeur.DROITIER].x, posYComponent, widthEs, heightEs, null);
 		} else {
@@ -244,18 +251,19 @@ public class VuePlateau extends JPanel implements Animateur {
 	}
 
 	public void actualise(HashSet<Integer> caseClickable, Escrimeur e) {
-		this.indiceEcrimeursCourant = e.getIndice();
+		this.showCaseClickable = true;
+		this.indiceEscrimeurCourant = e.getIndice();
 		this.caseClickable.clear();
 		Iterator<Integer> it = caseClickable.iterator();
 		while(it.hasNext()) {
 			this.caseClickable.add(it.next());
 		}
-		int otherIndiceEscrimeur = (indiceEcrimeursCourant + 1) % 2;
+		int otherIndiceEscrimeur = (indiceEscrimeurCourant + 1) % 2;
 	    Boolean atkPossible = caseClickable.contains(p.getPosition(otherIndiceEscrimeur));
 	    if (atkPossible) {
 	    	int max = p.getNbCartesAttaque(e);
 	    	spinner.setMax(max);
-			spinner.setBounds((p.getPosition(indiceEcrimeursCourant) - 1) * espaceCase + espaceCase / 2 - 50, posYComponent + 150 - 65, 100, 130);
+			spinner.setBounds((p.getPosition(indiceEscrimeurCourant) - 1) * espaceCase + espaceCase / 2 - 50, posYComponent + 150 - 65, 100, 130);
 			spinner.setVisible(true);
 	    } else {
 	    	spinner.setVisible(false);
@@ -263,15 +271,22 @@ public class VuePlateau extends JPanel implements Animateur {
 	    repaint();
 	}
 	
-	public Animation generateAnimationDeplaceJoueur(int indiceEcrimeursCourant) {
+	public void actualise(Escrimeur e) {
+		this.indiceEscrimeurCourant = e.getIndice();
+		this.showCaseClickable = false;
+		this.spinner.setVisible(false);
+	    repaint();
+	}
+	
+	public Animation generateAnimationDeplaceJoueur(int indiceEscrimeurCourant) {
 		int espaceCase = (getWidth() / NBCases);	
-		int posEscrimeur = positionEscrimeurs[indiceEcrimeursCourant].x;
-		int caseDestination = p.getPosition(indiceEcrimeursCourant) * espaceCase;
-		int caseSource = Math.abs((positionEscrimeurs[indiceEcrimeursCourant].x + widthEs / 2) / espaceCase + 1) * espaceCase;
+		int posEscrimeur = positionEscrimeurs[indiceEscrimeurCourant].x;
+		int caseDestination = p.getPosition(indiceEscrimeurCourant) * espaceCase;
+		int caseSource = Math.abs((positionEscrimeurs[indiceEscrimeurCourant].x + widthEs / 2) / espaceCase + 1) * espaceCase;
 		
 		int distance = caseDestination - caseSource;
 		
-		return new AnimationEscrimeur(controle, this, posEscrimeur, distance, indiceEcrimeursCourant);
+		return new AnimationEscrimeur(controle, this, posEscrimeur, distance, indiceEscrimeurCourant);
 	}
 	
 	public void deplace(int x, int indice) {
@@ -424,5 +439,13 @@ public class VuePlateau extends JPanel implements Animateur {
 			@Override
 			public void mouseClicked(MouseEvent e) {}
 		}
+	}
+
+	public Boolean getAnimActif() {
+		return animActif;
+	}
+	
+	public boolean estCaseClickable() {
+		return showCaseClickable;
 	}
 }

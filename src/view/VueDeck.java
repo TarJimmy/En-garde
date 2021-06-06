@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -22,6 +23,8 @@ import model.DeckPioche;
 
 public class VueDeck extends JComponent {
 	
+	public final static Point posCarteDeckDefausse = new Point(370, 120);
+	public final static Point posCarteDeckPioche = new Point(160, 120);
 	DeckPioche deckPioche;
 	DeckDefausse deckDefausse;
 	private final int largeurDeck = 179;
@@ -59,7 +62,12 @@ public class VueDeck extends JComponent {
 			if (isDefausse) {
 				int distance = ((DeckDefausse) deck).consulterCarteVisible().getDistance();
 				Image imgVisible = ImageIO.read(Configuration.charge(distance +  ".png", Configuration.CARTES));
-				drawable.drawImage(imgVisible, posx + 24 + 3 * (nbCarte > 4 ? 3 : nbCarte - 1), posy + 58 - 3 * (nbCarte > 4 ? 3 : nbCarte - 1), 98, 150, null);
+				posCarteDeckDefausse.x = posx + 24 + 3 * (nbCarte > 4 ? 3 : nbCarte - 1);
+				posCarteDeckDefausse.y = posy + 58 - 3 * (nbCarte > 4 ? 3 : nbCarte - 1);
+				drawable.drawImage(imgVisible, posCarteDeckDefausse.x, posCarteDeckDefausse.y, 98, 150, null);
+			} else {
+				posCarteDeckPioche.x = posx + 24 + 3 * (nbCarte > 4 ? 3 : nbCarte - 1);
+				posCarteDeckPioche.y = posy + 58 - 3 * (nbCarte > 4 ? 3 : nbCarte - 1);
 			}
 		}
 		drawable.setFont(new Font("Arial", Font.BOLD, 30));
