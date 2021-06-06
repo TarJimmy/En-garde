@@ -331,7 +331,7 @@ public class VuePlateau extends JPanel implements Animateur {
 			labelValue.setHorizontalTextPosition(SwingConstants.CENTER);
 			labelValue.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 			labelValue.setHorizontalAlignment(SwingConstants.CENTER);
-			labelValue.setFont(new Font(Configuration.Century.getFamily(), Font.PLAIN, 35));
+			labelValue.setFont(new Font("Century", Font.PLAIN, 35));
 			labelValue.setForeground(Color.white);
 			try {
 				imgFond = ImageIO.read(Configuration.charge("fondAttaque.png", Configuration.AUTRES));

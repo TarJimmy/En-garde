@@ -505,17 +505,17 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		warnEnregistrement.setBounds(70, 540, 300, 40);
 		warnEnregistrement.setVisible(false);
 		contentPane.add(warnEnregistrement);
-		btnSaveSettings = new ButtonCustom("Enregistrer comme parametres par defaut", "cadre3", new Dimension(266, 37), new Font(Configuration.Century.getFamily(), Font.PLAIN, 11));
+		btnSaveSettings = new ButtonCustom("Enregistrer comme parametres par defaut", "cadre3", new Dimension(266, 37), new Font("Century", Font.PLAIN, 11));
 		btnSaveSettings.addActionListener(new AdaptateurCommande(controle, "sauvePara", canEnregistrer));
 		btnSaveSettings.setBounds(55, 540, 266, 37);
 		contentPane.add(btnSaveSettings);
 		
-		JButton btnRestoreSettings = new ButtonCustom("Retablir les parametres par defaut","cadre3", new Dimension(266, 37), new Font(Configuration.Century.getFamily(), Font.PLAIN, 11));
+		JButton btnRestoreSettings = new ButtonCustom("Retablir les parametres par defaut","cadre3", new Dimension(266, 37), new Font("Century", Font.PLAIN, 11));
 		btnRestoreSettings.addActionListener(new AdaptateurCommande(controle, "restaurePara"));
 		btnRestoreSettings.setBounds(331, 540, 266, 37);
 		contentPane.add(btnRestoreSettings);
 		
-		JButton btnPlay = new ButtonCustom("MENU", "cadre4", new Dimension(195, 37), new Font(Configuration.Century.getFamily(), Font.PLAIN, 15));
+		JButton btnPlay = new ButtonCustom("MENU", "cadre4", new Dimension(195, 37), new Font("Century", Font.PLAIN, 15));
 		btnPlay.setForeground(Color.white);
 		btnPlay.addActionListener(new AdaptateurCommande(controle, "menu"));
 		btnPlay.setBounds(634, 540, 195, 37);

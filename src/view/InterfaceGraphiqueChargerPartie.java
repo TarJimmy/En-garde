@@ -55,7 +55,7 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 	}
 	
 	private static ButtonCustom createButtonChargerPartie(String name, int x, int y) {
-		ButtonCustom button = new ButtonCustom(name, "contourChargePartie", new Dimension(150, 150), new Font(Configuration.Century.getFamily(), Font.PLAIN, 15));
+		ButtonCustom button = new ButtonCustom(name, "contourChargePartie", new Dimension(150, 150), new Font("Century", Font.PLAIN, 15));
 		button.setBounds(x, y, 150, 150);
 		parties.add(button);
 		button.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -83,7 +83,7 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 		JButton Partie4 = createButtonChargerPartie(id, 395, 161);
 		JButton Partie5 = createButtonChargerPartie(id, 217, 161);
 		JButton Partie6 = createButtonChargerPartie(id, 35, 161);
-		JButton annuler = new ButtonCustom("Annuler", "cadre4", new Dimension(150, 40), new Font(Configuration.Century.getFamily(), Font.PLAIN, 15));
+		JButton annuler = new ButtonCustom("Annuler", "cadre4", new Dimension(150, 40), new Font("Century", Font.PLAIN, 15));
 		annuler.addActionListener(new AdaptateurCommande(controle, "annuler"));
 		annuler.setBounds(35, 500, 150, 40);
 		annuler.setForeground(Color.WHITE);

@@ -71,17 +71,17 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 		contentPane.setLayout(null);
 		
 		///Boutons
-		JButton btnMenu = new ButtonCustom("MENU", "cadre2", new Dimension(200, 40), new Font(Configuration.Century.getFamily(), Font.PLAIN, 15));
+		JButton btnMenu = new ButtonCustom("MENU", "cadre2", new Dimension(200, 40), new Font("Century", Font.PLAIN, 15));
 		btnMenu.addActionListener(new AdaptateurCommande(controle, "menu"));
 		btnMenu.setBounds(50, 350, 200, 40);
 		contentPane.add(btnMenu);
 		
-		JButton btnRecommencer = new ButtonCustom("Recommencer", "cadre2", new Dimension(200, 40), new Font(Configuration.Century.getFamily(), Font.PLAIN, 15));
+		JButton btnRecommencer = new ButtonCustom("Recommencer", "cadre2", new Dimension(200, 40), new Font("Century", Font.PLAIN, 15));
 		btnRecommencer.addActionListener(new AdaptateurCommande(controle, "rejouer"));
 		btnRecommencer.setBounds(342, 350, 200, 40);
 		contentPane.add(btnRecommencer);
 		
-		JButton btnQuit = new ButtonCustom("Quitter", "cadre2", new Dimension(200, 40), new Font(Configuration.Century.getFamily(), Font.PLAIN, 15));
+		JButton btnQuit = new ButtonCustom("Quitter", "cadre2", new Dimension(200, 40), new Font("Century", Font.PLAIN, 15));
 		btnQuit.addActionListener(new AdaptateurCommande(controle, "exit"));
 		btnQuit.setBounds(634, 350, 200, 40);
 		contentPane.add(btnQuit);
