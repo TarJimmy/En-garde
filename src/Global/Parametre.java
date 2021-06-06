@@ -38,6 +38,7 @@ public class Parametre {
 				/*Nombre maximum de cartes en mains*/fWriter.write("5\n");
 				/*Nombre de cartes par valeurs (1,2,3,4,5)*/fWriter.write("5\n5\n5\n5\n5\n");
 				/*Activer ou desactiver les animations*/fWriter.write("Actif\n");
+				/*Joueur qui commence*/fWriter.write("Gauche\n");
 				
 				fWriter.close();
 			} catch (IOException e) {

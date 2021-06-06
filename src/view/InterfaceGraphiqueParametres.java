@@ -58,6 +58,10 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	//Jeu
 	private JLabel titreSectionJeu;
 	private static JCheckBox btn_animation;
+	private JLabel labelJoueurDebut;
+	private static ButtonGroup buttonGroup_JoueurDebut;
+	private static JRadioButton joueurDebut_gauche;
+	private static JRadioButton joueurDebut_droite;
 	private JLabel labelModeAttaque;
 	private static ButtonGroup buttonGroup_ModeAttaque;
 	private static JRadioButton modeAttaque_Basique;
@@ -101,6 +105,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	private static int cartes4;
 	private static int cartes5;
 	private static String animation;
+	private static String joueurDebut;
 	private Boolean canEnregistrer;
 	private Boolean J1;
 	private Boolean J2;
@@ -130,6 +135,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		cartes4 = Integer.parseInt(settings.get(13));
 		cartes5 = Integer.parseInt(settings.get(14));
 		animation = settings.get(15);
+		joueurDebut = settings.get(16);
 	}
 	
 	/**
@@ -158,7 +164,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	 */
 	public static void majParametres(List<String> settings) {
 		settings(settings);
-		setRadioButtons(typeJ1,typeJ2,modeAttaque,animation);
+		setRadioButtons(typeJ1,typeJ2,modeAttaque,animation,joueurDebut);
 		spinner_map.setValue(map);
 		txtJoueur1.setText(nomJoueur1);
 		spinner_positionJ1.setValue(posJ1);
@@ -179,7 +185,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	 * @param typeJ2 : valeur du type du joueur 2 (humain ou IA)
 	 * @param modeAttaque : valeur par defaut du mode d'attaque (basique ou avance)
 	 */
-	private static void setRadioButtons(String typeJ1, String typeJ2, String modeAttaque, String animation) {
+	private static void setRadioButtons(String typeJ1, String typeJ2, String modeAttaque, String animation, String joueurDebut) {
 		switch (typeJ1) {
 			case "HUMAIN" : btnRadioJ1_Humain.setSelected(true);break;
 			case "IA_FACILE" : btnRadioJ1_Facile.setSelected(true);break;
@@ -200,7 +206,10 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 			case "Actif" : btn_animation.setSelected(true);break;
 			case "NonActif" : btn_animation.setSelected(false);break;
 		}
-		
+		switch (joueurDebut) {
+			case "Gauche" : joueurDebut_gauche.setSelected(true);break;
+			case "Droit" : joueurDebut_droite.setSelected(true);break;
+		}
 	}
 	
 	/**
@@ -404,97 +413,113 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		
 		////Option - Animations actives
 		btn_animation = new JCheckBox("Activer les animations");
-		btn_animation.setBounds(50, 305, 200, 23);
+		btn_animation.setBounds(50, 315, 200, 23);
 		contentPane.add(btn_animation);
+		
+		////Option - Joueur qui commance
+		labelJoueurDebut = new JLabel("Joueur qui commence :");
+		labelJoueurDebut.setBounds(55, 350, 150, 23);
+		contentPane.add(labelJoueurDebut);
+		joueurDebut_gauche = new JRadioButton("Gauche");
+		joueurDebut_gauche.setActionCommand("Gauche");
+		buttonGroup_JoueurDebut = new ButtonGroup();
+		buttonGroup_JoueurDebut.add(joueurDebut_gauche);
+		joueurDebut_gauche.setBounds(200, 350, 75, 23);
+		contentPane.add(joueurDebut_gauche);
+		joueurDebut_droite = new JRadioButton("Droit");
+		joueurDebut_droite.setActionCommand("Droit");
+		buttonGroup_JoueurDebut.add(joueurDebut_droite);
+		joueurDebut_droite.setBounds(276, 350, 75, 23);
+		contentPane.add(joueurDebut_droite);
 		
 		////Option - Mode d'attaque
 		labelModeAttaque = new JLabel("Mode d'attaque :");
-		labelModeAttaque.setBounds(55, 335, 100, 23);
+		labelModeAttaque.setBounds(55, 385, 100, 23);
 		contentPane.add(labelModeAttaque);
 		modeAttaque_Basique = new JRadioButton("Basique");
 		modeAttaque_Basique.setActionCommand("Basique");
 		buttonGroup_ModeAttaque = new ButtonGroup();
 		buttonGroup_ModeAttaque.add(modeAttaque_Basique);
-		modeAttaque_Basique.setBounds(170, 335, 75, 23);
+		modeAttaque_Basique.setBounds(170, 385, 75, 23);
 		contentPane.add(modeAttaque_Basique);
 		modeAttaque_Avance = new JRadioButton("Avanc\u00E9");
 		modeAttaque_Avance.setActionCommand("Avance");
 		buttonGroup_ModeAttaque.add(modeAttaque_Avance);
-		modeAttaque_Avance.setBounds(246, 335, 75, 23);
+		modeAttaque_Avance.setBounds(246, 385, 75, 23);
 		contentPane.add(modeAttaque_Avance);
 		
 		////Option - Nombre de manches
 		labelNbManches = new JLabel("Nombre de manches");
-		labelNbManches.setBounds(55, 375, 130, 20);
+		labelNbManches.setBounds(55, 425, 130, 20);
 		contentPane.add(labelNbManches);
 		spinner_manches = new JSpinner();
 		spinner_manches.setModel(new SpinnerNumberModel(manches, 1, 10, 1));
-		spinner_manches.setBounds(181, 375, 39, 20);
+		spinner_manches.setBounds(181, 425, 39, 20);
 		((JSpinner.DefaultEditor) spinner_manches.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_manches);
 		
 		////Option - Nombre maximum de cartes en mains
 		labelCartesMax = new JLabel("Nombre maximum de cartes en mains");
-		labelCartesMax.setBounds(55, 410, 243, 20);
+		labelCartesMax.setBounds(55, 460, 243, 20);
 		contentPane.add(labelCartesMax);
 		spinner_cartesMax = new JSpinner();
 		spinner_cartesMax.setModel(new SpinnerNumberModel(cartes_max, 3, 7, 1));
-		spinner_cartesMax.setBounds(279, 410, 39, 20);
+		spinner_cartesMax.setBounds(279, 460, 39, 20);
 		((JSpinner.DefaultEditor) spinner_cartesMax.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_cartesMax);
 		
 		////Option - Nombre de cartes par valeurs
 		labelNbCartesValeurs = new JLabel("Nombre de cartes par valeurs :");
-		labelNbCartesValeurs.setBounds(55, 450, 212, 14);
+		labelNbCartesValeurs.setBounds(55, 500, 212, 14);
 		contentPane.add(labelNbCartesValeurs);
 		
 		/////cartes de valeur 1
 		labelCartes1 = new JLabel("Cartes 1");
-		labelCartes1.setBounds(55, 480, 80, 20);
+		labelCartes1.setBounds(55, 530, 80, 20);
 		contentPane.add(labelCartes1);
 		spinner_cartes1 = new JSpinner();
 		spinner_cartes1.setModel(new SpinnerNumberModel(cartes1, 0, 10, 1));
-		spinner_cartes1.setBounds(120, 480, 40, 20);
+		spinner_cartes1.setBounds(120, 530, 40, 20);
 		((JSpinner.DefaultEditor) spinner_cartes1.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_cartes1);
 		
 		/////cartes de valeur 2
 		labelCartes2 = new JLabel("Cartes 2");
-		labelCartes2.setBounds(220, 480, 80, 20);
+		labelCartes2.setBounds(220, 530, 80, 20);
 		contentPane.add(labelCartes2);
 		spinner_cartes2 = new JSpinner();
 		spinner_cartes2.setModel(new SpinnerNumberModel(cartes2, 0, 10, 1));
-		spinner_cartes2.setBounds(285, 480, 40, 20);
+		spinner_cartes2.setBounds(285, 530, 40, 20);
 		((JSpinner.DefaultEditor) spinner_cartes2.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_cartes2);
 		
 		/////cartes de valeur 3
 		labelCartes3 = new JLabel("Cartes 3");
-		labelCartes3.setBounds(385, 480, 80, 20);
+		labelCartes3.setBounds(385, 530, 80, 20);
 		contentPane.add(labelCartes3);
 		spinner_cartes3 = new JSpinner();
 		spinner_cartes3.setModel(new SpinnerNumberModel(cartes3, 0, 10, 1));
-		spinner_cartes3.setBounds(450, 480, 40, 20);
+		spinner_cartes3.setBounds(450, 530, 40, 20);
 		((JSpinner.DefaultEditor) spinner_cartes3.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_cartes3);
 		
 		/////cartes de valeur 4
 		labelCartes4 = new JLabel("Cartes 4");
-		labelCartes4.setBounds(550, 480, 80, 20);
+		labelCartes4.setBounds(550, 530, 80, 20);
 		contentPane.add(labelCartes4);
 		spinner_cartes4 = new JSpinner();
 		spinner_cartes4.setModel(new SpinnerNumberModel(cartes4, 0, 10, 1));
-		spinner_cartes4.setBounds(615, 480, 40, 20);
+		spinner_cartes4.setBounds(615, 530, 40, 20);
 		((JSpinner.DefaultEditor) spinner_cartes4.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_cartes4);
 		
 		/////cartes de valeur 5
 		labelCartes5 = new JLabel("Cartes 5");
-		labelCartes5.setBounds(715, 480, 80, 20);
+		labelCartes5.setBounds(715, 530, 80, 20);
 		contentPane.add(labelCartes5);
 		spinner_cartes5 = new JSpinner();
 		spinner_cartes5.setModel(new SpinnerNumberModel(cartes5, 0, 10, 1));
-		spinner_cartes5.setBounds(780, 480, 40, 20);
+		spinner_cartes5.setBounds(780, 530, 40, 20);
 		((JSpinner.DefaultEditor) spinner_cartes5.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_cartes5);
 		
@@ -502,27 +527,27 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		warnEnregistrement = new JLabel("Enregistrement des parametres impossible");
 		warnEnregistrement.setFont(new Font("Tahoma", Font.BOLD, 11));
 		warnEnregistrement.setForeground(new Color(128, 0, 0));
-		warnEnregistrement.setBounds(70, 540, 300, 40);
+		warnEnregistrement.setBounds(70, 590, 300, 40);
 		warnEnregistrement.setVisible(false);
 		contentPane.add(warnEnregistrement);
 		btnSaveSettings = new ButtonCustom("Enregistrer comme parametres par defaut", "cadre3", new Dimension(266, 37), new Font("Century", Font.PLAIN, 11));
 		btnSaveSettings.addActionListener(new AdaptateurCommande(controle, "sauvePara", canEnregistrer));
-		btnSaveSettings.setBounds(55, 540, 266, 37);
+		btnSaveSettings.setBounds(55, 590, 266, 37);
 		contentPane.add(btnSaveSettings);
 		
 		JButton btnRestoreSettings = new ButtonCustom("Retablir les parametres par defaut","cadre3", new Dimension(266, 37), new Font("Century", Font.PLAIN, 11));
 		btnRestoreSettings.addActionListener(new AdaptateurCommande(controle, "restaurePara"));
-		btnRestoreSettings.setBounds(331, 540, 266, 37);
+		btnRestoreSettings.setBounds(331, 590, 266, 37);
 		contentPane.add(btnRestoreSettings);
 		
 		JButton btnPlay = new ButtonCustom("MENU", "cadre4", new Dimension(195, 37), new Font("Century", Font.PLAIN, 15));
 		btnPlay.setForeground(Color.white);
 		btnPlay.addActionListener(new AdaptateurCommande(controle, "menu"));
-		btnPlay.setBounds(634, 540, 195, 37);
+		btnPlay.setBounds(634, 590, 195, 37);
 		contentPane.add(btnPlay);
 		
 		//setRadioButtons
-		setRadioButtons(typeJ1,typeJ2,modeAttaque,animation);
+		setRadioButtons(typeJ1,typeJ2,modeAttaque,animation,joueurDebut);
 		
 		//warningField
 		warningField("j1",txtJoueur1, warning_J1);
@@ -562,7 +587,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		
 		//fenetreParametres.add(para_fond);
 		fenetreParametres.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		fenetreParametres.setBounds(100, 100, 900, 650);
+		fenetreParametres.setBounds(100, 100, 900, 700);
 		fenetreParametres.setResizable(false);
 		fenetreParametres.setVisible(true);
 	}
@@ -607,6 +632,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 			case "animation":
 				if(btn_animation.isSelected()) {return "Actif";}
 				else {return "NonActif";}
+			case "joueurDebut":
+				return buttonGroup_JoueurDebut.getSelection().getActionCommand();
 			default:
 				System.err.println("Parametre introuvable !");
 				return "";
