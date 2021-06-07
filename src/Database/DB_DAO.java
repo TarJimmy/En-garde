@@ -91,8 +91,16 @@ public class DB_DAO {
                 + " DefausseJSON text NOT NULL,\n"
                 
                 + " posDepartGauche integer NOT NULL,\n"
-                + " posDepartDroit integer NOT NULL\n"
-
+                + " posDepartDroit integer NOT NULL,\n"
+                
+                
+				+ " modeSimple boolean NOT NULL,\n"
+				+ " TypeEscrimeurG text NOT NULL,\n"
+				+ " TypeEscrimeurD text NOT NULL,\n"
+				+ " CartesMaxJoueur integer NOT NULL,\n"
+				+ " AnimationAutoriser boolean NOT NULL\n,"
+				+ " indicePremierJoueur int NOT NULL,\n"
+				+ " indiceCurrentJoueur int NOT NULL\n"
                 
                 + ");";
 
