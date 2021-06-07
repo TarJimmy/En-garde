@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -53,7 +55,7 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 	}
 	
 	private static ButtonCustom createButtonChargerPartie(String name, int x, int y) {
-		ButtonCustom button = new ButtonCustom(name, "contourChargePartie", new Dimension(150, 150), new Font(Configuration.Century.getFamily(), Font.PLAIN, 15));
+		ButtonCustom button = new ButtonCustom(name, "contourChargePartie", new Dimension(150, 150), new Font("Century", Font.PLAIN, 15));
 		button.setBounds(x, y, 150, 150);
 		button.setHorizontalTextPosition(SwingConstants.CENTER);
 		return button;
@@ -66,13 +68,13 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 		String name = "Vide";
 		try {
 			contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("fondChargePartie.png", Configuration.MENU))));
+			fenetreChargerPartie.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		fenetreChargerPartie.setContentPane(contentPane);
-		contentPane.setLayout(null);
 		int x1 = 35;
 		int x2 = 217;
 		int x3 = 395;
@@ -85,7 +87,7 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 		parties.add(createButtonChargerPartie(name, x2, y2));
 		parties.add(createButtonChargerPartie(name, x3, y2));
 
-		JButton annuler = new ButtonCustom("Annuler", "cadre4", new Dimension(150, 40), new Font(Configuration.Century.getFamily(), Font.PLAIN, 15));
+		JButton annuler = new ButtonCustom("Annuler", "cadre4", new Dimension(150, 40), new Font("Century", Font.PLAIN, 15));
 		annuler.addActionListener(new AdaptateurCommande(controle, "annuler"));
 		annuler.setBounds(35, 500, 150, 40);
 		annuler.setForeground(Color.WHITE);

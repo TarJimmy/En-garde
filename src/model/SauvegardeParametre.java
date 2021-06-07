@@ -23,6 +23,7 @@ public class SauvegardeParametre {
 	private static String cartes_max;
 	private static List<String> valeurs_cartes = new ArrayList<>();
 	private static String animation;
+	private static String joueurDebut;
 	
 	public SauvegardeParametre(){
 		map = null;
@@ -32,6 +33,8 @@ public class SauvegardeParametre {
 		manches = null;
 		cartes_max = null;
 		valeurs_cartes = null;
+		animation = null;
+		joueurDebut = null;
 	}
 	
 	/**
@@ -53,7 +56,7 @@ public class SauvegardeParametre {
 	 * @param carte4 : nombre de cartes de valeur 4
 	 * @param carte5 : nombre de cartes de valeur 5
 	 */
-	public static void sauvegarderParametres(String map, String nomJ1, String typeJ1, String posJ1, String nomJ2, String typeJ2, String posJ2, String modeAttaque, String manches, String carteMax, String carte1, String carte2, String carte3, String carte4, String carte5, String animation){
+	public static void sauvegarderParametres(String map, String nomJ1, String typeJ1, String posJ1, String nomJ2, String typeJ2, String posJ2, String modeAttaque, String manches, String carteMax, String carte1, String carte2, String carte3, String carte4, String carte5, String animation, String joueurDebut){
 		String filePath = Parametre.instance().dirPara + "/parametres.txt";
 		try {
 			// Create new file if needed
@@ -70,6 +73,7 @@ public class SauvegardeParametre {
 			fWriter.write(carteMax+"\n");
 			fWriter.write(carte1+"\n"+carte2+"\n"+carte3+"\n"+carte4+"\n"+carte5+"\n");
 			fWriter.write(animation+"\n");
+			fWriter.write(joueurDebut+"\n");
 			
 			fWriter.close();
 		} catch (IOException e) {
@@ -110,6 +114,7 @@ public class SauvegardeParametre {
 			}
 			valeurs_cartes = vc;
 			animation = fReader.nextLine().trim();
+			joueurDebut = fReader.nextLine().trim();
 			
 			fReader.close();
 			
@@ -133,6 +138,7 @@ public class SauvegardeParametre {
 		settings.add(cartes_max);
 		for (String value3 : valeurs_cartes) {settings.add(value3);}
 		settings.add(animation);
+		settings.add(joueurDebut);
 		return settings;
 	}
 }

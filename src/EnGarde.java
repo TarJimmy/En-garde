@@ -1,5 +1,6 @@
 import Database.DB_DAO;
 import Global.Configuration;
+import Global.Parametre;
 import controller.ControlerAutre;
 import view.InterfaceGraphiqueMenu;
 

@@ -82,7 +82,7 @@ public class VueInfoJeu extends JPanel {
 			@Override
 			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);
-				g.setFont(new Font(Configuration.Century.getFamily(), Font.PLAIN, 40));
+				g.setFont(new Font("Century", Font.PLAIN, 40));
 				g.drawString(nom, 140, getHeight() / 2 + 10);
 			}
 		};

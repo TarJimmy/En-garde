@@ -209,6 +209,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 			background.setLayout(new GridLayout(3, 1));
 			background.setPreferredSize(new Dimension(largeurFenetre, hauteurFenetre));
 			frame.add(background);
+			frame.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -303,7 +304,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 					break;
 				case Animation.ANIM_FIN_MANCHE:
 					drawable.drawImage(imgFinDeManche[winnerManche], ptDebutPanelAnimation.x, ptDebutPanelAnimation.y, sizeImgPanelAnimation.width, sizeImgPanelAnimation.height, null);
-					drawable.setFont(new Font(Configuration.Century.getFamily(), Font.PLAIN, 50));
+					drawable.setFont(new Font("Century", Font.PLAIN, 50));
 					if (winnerManche == Jeu.NONE) {
 						drawable.drawString("Manche nulle", ptDebutPanelAnimation.x + 200, ptDebutPanelAnimation.y + 150);
 					} else {

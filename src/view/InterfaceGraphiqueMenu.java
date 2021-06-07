@@ -4,6 +4,10 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -74,12 +78,13 @@ public class InterfaceGraphiqueMenu implements Runnable {
 		fenetreMenu = new JFrame("EN GARDE ! - MENU PRINCIPAL");
 		JLabel menu_fond = null;
 		try {
+			fenetreMenu.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
 			menu_fond = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("Menu_EnGarde.png", Configuration.MENU))));
 			menu_fond.setLayout( new GridBagLayout());
 			menu_fond.setBorder(new EmptyBorder(0, 0, 0, 0));
 			JButton play = new ButtonCustom("JOUER", "cadre", new Dimension(400, 100));
 			play.addActionListener(new AdaptateurCommande(collecteurMenu, "jouerMenu"));
-			BufferedImage imgBtnBanal = ImageIO.read(Configuration.charge("cadre3.png", Configuration.MENU));
+			ImageIcon imgBtnBanal = new ImageIcon(ImageIO.read(Configuration.charge("cadre3.png", Configuration.MENU)).getScaledInstance(400, 50, Image.SCALE_SMOOTH));
 			JButton charge = new ButtonCustom("Charger Partie", null, imgBtnBanal, new Dimension(400, 50));
 			JButton demo = new ButtonCustom("Tutoriel", null, imgBtnBanal, new Dimension(400, 50));
 			demo.addActionListener(new AdaptateurCommande(collecteurMenu, "tuto"));

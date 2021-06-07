@@ -2,7 +2,10 @@ package view;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -57,9 +60,14 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 	public void run() {
 		fenetreFin = new JFrame("EN GARDE ! - Fin de la partie");
 		JLabel contentPane = new JLabel(new ImageIcon("res/Images/Menu/Fin.png"));
-		//JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		fenetreFin.setContentPane(contentPane);
+		try {
+			fenetreFin.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
+		} catch (HeadlessException | IndexOutOfBoundsException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		contentPane.setLayout(null);
 		
 		///Boutons

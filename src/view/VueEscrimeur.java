@@ -52,7 +52,7 @@ public class VueEscrimeur extends JPanel {
 		panelMancheBtn.setPreferredSize(new Dimension(1000, 74));
 		panelMancheBtn.setOpaque(false);
 		
-		btnPasserTour = new ButtonCustom("Passer tour", "cadre", new Dimension(290, 60), new Font(Configuration.Century.getFamily(), Font.PLAIN, 20));
+		btnPasserTour = new ButtonCustom("Passer tour", "cadre", new Dimension(290, 60), new Font("Century", Font.PLAIN, 20));
 		btnPasserTour.setVerticalTextPosition(SwingConstants.CENTER);
 		btnPasserTour.addActionListener(new AdaptateurCommande(controle, "PasserTour"));
 		btnPasserTour.setVisible(false);

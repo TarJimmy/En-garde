@@ -22,6 +22,7 @@ import view.InterfaceGraphiqueJeu;
 import view.InterfaceGraphiqueMenu;
 import view.InterfaceGraphiqueParametres;
 import view.InterfaceGraphiqueRegles;
+import view.InterfaceGraphiqueTutoriel;
 
 /**
  * 
@@ -122,7 +123,7 @@ public class ControlerAutre extends Controler {
 				InterfaceGraphiqueParametres.demarrer(settings, this);
 				break;
 			case "sauvePara":
-				SauvegardeParametre.sauvegarderParametres(InterfaceGraphiqueParametres.getParametre("map"), InterfaceGraphiqueParametres.getParametre("nomJ1"), InterfaceGraphiqueParametres.getParametre("typeJ1"), InterfaceGraphiqueParametres.getParametre("posJ1"), InterfaceGraphiqueParametres.getParametre("nomJ2"), InterfaceGraphiqueParametres.getParametre("typeJ2"), InterfaceGraphiqueParametres.getParametre("posJ2"), InterfaceGraphiqueParametres.getParametre("modeAttaque"), InterfaceGraphiqueParametres.getParametre("manches"), InterfaceGraphiqueParametres.getParametre("carteMax"), InterfaceGraphiqueParametres.getParametre("carte1"), InterfaceGraphiqueParametres.getParametre("carte2"), InterfaceGraphiqueParametres.getParametre("carte3"), InterfaceGraphiqueParametres.getParametre("carte4"), InterfaceGraphiqueParametres.getParametre("carte5"), InterfaceGraphiqueParametres.getParametre("animation"));
+				SauvegardeParametre.sauvegarderParametres(InterfaceGraphiqueParametres.getParametre("map"), InterfaceGraphiqueParametres.getParametre("nomJ1"), InterfaceGraphiqueParametres.getParametre("typeJ1"), InterfaceGraphiqueParametres.getParametre("posJ1"), InterfaceGraphiqueParametres.getParametre("nomJ2"), InterfaceGraphiqueParametres.getParametre("typeJ2"), InterfaceGraphiqueParametres.getParametre("posJ2"), InterfaceGraphiqueParametres.getParametre("modeAttaque"), InterfaceGraphiqueParametres.getParametre("manches"), InterfaceGraphiqueParametres.getParametre("carteMax"), InterfaceGraphiqueParametres.getParametre("carte1"), InterfaceGraphiqueParametres.getParametre("carte2"), InterfaceGraphiqueParametres.getParametre("carte3"), InterfaceGraphiqueParametres.getParametre("carte4"), InterfaceGraphiqueParametres.getParametre("carte5"), InterfaceGraphiqueParametres.getParametre("animation"),InterfaceGraphiqueParametres.getParametre("joueurDebut"));
 				break;
 			case "restaurePara":
 				SauvegardeParametre.chargerParametres();
@@ -130,6 +131,7 @@ public class ControlerAutre extends Controler {
 				InterfaceGraphiqueParametres.majParametres(settings);
 				break;
 			case "tuto":
+		        InterfaceGraphiqueTutoriel.demarrer();
 				break;
 			case "regles":
 				InterfaceGraphiqueRegles.demarrer();

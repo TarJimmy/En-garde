@@ -38,28 +38,28 @@ import Global.Configuration;
  *
  * @author tardyj
  */
-public class InterfaceGraphiqueRegles implements Runnable {
+public class InterfaceGraphiqueTutoriel implements Runnable {
 	
     private JFrame frame;
     private BtnNavigation plus;
     private BtnNavigation moins;
     private JPanel center;
     private final CardLayout c1 = new CardLayout();
-    private final int widthImageRegle = 866;
-    private final int heightImageRegle = 1200;
+    private final int widthImageTuto = 1600;
+    private final int heightImageTuto = 900;
     private static Boolean exists = false;
     
     public static void demarrer() {
     	if (!exists) {
     		exists = true;
-    		SwingUtilities.invokeLater(new InterfaceGraphiqueRegles());
+    		SwingUtilities.invokeLater(new InterfaceGraphiqueTutoriel());
     	} else {
     		System.out.println("La fenetre existe déjà");
     	}
     }
    
-    private InterfaceGraphiqueRegles() {
-        frame = new JFrame("Règle");
+    private InterfaceGraphiqueTutoriel() {
+        frame = new JFrame("EN GARDE ! - Tutoriel");
         frame.addWindowListener(new WindowListener() {
 			@Override
 			public void windowOpened(WindowEvent e) {}
@@ -88,7 +88,7 @@ public class InterfaceGraphiqueRegles implements Runnable {
     	frame.setLayout(new BorderLayout());
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setBackground(Color.white);
-        frame.setSize(906, 900);
+        frame.setSize(1619,1048);
         frame.setResizable(false);
         try {
 			frame.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
@@ -131,8 +131,8 @@ public class InterfaceGraphiqueRegles implements Runnable {
         panelPlus.add(plus);
         center = new JPanel(c1);
         try {
-	        for (int i = 1; i <= 4; i++){
-	            center.add(new ScrollPanelImage(widthImageRegle, heightImageRegle, Configuration.charge("regle" + i + ".png", Configuration.REGLES)), i - 1);
+	        for (int i = 1; i <= 13; i++){
+	            center.add(new ScrollPanelImage(widthImageTuto, heightImageTuto, Configuration.charge("tuto" + i + ".png", Configuration.TUTORIEL)), i - 1);
 	        }
         } catch(Exception e) {
         	e.printStackTrace();
@@ -224,9 +224,5 @@ public class InterfaceGraphiqueRegles implements Runnable {
                 g.dispose();
             }
         }
-    }
-	public static void main(String[] args) {
-    	System.out.println("coucou");
-        InterfaceGraphiqueRegles.demarrer();
     }
 }
