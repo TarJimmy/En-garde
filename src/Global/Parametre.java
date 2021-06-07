@@ -21,7 +21,7 @@ public class Parametre {
 		File dossier = new File("Parametres"); 
 	    boolean res = dossier.mkdir();
 	    if (res) {
-	    	System.out.println("Le dossier Parametres a \u00E9t\u00E9 cr\u00E9\u00E9.");
+	    	System.out.println("Le dossier Parametres a été créé.");
 	      	String filePath = dirPara + "/parametres.txt";
 			try {
 				// Create new file if needed

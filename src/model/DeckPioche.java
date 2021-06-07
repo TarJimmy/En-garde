@@ -8,6 +8,10 @@ public class DeckPioche extends Deck {
 		super(cartes);
 	}
 	
+	public DeckPioche() {
+		super();
+	}
+	
 	public Carte piocher() {
 		return cartes.pop();
 	}

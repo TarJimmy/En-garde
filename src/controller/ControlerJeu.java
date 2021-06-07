@@ -26,19 +26,43 @@ import view.InterfaceGraphiqueJeu;
 import view.InterfaceGraphiqueMenu;
 
 public class ControlerJeu extends Controler {
-	private Jeu jeu;
-	private LinkedList<Animation> animations;
-	boolean animationsActives;
-	private SauvegarderPartie_DAO partieSauvegardee;
+	protected Jeu jeu;
+	protected LinkedList<Animation> animations;
+	protected boolean animationsActives;
+	protected SauvegarderPartie_DAO partieSauvegardee;
+	protected boolean lancerNouvellePartie;
+	protected boolean showGraphique;
 	
+	public ControlerJeu() {}
 	public ControlerJeu(Jeu jeu) {
+		this.jeu = jeu;
+		this.animations = new LinkedList<>();
+		animationsActives = false;
+		partieSauvegardee = new SauvegarderPartie_DAO();
+		lancerNouvellePartie = false;
+		InterfaceGraphiqueJeu.demarrer(this, jeu);
+	}
+	
+	public ControlerJeu(Jeu jeu, boolean lancerNouvellePartie, boolean showGraphique) {
+		this.lancerNouvellePartie = lancerNouvellePartie;
+		this.jeu = jeu;
+		this.animations = new LinkedList<>();
+		animationsActives = false;
+		partieSauvegardee = new SauvegarderPartie_DAO();
+		this.showGraphique = showGraphique;
+		this.lancerNouvellePartie = lancerNouvellePartie;
+		this.showGraphique = showGraphique;
+	}
+
+	public ControlerJeu(Jeu jeu, boolean lancerNouvellePartie) {
+		this.lancerNouvellePartie = lancerNouvellePartie;
 		this.jeu = jeu;
 		this.animations = new LinkedList<>();
 		animationsActives = false;
 		partieSauvegardee = new SauvegarderPartie_DAO();
 		InterfaceGraphiqueJeu.demarrer(this, jeu);
 	}
-
+	
 	public void piocher(Escrimeur e) {
 		jeu.piocher(e);
 	}
@@ -257,7 +281,12 @@ public class ControlerJeu extends Controler {
 				InterfaceGraphiqueActionAnnexe.close(); 
 				return true;
 			case "PageInitialiser":
-				nouvellePartie();
+				if (lancerNouvellePartie) {
+					lancerNouvellePartie = false;
+					jeu.modifieVue(Action.ACTUALISER_JEU);
+				} else {
+					nouvellePartie();
+				}
 				return true;
 			case "ChangeModeAnimation":
 				jeu.toggleAnimationAutoriser();
@@ -326,5 +355,9 @@ public class ControlerJeu extends Controler {
 	
 	public ControlerJeu copySimple() {
 		return new ControlerJeu(jeu.copySimple());
+	}
+	
+	public Jeu getJeu() {
+		return jeu;
 	}
 }

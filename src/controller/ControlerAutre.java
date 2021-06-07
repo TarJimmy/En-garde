@@ -59,6 +59,8 @@ public class ControlerAutre extends Controler {
 					int posJ1 = Integer.parseInt(it.next());
 					
 					String nameJ2 = it.next();
+					
+
 					TypeEscrimeur typeJ2 = getTypeEscrimeur(it.next());
 					int posJ2 = Integer.parseInt(it.next());
 					
@@ -144,15 +146,16 @@ public class ControlerAutre extends Controler {
 		}
 		return false;
 	}
-	private TypeEscrimeur getTypeEscrimeur(String text) {
+	
+	protected TypeEscrimeur getTypeEscrimeur(String text) {
 		switch (text) {
-		case "Humain":
+		case "HUMAIN":
 			return TypeEscrimeur.HUMAIN;
-		case "IA Facile":
+		case "IA_FACILE":
 			return TypeEscrimeur.IA_FACILE;
-		case "IA Moyenne":
+		case "IA_MOYENNE":
 			return TypeEscrimeur.IA_MOYENNE;
-		case "IA Difficile":
+		case "IA_DIFFICILE":
 			return TypeEscrimeur.IA_DIFFICILE;
 		default:
 			return null;
@@ -162,11 +165,7 @@ public class ControlerAutre extends Controler {
 	@Override
 	public void SuiteChargerPartie(Jeu jeu) {
 		// TODO Auto-generated method stub
-		new ControlerJeu(jeu);
+		new ControlerJeu(jeu, true);
 	}
-
-	
-	
-	
 }
 

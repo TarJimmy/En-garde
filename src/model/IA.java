@@ -9,13 +9,13 @@ import controller.ControlerJeu;
 import view.InterfaceGraphiqueRegles;
 
 public abstract class IA {
-	protected ControlerJeu controlerJeu;
+	Jeu jeu;
 	
-	public IA(ControlerJeu controlerJeu) {
-		this.controlerJeu = controlerJeu;
+	public IA(Jeu jeu) {
+		this.jeu = jeu;
 	}
 	
-	public abstract int[] getChoixCoup(Escrimeur e, int typeCoup, int valeurDefense);
+	public abstract int[] getChoixCoup(int indiceEscrimeur, int typeCoup, int valeurDefense);
 	
 	/**
 	 * 
@@ -23,8 +23,8 @@ public abstract class IA {
 	 * @param valeurDefense
 	 * @return la liste des cases accessibles
 	 */
-	protected HashSet<Integer> getCasesAccessibles(int typeCoup, int valeurDefense) {
-		return p.casesJouables(e, typeCoup, valeurDefense);
+	protected HashSet<Integer> getCasesAccessibles(int indiceEscrimeur, int typeCoup, int valeurDefense) {
+		 return jeu.getPlateau().casesJouables(jeu.getEscrimeurs()[indiceEscrimeur], typeCoup, valeurDefense);
 	}
 	
 	/**
@@ -33,12 +33,13 @@ public abstract class IA {
 	 * @param valeurDefense
 	 * @return un hashmap avec comme clé la valeur de la case accessible, et comme valeur un tableau int comme [distance, nbExemplaire]
 	 */
-	protected HashMap<Integer, int[]> getCasesByCartes(int typeCoup, int valeurDefense) {
-		 HashSet<Integer> casesAccessibles = getCasesAccessibles(typeCoup, valeurDefense);
+	protected HashMap<Integer, int[]> getCasesByCartes(int indiceEscrimeur, int typeCoup, int valeurDefense) {
+		 HashSet<Integer> casesAccessibles = getCasesAccessibles(typeCoup, valeurDefense, valeurDefense);
 		 HashMap<Integer, int[]> caseByCartes = new HashMap<>();
 		 
 		 Iterator<Integer> it = casesAccessibles.iterator();
-		 int positionEscrimeur = p.getPosition(e.getIndice());
+		 int positionEscrimeur = jeu.getPlateau().getPosition(indiceEscrimeur);
+		 Escrimeur e = jeu.getEscrimeurs()[indiceEscrimeur];
 		 while(it.hasNext()) {
 			 int numCase = it.next();
 			 int valeurDistance = Math.abs(numCase - positionEscrimeur);
@@ -56,25 +57,15 @@ public abstract class IA {
 		return cartesRes;
 	}
 	
-	public CarteProbable getCarteProbable(int[] cartesDisponible, int nbCarte) throws IncorrectCarteException {
-		float probMax = 0;
-		int distance = 0;
-		for (int i=0; i<cartesDisponible.length; i++){
-			float probaCourante = cartesDisponible[i]/nbCarte;
-			if (probaCourante>probMax) {
-				probMax = probaCourante;
-				distance = i+1;
-			}
-		}
-		return new CarteProbable(distance, probMax);
+	public Escrimeur getEscrimeur(int indice) {
+		return jeu.getEscrimeurs()[indice];
 	}
 	
-	public class CarteProbable extends Carte {
-		public float proba;
-		
-		public CarteProbable(int distance, float proba) throws IncorrectCarteException {
-			super(distance);
-			this.proba = proba; 
-		}
+	public Plateau getPlateau() {
+		return jeu.getPlateau();
+	}
+	
+	public DeckDefausse getDefausse() {
+		return jeu.getDeckDefausse();
 	}
 }

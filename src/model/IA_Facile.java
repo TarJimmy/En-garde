@@ -4,10 +4,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 
+
 public class IA_Facile extends IA {
 	
-	public IA_Facile(Escrimeur e, Plateau p) {
-		super(e, p);
+	public IA_Facile(Jeu jeu) {
+		super(jeu);
 	}
 	
 	/**
@@ -17,8 +18,9 @@ public class IA_Facile extends IA {
 	 * @return un tableau de int comme [numero de la case, nombre de carte utilisé]
 	 */
 	@Override
-	public int[] getChoixCoup(int typeCoup, int valeurDefense) {
-		HashSet<Integer> casesAccessibles = getCasesAccessibles(typeCoup, valeurDefense);
+	public int[] getChoixCoup(int indiceEscrimeur, int typeCoup, int valeurDefense) {
+		Escrimeur e = getEscrimeur(indiceEscrimeur);
+		HashSet<Integer> casesAccessibles = getCasesAccessibles(indiceEscrimeur, typeCoup, valeurDefense);
 		
 	    int indiceChoisi = new Random().nextInt(casesAccessibles.size());
 	    Iterator<Integer> it = casesAccessibles.iterator();
@@ -27,6 +29,6 @@ public class IA_Facile extends IA {
 	    }
 	    int numCase = it.next();
 
-		return new int[] {numCase, e.getNbCartes(Math.abs(numCase - p.getPosition(e.getIndice()))) } ;
+		return new int[] {numCase, e.getNbCartes(Math.abs(numCase - getPlateau().getPosition(e.getIndice()))) } ;
 	}
 }

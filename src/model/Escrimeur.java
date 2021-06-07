@@ -3,6 +3,9 @@ package model;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import Patterns.Observable;
 
 public class Escrimeur {
@@ -110,14 +113,6 @@ public class Escrimeur {
 	public Carte getCarte(int i) {
 		return cartes[i];
 	}
-	
-	public int[] getArrayCartes() {
-		int [] res = new int[cartes.length];
-		for (int i = 0; i < cartes.length; i++) {
-			res[i] = cartes[i].getDistance();
-		}
-		return res;
-	}
 
 	public String getNom() {
 		return nom;
@@ -137,6 +132,10 @@ public class Escrimeur {
 
 	public static int getDroitier() {
 		return DROITIER;
+	}
+	
+	public void setMancheGagner(int nbWin) {
+		this.mancheGagner = nbWin;
 	}
 
 	public int getMancheGagner() {
@@ -188,5 +187,30 @@ public class Escrimeur {
 			e.cartes[i] = cartes[i].copySimple();
 		}
 		return e;
+	}
+	
+	public int[] getArrayCartes() {
+		int [] res = new int[cartes.length];
+		for (int i = 0; i < cartes.length; i++) {
+			if (cartes[i] != null) {
+				res[i] = cartes[i].getDistance();
+			} else {
+				res[i] = 0;
+			}
+		}
+		return res;
+	}
+	
+	public void setCartes(JSONArray cartesInt,int NbCartes) {
+		for (int i = 0; i < NbCartes; i++) {
+			try {
+				int temp = cartesInt.getInt(i);
+				if (temp != 0) {
+					cartes[i] = new Carte(cartesInt.getInt(i));
+				} 
+			} catch (JSONException | IncorrectCarteException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
