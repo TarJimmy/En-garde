@@ -12,8 +12,6 @@ public class AdaptateurChargerPartie implements ActionListener {
 		control = controle;
 		this.id = id;
 	}
-
-
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {

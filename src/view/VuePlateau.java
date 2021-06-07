@@ -223,7 +223,7 @@ public class VuePlateau extends JPanel implements Animateur {
 				if (numCaseMouse == i) {
 					imgDalle = p.getPosition(indiceOtherEscrimeur) == i || (!animActif && p.getPosition(indiceEscrimeurCourant) == i) ? imgAttaqueDefense[i - 1] : imgOver[i - 1];
 				} else {
-					imgDalle = imgSelect[i - 1];
+					imgDalle = numCaseConseil == i ? imgConseil[i - 1] : imgSelect[i - 1];
 				}
 			} else {
 				imgDalle = imgNormal[i - 1];
@@ -447,5 +447,9 @@ public class VuePlateau extends JPanel implements Animateur {
 	
 	public boolean estCaseClickable() {
 		return showCaseClickable;
+	}
+	
+	public void setCaseConseil(int numCaseConseil) {
+		this.numCaseConseil = numCaseConseil;
 	}
 }

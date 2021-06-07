@@ -10,7 +10,7 @@ public class Carte {
 	
 	public Carte(int distance) throws IncorrectCarteException {
 		if (distance < 0) {
-			throw new IncorrectCarteException("Distance ");
+			throw new IncorrectCarteException("Distance < 0");
 		} else {
 			this.distance = distance;
 		}

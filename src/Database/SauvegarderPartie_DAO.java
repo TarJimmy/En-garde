@@ -29,7 +29,7 @@ public class SauvegarderPartie_DAO {
     }
 	
 	public void sauvegardeJeu(Jeu jeu) {  
-        String sql = "INSERT OR REPLACE INTO SauvegarderPartie(nomJoueurG,nomJoueurD,mancheGagnerGauche,mancheGagnerDroit,posJoueurG,posJoueurD,nbCasesJeu,nbManchesWin,mainGaucherJSON,mainDroitierJSON,DefausseJSON,PiocheJSON,posDepartGauche,posDepartDroit) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";  
+        String sql = "INSERT OR REPLACE INTO SauvegarderPartie(nomJoueurG,nomJoueurD,mancheGagnerGauche,mancheGagnerDroit,posJoueurG,posJoueurD,nbCasesJeu,nbManchesWin,mainGaucherJSON,mainDroitierJSON,DefausseJSON,PiocheJSON,posDepartGauche,posDepartDroit,modeSimple,TypeEscrimeurG,TypeEscrimeurD,CartesMaxJoueur,AnimationAutoriser,indicePremierJoueur,indiceCurrentJoueur) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";  
    
         try{  
             Connection conn = this.connect();  
@@ -60,8 +60,17 @@ public class SauvegarderPartie_DAO {
             pstmt.setInt(13, jeu.getPositionsDepart()[0]);
             pstmt.setInt(14, jeu.getPositionsDepart()[1]);  
             
+            pstmt.setBoolean(15, jeu.getModeSimple()); 
+            System.out.println(jeu.getEscrimeurGaucher().getType());
+            pstmt.setString(16,jeu.getEscrimeurGaucher().getType().name());
+            pstmt.setString(17,jeu.getEscrimeurDroitier().getType().toString());
+            pstmt.setInt(18, jeu.getEscrimeurDroitier().getNbCartes());  
+            pstmt.setInt(19, jeu.getPositionsDepart()[1]);  
+            pstmt.setInt(20, jeu.getIndicePremierJoueur());  
+            pstmt.setInt(21, jeu.getIndiceCurrentEscrimeur());  
             
             pstmt.executeUpdate();  
+            System.out.println("Partie sauvegard�\n");
         } catch (SQLException e) {  
             System.out.println(e.getMessage());  
         }  
@@ -85,7 +94,7 @@ public class SauvegarderPartie_DAO {
 	}
 	
 	public ResultSet getIdJeu(int idJeu) {
-		String sql = "SELECT * FROM SauvegarderPartie WHERE id = '" + idJeu + "'";
+		String sql = "SELECT * FROM SauvegarderPartie WHERE idPartie = '" + idJeu + "'";
         
         try {
         	Connection conn = connect();

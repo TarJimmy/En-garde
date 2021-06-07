@@ -2,7 +2,9 @@ package model;
 
 import java.util.Random;
 
-public class IA_Moyenne {
+import controller.ControlerIA;
+
+public class IA_Difficile {
 	
 
 	Coup coup;
@@ -10,7 +12,11 @@ public class IA_Moyenne {
 	Plateau plateau;
 	Deck deck;
 	
-	public IA_Moyenne(Coup c, Plateau p, Deck d, Coup a) {
+	public IA_Difficile(ControlerIA controlerIA) {
+		this.controlerIA = controlerIA;
+	}
+	
+	public IA_Difficile(Coup c, Plateau p, Deck d, Coup a) {
 		coup = c;
 		plateau = p;
 		deck = d;
@@ -374,7 +380,34 @@ public class IA_Moyenne {
 		
 		System.out.println("action choisie :" + act_IA[0] + "carte choisie :"+act_IA[1]);
 	} */
-
-
-
+	
+	public int[] getCarteDansPioche(int[] totalCartes, Carte[] carteEGauche, Carte[] carteEDroitier, DeckDefausse defausse) {
+        int[] cartesRes = new int[]{totalCartes[0],totalCartes[1],totalCartes[2],totalCartes[3],totalCartes[4]};
+        for (Carte c: carteEGauche) { cartesRes[c.getDistance()-1]--; }
+        for (Carte c: carteEDroitier) { cartesRes[c.getDistance()-1]--; }
+        for (int i=0; i<defausse.cartes.size();i++) { cartesRes[defausse.cartes.elementAt(i).getDistance()-1]--; }
+        return cartesRes;
+    }
+    
+    public CarteProbable getCarteProbable(int[] cartesDisponible, int nbCarte) throws IncorrectCarteException {
+        float probMax = 0;
+        int distance = 0;
+        for (int i=0; i<cartesDisponible.length; i++){
+            float probaCourante = cartesDisponible[i]/nbCarte;
+            if (probaCourante>probMax) {
+                probMax = probaCourante;
+                distance = i+1;
+            }
+        }
+        return new CarteProbable(distance, probMax);
+    }
+    
+    public class CarteProbable extends Carte {
+        public float proba;
+        
+        public CarteProbable(int distance, float proba) throws IncorrectCarteException {
+            super(distance);
+            this.proba = proba; 
+        }
+    }
 }

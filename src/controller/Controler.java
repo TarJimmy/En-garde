@@ -1,8 +1,13 @@
 package controller;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import Database.SauvegarderPartie_DAO;
 import Global.Parametre;
@@ -10,6 +15,7 @@ import model.Carte;
 import model.DeckDefausse;
 import model.DeckPioche;
 import model.Escrimeur;
+import model.IncorrectPlateauException;
 import model.Jeu;
 import model.Plateau;
 import model.SauvegardeParametre;
@@ -42,112 +48,81 @@ public abstract class Controler implements CollecteurEvenements {
 	public abstract void SuiteChargerPartie(Jeu jeu);
 	
 	
+	protected TypeEscrimeur getTypeEscrimeur(String text) {
+		
+		System.out.println(text + "   \n");
+		switch (text) {
+		case "HUMAIN":
+			return TypeEscrimeur.HUMAIN;
+		case "IA_FACILE":
+			return TypeEscrimeur.IA_FACILE;
+		case "IA_MOYENNE":
+			return TypeEscrimeur.IA_MOYENNE;
+		case "IA_DIFFICILE":
+			return TypeEscrimeur.IA_DIFFICILE;
+		default:
+			System.out.println("passe dans null");
+			return null;
+		}
+	}
+	
 	@Override
 	public boolean chargerPartie(int id) {
 		System.out.println("chargerPartie : " + id);
 		SauvegarderPartie_DAO SPartie_DAO = new SauvegarderPartie_DAO();
 		ResultSet PartieSauvegarde = SPartie_DAO.getIdJeu(id);
-
 		
+		try {
 		
+			int nbDalles = PartieSauvegarde.getInt("nbCasesJeu");
+			
+			String nameJ1 = PartieSauvegarde.getString("nomJoueurG");
+			TypeEscrimeur typeJ1 = getTypeEscrimeur(PartieSauvegarde.getString("TypeEscrimeurG"));
+			int posJ1 = PartieSauvegarde.getInt("posJoueurG");
+			
+			String nameJ2 = PartieSauvegarde.getString("nomJoueurD");
+			TypeEscrimeur typeJ2 = getTypeEscrimeur(PartieSauvegarde.getString("TypeEscrimeurD"));
+			int posJ2 = PartieSauvegarde.getInt("posJoueurD");
+			
+			Boolean modeSimple = PartieSauvegarde.getBoolean("modeSimple");
+			int nbManches = PartieSauvegarde.getInt("nbManchesWin");
+			int nbCarteMaxParJoueur = PartieSauvegarde.getInt("CartesMaxJoueur");
+			
+			Escrimeur eGaucher = new Escrimeur(nameJ1, typeJ1, Escrimeur.GAUCHER, nbCarteMaxParJoueur);
+			JSONArray  mainGaucherJson = new JSONArray(PartieSauvegarde.getString("mainGaucherJSON"));
+			eGaucher.setCartes(mainGaucherJson,nbCarteMaxParJoueur);
+			eGaucher.setMancheGagner(PartieSauvegarde.getInt("mancheGagnerGauche"));
+			
+			Escrimeur eDroitier = new Escrimeur(nameJ2, typeJ2, Escrimeur.DROITIER, nbCarteMaxParJoueur);
+			JSONArray  mainDroitierJson = new JSONArray(PartieSauvegarde.getString("mainDroitierJSON"));
+			eDroitier.setCartes(mainDroitierJson,nbCarteMaxParJoueur);
+			eDroitier.setMancheGagner(PartieSauvegarde.getInt("mancheGagnerDroit"));
+	
+			DeckPioche deckPioche = new DeckPioche();
+			JSONArray  PiocheJson = new JSONArray(PartieSauvegarde.getString("piocheJSON"));
+			deckPioche.setDeck(PiocheJson);
+			
+			DeckDefausse deckDefausse = new DeckDefausse();
+			JSONArray  DefausseJson = new JSONArray(PartieSauvegarde.getString("DefausseJSON"));
+			deckDefausse.setDeck(DefausseJson);
+			
+			Boolean animationAutoriser;
+			
+			animationAutoriser = PartieSauvegarde.getBoolean("AnimationAutoriser");
+			
+			int indiceCurrentEscrimeur = PartieSauvegarde.getInt("indiceCurrentJoueur");
+			int indicePremierEscrimeur = PartieSauvegarde.getInt("indicePremierJoueur");
+			
+			int[] positionDepart = {PartieSauvegarde.getInt("posDepartGauche"), PartieSauvegarde.getInt("posDepartDroit")};
+			Plateau plateau = new Plateau(posJ1, posJ2, nbDalles);
+			Jeu jeu = new Jeu(modeSimple, plateau, deckPioche, deckDefausse, nbManches, indiceCurrentEscrimeur, eGaucher, eDroitier, positionDepart,indicePremierEscrimeur,null, animationAutoriser);
+			SuiteChargerPartie(jeu);
+			
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-//		Parametre.instance();
-//		SauvegardeParametre.chargerParametres();
-//		settings = SauvegardeParametre.getSettings();
-//		Iterator<String> it = settings.iterator();
-//		int nbDalles = Integer.parseInt(it.next());
-//		String nameJ1 = it.next();
-//		TypeEscrimeur typeJ1 = getTypeEscrimeur(it.next());
-//		int posJ1 = Integer.parseInt(it.next());
-//		
-//		String nameJ2 = it.next();
-//		TypeEscrimeur typeJ2 = getTypeEscrimeur(it.next());
-//		int posJ2 = Integer.parseInt(it.next());
-//		
-//		Boolean modeSimple = it.next().equals("Basique");
-//		int nbManches = Integer.parseInt(it.next());
-//		int nbCarteMaxParJoueur = Integer.parseInt(it.next());
-//		Escrimeur eGaucher = new Escrimeur(nameJ1, typeJ1, Escrimeur.GAUCHER, nbCarteMaxParJoueur);
-//		Escrimeur eDroitier = new Escrimeur(nameJ2, typeJ2, Escrimeur.DROITIER, nbCarteMaxParJoueur);
-//		
-//		ArrayList<Carte> cartesPrepare = new ArrayList<>();
-//		int nbCarteTotal = 0;
-//		
-//		for(int i = 0; i < 5; i++) {
-//			int nbCarteCourant = Integer.parseInt(it.next());
-//			for (int j = 0; j < nbCarteCourant; j++) {
-//				cartesPrepare.add(new Carte(i + 1));
-//				nbCarteTotal++;
-//			}
-//			
-//		}
-//		Carte[] cartesDeck = new Carte[nbCarteTotal];
-//		int i = 0;
-//		for (Carte c1 : cartesPrepare) {
-//			cartesDeck[i] = c1;
-//			i++;
-//		}
-//		DeckPioche deckPioche = new DeckPioche(cartesDeck);
-//		DeckDefausse deckDefausse = new DeckDefausse();
-//		
-//		String anim = it.next();
-//		Boolean animationAutoriser;
-//		if (anim.equals("Actif")) { 
-//			animationAutoriser = true;
-//		} else {
-//			animationAutoriser = false;
-//		}
-//		int[] positonDepart = {posJ1, posJ2};
-//		Plateau plateau = new Plateau(posJ1, posJ2, nbDalles);
-//		Jeu jeu = new Jeu(modeSimple, plateau, deckPioche, deckDefausse, nbManches, Escrimeur.GAUCHER, eGaucher, eDroitier, positonDepart, animationAutoriser);
-//		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-//		SuiteChargerPartie(jeu)
-		// TODO Auto-generated method stub
+		} catch (SQLException | IncorrectPlateauException | JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return false;
 	}
 	

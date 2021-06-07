@@ -13,6 +13,7 @@ import java.util.Stack;
 import javax.swing.Timer;
 
 import Patterns.Observable;
+import controller.ControlerIA.DeckPiocheIA;
 import controller.ControlerJeu;
 import model.Jeu.Action;
 
@@ -65,8 +66,10 @@ public class Jeu extends Observable {
 	public static final int NONE = 3;
 
 	private int lastWinner;
+	private IA_Facile IA_conseil;
 	
-	private Jeu() {}
+	protected Jeu() {}
+	
 	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, int[] positionsDeparts, boolean animationAutoriser) {
 		super();
 		this.indiceCurrentEscrimeur = 0;
@@ -76,13 +79,16 @@ public class Jeu extends Observable {
 		peutPasserTour = false;
 	}
 
-	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, int[] positionsDeparts, int indicePremierJoueur, Action action, Historique historique, boolean animationAutoriser) {
+	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, int[] positionsDeparts, int indicePremierJoueur, Historique historique, boolean animationAutoriser) {
 		super();
 		this.indiceCurrentEscrimeur = indiceCurrentEscrimeur;
-		setHistorique(historique);
+		if(historique != null) {
+			setHistorique(historique);
+		} else {
+			setHistorique(new Historique(this));
+		}
 		init(modeSimple, plateau, deckPioche, deckDefausse, nbManchesPourVictoire, gaucher, droitier, positionsDeparts, animationAutoriser);
-		modifieVue(action);
-		indicePremierJoueur = indiceCurrentEscrimeur;
+		this.indicePremierJoueur = indicePremierJoueur;
 		peutPasserTour = false;
 	}
 	
@@ -113,6 +119,7 @@ public class Jeu extends Observable {
 		this.actionEnCours = false;
 		this.dernierTour = false;
 		this.winner = NONE;
+		//IA_conseil;
 	}
 	
 	public boolean isDernierTour() {
@@ -157,6 +164,10 @@ public class Jeu extends Observable {
 
 	public int getIndiceCurrentEscrimeur() {
 		return indiceCurrentEscrimeur;
+	}
+	
+	public int getIndicePremierJoueur() {
+		return indicePremierJoueur;
 	}
 
 	public Boolean getIsTourGaucher() {
@@ -429,9 +440,7 @@ public class Jeu extends Observable {
 
 	
 	public void nouvelleManche() {
-		System.out.println("---------------Nouvelle Manche----------------");
 		resetManche();
-		
 		indicePremierJoueur = (indicePremierJoueur + 1) % 2;
 		indiceCurrentEscrimeur = indicePremierJoueur;
 		modifieVue(Action.ACTUALISER_JEU);
@@ -605,6 +614,10 @@ public class Jeu extends Observable {
 		jeu.indiceCurrentEscrimeur = indiceCurrentEscrimeur;
 		jeu.historique = historique.copySimple(jeu);
 		return jeu;
+	}
+
+	public void setDeckPioche(DeckPioche deckPioche) {
+		this.deckPioche = deckPioche;
 	}
 	
 	

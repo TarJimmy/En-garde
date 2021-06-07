@@ -4,16 +4,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import controller.ControlerIA;
 import controller.ControlerJeu;
 
 public abstract class IA {
-	protected ControlerJeu controlerJeu;
+	Jeu jeu;
 	
-	public IA(ControlerJeu controlerJeu) {
-		this.controlerJeu = controlerJeu;
+	public IA(Jeu jeu) {
+		this.jeu = jeu;
 	}
 	
-	public abstract int[] getChoixCoup(Escrimeur e, int typeCoup, int valeurDefense);
+	public abstract int[] getChoixCoup(int indiceEscrimeur, int typeCoup, int valeurDefense);
 	
 	/**
 	 * 
@@ -21,8 +22,8 @@ public abstract class IA {
 	 * @param valeurDefense
 	 * @return la liste des cases accessibles
 	 */
-	protected HashSet<Integer> getCasesAccessibles(int typeCoup, int valeurDefense) {
-		return p.casesJouables(e, typeCoup, valeurDefense);
+	protected HashSet<Integer> getCasesAccessibles(int indiceEscrimeur, int typeCoup, int valeurDefense) {
+		 return jeu.getPlateau().casesJouables(jeu.getEscrimeurs()[indiceEscrimeur], typeCoup, valeurDefense);
 	}
 	
 	/**
@@ -31,12 +32,13 @@ public abstract class IA {
 	 * @param valeurDefense
 	 * @return un hashmap avec comme clé la valeur de la case accessible, et comme valeur un tableau int comme [distance, nbExemplaire]
 	 */
-	protected HashMap<Integer, int[]> getCasesByCartes(int typeCoup, int valeurDefense) {
-		 HashSet<Integer> casesAccessibles = getCasesAccessibles(typeCoup, valeurDefense);
+	protected HashMap<Integer, int[]> getCasesByCartes(int indiceEscrimeur, int typeCoup, int valeurDefense) {
+		 HashSet<Integer> casesAccessibles = getCasesAccessibles(typeCoup, valeurDefense, valeurDefense);
 		 HashMap<Integer, int[]> caseByCartes = new HashMap<>();
 		 
 		 Iterator<Integer> it = casesAccessibles.iterator();
-		 int positionEscrimeur = p.getPosition(e.getIndice());
+		 int positionEscrimeur = jeu.getPlateau().getPosition(indiceEscrimeur);
+		 Escrimeur e = jeu.getEscrimeurs()[indiceEscrimeur];
 		 while(it.hasNext()) {
 			 int numCase = it.next();
 			 int valeurDistance = Math.abs(numCase - positionEscrimeur);
@@ -46,17 +48,15 @@ public abstract class IA {
 		 return caseByCartes;
 	}
 	
-	public abstract int[] getCarteDansPioche(Carte[] carteEGauche, Carte[] eDroitier, DeckDefausse defausse);
+	public Escrimeur getEscrimeur(int indice) {
+		return jeu.getEscrimeurs()[indice];
+	}
 	
-	public abstract CarteProbable getCarteProbable(Carte[] cartesDisponible, int nbCarte);
+	public Plateau getPlateau() {
+		return jeu.getPlateau();
+	}
 	
-	public class CarteProbable {
-		public Carte c;
-		public float proba;
-		
-		public CarteProbable(Carte c, float proba) {
-			this.c = c;
-			this.proba = proba; 
-		}
+	public DeckDefausse getDefausse() {
+		return jeu.getDeckDefausse();
 	}
 }
