@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import Database.SauvegarderPartie_DAO;
 import Global.Parametre;
 import model.Carte;
 import model.DeckDefausse;
@@ -109,7 +110,7 @@ public class ControlerAutre extends Controler {
 				break;
 			case "chargePartieMenu":
 				InterfaceGraphiqueMenu.close();
-				InterfaceGraphiqueChargerPartie.demarrer(new ControlerAutre());
+				InterfaceGraphiqueChargerPartie.demarrer(this);
 				break;
 			case "rejouer":
 				break;
@@ -118,7 +119,7 @@ public class ControlerAutre extends Controler {
 				Parametre.instance();
 				SauvegardeParametre.chargerParametres();
 				settings = SauvegardeParametre.getSettings();
-				InterfaceGraphiqueParametres.demarrer(settings, new ControlerAutre());
+				InterfaceGraphiqueParametres.demarrer(settings, this);
 				break;
 			case "sauvePara":
 				SauvegardeParametre.sauvegarderParametres(InterfaceGraphiqueParametres.getParametre("map"), InterfaceGraphiqueParametres.getParametre("nomJ1"), InterfaceGraphiqueParametres.getParametre("typeJ1"), InterfaceGraphiqueParametres.getParametre("posJ1"), InterfaceGraphiqueParametres.getParametre("nomJ2"), InterfaceGraphiqueParametres.getParametre("typeJ2"), InterfaceGraphiqueParametres.getParametre("posJ2"), InterfaceGraphiqueParametres.getParametre("modeAttaque"), InterfaceGraphiqueParametres.getParametre("manches"), InterfaceGraphiqueParametres.getParametre("carteMax"), InterfaceGraphiqueParametres.getParametre("carte1"), InterfaceGraphiqueParametres.getParametre("carte2"), InterfaceGraphiqueParametres.getParametre("carte3"), InterfaceGraphiqueParametres.getParametre("carte4"), InterfaceGraphiqueParametres.getParametre("carte5"), InterfaceGraphiqueParametres.getParametre("animation"));
@@ -155,5 +156,15 @@ public class ControlerAutre extends Controler {
 			return null;
 		}
 	}
+
+	@Override
+	public void SuiteChargerPartie(Jeu jeu) {
+		// TODO Auto-generated method stub
+		new ControlerJeu(jeu);
+	}
+
+	
+	
+	
 }
 

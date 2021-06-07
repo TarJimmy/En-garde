@@ -55,7 +55,6 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 	private static ButtonCustom createButtonChargerPartie(String name, int x, int y) {
 		ButtonCustom button = new ButtonCustom(name, "contourChargePartie", new Dimension(150, 150), new Font(Configuration.Century.getFamily(), Font.PLAIN, 15));
 		button.setBounds(x, y, 150, 150);
-		parties.add(button);
 		button.setHorizontalTextPosition(SwingConstants.CENTER);
 		return button;
 	}
@@ -64,7 +63,7 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 	public void run() {
 		fenetreChargerPartie = new JFrame("EN GARDE ! - CHARGER UNE PARTIE");
 		JLabel contentPane = null;
-		String id = "Vide";
+		String name = "Vide";
 		try {
 			contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("fondChargePartie.png", Configuration.MENU))));
 		} catch (IOException e) {
@@ -74,12 +73,18 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		fenetreChargerPartie.setContentPane(contentPane);
 		contentPane.setLayout(null);
-		JButton Partie1 = createButtonChargerPartie(id, 395, 322);
-		JButton Partie2 = createButtonChargerPartie(id, 217, 322);
-		JButton Partie3 = createButtonChargerPartie(id, 35, 322);
-		JButton Partie4 = createButtonChargerPartie(id, 395, 161);
-		JButton Partie5 = createButtonChargerPartie(id, 217, 161);
-		JButton Partie6 = createButtonChargerPartie(id, 35, 161);
+		int x1 = 35;
+		int x2 = 217;
+		int x3 = 395;
+		int y1 = 161;
+		int y2 = 322;
+		parties.add(createButtonChargerPartie(name, x1, y1));
+		parties.add(createButtonChargerPartie(name, x2, y1));
+		parties.add(createButtonChargerPartie(name, x3, y1));
+		parties.add(createButtonChargerPartie(name, x1, y2));
+		parties.add(createButtonChargerPartie(name, x2, y2));
+		parties.add(createButtonChargerPartie(name, x3, y2));
+
 		JButton annuler = new ButtonCustom("Annuler", "cadre4", new Dimension(150, 40), new Font(Configuration.Century.getFamily(), Font.PLAIN, 15));
 		annuler.addActionListener(new AdaptateurCommande(controle, "annuler"));
 		annuler.setBounds(35, 500, 150, 40);
@@ -87,11 +92,11 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 		try {
 			rs = SauvegarderPartie_DAO.getAll();
 			for(int i=0; i<6; i++) {
+				JButton button = parties.get(i);
 				rs.next();
-				id = rs.getString("idPartie")+"\n"+rs.getString("nomJoueurG")+"\n"+rs.getString("nomJoueurD");
-				parties.get(i).setText(id);
-				// TODO charger la partie voulue
-				// parties.get(i).addActionListener();
+				name = rs.getString("idPartie")+" \n"+rs.getString("nomJoueurG")+"\n"+rs.getString("nomJoueurD");
+				button.setText(name);
+				button.addActionListener(new AdaptateurChargerPartie(controle,rs.getInt("idPartie")));
 			}
 		} catch (SQLException e) {
 			System.out.println("Pas plus de parties enregistrees");

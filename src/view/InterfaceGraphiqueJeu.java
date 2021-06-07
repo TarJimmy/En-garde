@@ -94,12 +94,11 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	public static void demarrer(CollecteurEvenements control, Jeu jeu) {
 		SwingUtilities.invokeLater(new InterfaceGraphiqueJeu(control, jeu));
 	}
-	
 	/**
 	 * Ferme la fenetre de jeu
 	 */
 	public static void close() {
-		if(frame!=null) {
+		if(frame != null) {
 			frame.setVisible(false);
 			frame.dispose();
 		}
@@ -117,6 +116,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	}
 	@Override
 	public void miseAJour() {
+		frame.setFocusable(true);
 		Action action = jeu.getActionCourante();
 		switch (action) {
 			case ACTUALISER_JEU:
@@ -151,11 +151,11 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				controle.commande("ActionTerminer");
 				break;
 			case ANIMATION_PIOCHER:
-				int indicePiocher = jeu.getIndiceChangeCarte();
+				int indicePiocher = jeu.getIndiceEscrimeurChangeCarte();
 				Escrimeur escrimeurPiocher = jeu.getEscrimeurs()[indicePiocher];
 				
-				ArrayList<Integer> indicesCartesADeplacerPiocher = escrimeurPiocher.getIndicesCartesModifierRecemment();
-				ArrayList<Integer> distancesListPiocher = escrimeurPiocher.getDistancesCartesModifierRecemment();
+				ArrayList<Integer> indicesCartesADeplacerPiocher = jeu.popListeCartesChangeRecemment(indicePiocher);
+				ArrayList<Integer> distancesListPiocher = jeu.popListeDistancesChangeRecemment(indicePiocher);
 				
 				Point[] destinationsPiocher = getPosCartesModifierRecemment(indicePiocher, indicesCartesADeplacerPiocher);
 				Point[] departsPiocher = new Point[destinationsPiocher.length];
@@ -168,10 +168,10 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				controle.animation("Ajouter", panelAnimation.generateAnimationDeplacerCartes(departsPiocher, destinationsPiocher, distancesPiocher, indicePiocher));
 				break;
 			case ANIMATION_DEFAUSSER:
-				int indiceDefausser = jeu.getIndiceChangeCarte();
+				int indiceDefausser = jeu.getIndiceEscrimeurChangeCarte();
 				Escrimeur escrimeurDefausser = jeu.getEscrimeurs()[indiceDefausser];
-				ArrayList<Integer> indicesCartesADeplacerDefausser = escrimeurDefausser.getIndicesCartesModifierRecemment();
-				ArrayList<Integer> distancesListDefausser = escrimeurDefausser.getDistancesCartesModifierRecemment();
+				ArrayList<Integer> indicesCartesADeplacerDefausser = jeu.popListeCartesChangeRecemment(indiceDefausser);
+				ArrayList<Integer> distancesListDefausser = jeu.popListeDistancesChangeRecemment(indiceDefausser);
 				Point[] departsDefausser = getPosCartesModifierRecemment(indiceDefausser, indicesCartesADeplacerDefausser);
 				Point[] destinationsDefausser = new Point[departsDefausser.length];
 				int[] distancesDefausser = new int[departsDefausser.length];

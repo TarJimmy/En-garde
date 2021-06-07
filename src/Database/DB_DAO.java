@@ -73,8 +73,13 @@ public class DB_DAO {
         		+ " idPartie integer PRIMARY KEY AUTOINCREMENT,\n"
                 + " nomJoueurG integer NOT NULL,\n"
                 + " nomJoueurD integer NOT NULL,\n"
+                
+                
                 + " mancheGagnerGauche integer NOT NULL,\n"
                 + " mancheGagnerDroit integer NOT NULL,\n"
+                
+				+ " nbCasesJeu integer NOT NULL,\n"
+				+ " nbManchesWin integer NOT NULL,\n"
                 
                 + " posJoueurG integer NOT NULL,\n"
                 + " posJoueurD integer NOT NULL,\n"

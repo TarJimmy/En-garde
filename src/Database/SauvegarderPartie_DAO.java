@@ -29,7 +29,7 @@ public class SauvegarderPartie_DAO {
     }
 	
 	public void sauvegardeJeu(Jeu jeu) {  
-        String sql = "INSERT OR REPLACE INTO SauvegarderPartie(nomJoueurG,nomJoueurD,mancheGagnerGauche,mancheGagnerDroit,posJoueurG,posJoueurD,mainGaucherJSON,mainDroitierJSON,DefausseJSON,PiocheJSON,posDepartGauche,posDepartDroit) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";  
+        String sql = "INSERT OR REPLACE INTO SauvegarderPartie(nomJoueurG,nomJoueurD,mancheGagnerGauche,mancheGagnerDroit,posJoueurG,posJoueurD,nbCasesJeu,nbManchesWin,mainGaucherJSON,mainDroitierJSON,DefausseJSON,PiocheJSON,posDepartGauche,posDepartDroit) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";  
    
         try{  
             Connection conn = this.connect();  

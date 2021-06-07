@@ -2,6 +2,7 @@ package model;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,7 +42,6 @@ public class Jeu extends Observable {
 	private DeckDefausse deckDefausse;
 	private int indiceCurrentEscrimeur;
 	private int indicePremierJoueur;
-	private int indiceChangeCarte;
 	private boolean animationAutoriser;
 	
 	private Escrimeur[] escrimeurs;
@@ -52,6 +52,9 @@ public class Jeu extends Observable {
 	
 	private LinkedList<Action> listeActions;
 	private LinkedList<Carte[]> cartesShowEscrimeurs[];
+	private LinkedList<Integer> listeIndiceEscrimeurChangeCarte;
+	private LinkedList<ArrayList<Integer>> listeCartesChangeRecemment[];
+	private LinkedList<ArrayList<Integer>> listeDistancesChangeRecemment[];
 	private Boolean actionEnCours;
 	
 	private int[] positionsDeparts;
@@ -95,6 +98,13 @@ public class Jeu extends Observable {
 		this.escrimeurs[1] = droitier;
 		this.positionsDeparts = positionsDeparts;
 		this.listeActions = new LinkedList<>();
+		this.listeIndiceEscrimeurChangeCarte = new LinkedList<>();
+		this.listeCartesChangeRecemment = new LinkedList[2];
+		this.listeCartesChangeRecemment[Escrimeur.GAUCHER] = new LinkedList<>();
+		this.listeCartesChangeRecemment[Escrimeur.DROITIER] = new LinkedList<>();
+		this.listeDistancesChangeRecemment = new LinkedList[2];
+		this.listeDistancesChangeRecemment[Escrimeur.GAUCHER] = new LinkedList<>();
+		this.listeDistancesChangeRecemment[Escrimeur.DROITIER] = new LinkedList<>();
 		this.cartesShowEscrimeurs = new LinkedList[2];
 		this.cartesShowEscrimeurs[Escrimeur.GAUCHER] = new LinkedList<>();
 		this.cartesShowEscrimeurs[Escrimeur.DROITIER] = new LinkedList<>();
@@ -166,7 +176,9 @@ public class Jeu extends Observable {
 		while (e.manqueCarte() && !deckPioche.deckVide()) {
 			e.ajouterCarte(deckPioche.piocher());
 		}
-		indiceChangeCarte = e.getIndice();
+		listeIndiceEscrimeurChangeCarte.add(e.getIndice());
+		listeCartesChangeRecemment[e.getIndice()].add(e.getIndicesCartesModifierRecemment());
+		listeDistancesChangeRecemment[e.getIndice()].add(e.getDistancesCartesModifierRecemment());
 		modifieVueAnimation(Action.ANIMATION_PIOCHER);
 		modifieVue(e.getIndice() == Escrimeur.GAUCHER ? Action.ACTUALISER_ESCRIMEUR_GAUCHER : Action.ACTUALISER_ESCRIMEUR_DROITIER);
 		modifieVue(Action.ACTUALISER_DECK);
@@ -207,7 +219,9 @@ public class Jeu extends Observable {
 	}
 	
 	private void animerDefausser(int indice) {
-		indiceChangeCarte = indice;
+		listeIndiceEscrimeurChangeCarte.add(indice);
+		listeCartesChangeRecemment[indice].add(escrimeurs[indice].getIndicesCartesModifierRecemment());
+		listeDistancesChangeRecemment[indice].add(escrimeurs[indice].getDistancesCartesModifierRecemment());
 		modifieVueAnimation(Action.ANIMATION_DEFAUSSER);
 		modifieVue(Action.ACTUALISER_DECK);
 		modifieVue(indice == Escrimeur.GAUCHER ? Action.ACTUALISER_ESCRIMEUR_GAUCHER : Action.ACTUALISER_ESCRIMEUR_DROITIER);
@@ -412,42 +426,16 @@ public class Jeu extends Observable {
 		return plateau.casesJouables(getCurrentEscrimeur(), code, atk);
 	}
 
-	private void resetDeck() {
-		while(!deckDefausse.deckVide()) {
-			deckPioche.reposerCarte(deckDefausse.reprendreDerniereCarte());
-		}
-		deckPioche.melanger();
-	}
-	
-	private void resetEscrimeurs() {
-		int nbCartesMain = getCurrentEscrimeur().getNbCartes();
-		for (int i = 0; i < nbCartesMain; i++) {
-			for (int j = 0; j < 2; j++) {
-				Carte currentCard = escrimeurs[j].getCarte(i);
-				if (currentCard != null) {
-					deckPioche.reposerCarte(currentCard);
-				}
-				escrimeurs[j].getCartes()[i] = null;
-			}
-		}
-		try {
-			plateau.setPosition(positionsDeparts[Escrimeur.GAUCHER], Escrimeur.GAUCHER);
-			plateau.setPosition(positionsDeparts[Escrimeur.DROITIER], Escrimeur.DROITIER);
-		} catch (IncorrectPlateauException e) {
-			System.err.println(e.getMessage());
-		};
-	}
 	
 	public void nouvelleManche() {
-		resetDeck();		
-		resetEscrimeurs();
-		historique.vider();
-		deckPioche.melanger();
+		System.out.println("---------------Nouvelle Manche----------------");
+		resetManche();
+		
 		indicePremierJoueur = (indicePremierJoueur + 1) % 2;
 		indiceCurrentEscrimeur = indicePremierJoueur;
 		modifieVue(Action.ACTUALISER_JEU);
-		piocher(getEscrimeurGaucher());
-		piocher(getEscrimeurDroitier());
+		piocher(escrimeurs[indiceCurrentEscrimeur]);
+		piocher(escrimeurs[(indiceCurrentEscrimeur + 1) % 2]);
 		modifieVue(Action.ACTUALISER_JEU);
 	}
 	
@@ -534,10 +522,6 @@ public class Jeu extends Observable {
 	}
 	
 	public void nouvellePartie() {
-		listeActions.clear();
-		actionEnCours = false;
-		cartesShowEscrimeurs[Escrimeur.GAUCHER].clear();
-		cartesShowEscrimeurs[Escrimeur.DROITIER].clear();
 		escrimeurs[Escrimeur.GAUCHER].resetMancheGagner();
 		escrimeurs[Escrimeur.DROITIER].resetMancheGagner();
 		//Droitier car il seront inverser dans nouvelle manche
@@ -550,8 +534,8 @@ public class Jeu extends Observable {
 		return positionsDeparts;
 	}
 	
-	public int getIndiceChangeCarte() {
-		return indiceChangeCarte;
+	public int getIndiceEscrimeurChangeCarte() {
+		return listeIndiceEscrimeurChangeCarte.pop();
 	}
 	
 	public Carte[] popShowCarte(int indice) {
@@ -560,5 +544,52 @@ public class Jeu extends Observable {
 	
 	public void toggleAnimationAutoriser() {
 		animationAutoriser = !animationAutoriser;
+	}
+	
+	public void resetAction() {
+		listeActions.clear();
+		actionEnCours = false;
+	}
+	
+	public void resetManche() {
+		cartesShowEscrimeurs[Escrimeur.GAUCHER].clear();
+		cartesShowEscrimeurs[Escrimeur.DROITIER].clear();
+		listeIndiceEscrimeurChangeCarte.clear();
+		this.listeCartesChangeRecemment[Escrimeur.GAUCHER].clear();
+		this.listeCartesChangeRecemment[Escrimeur.DROITIER].clear();
+		this.listeDistancesChangeRecemment[Escrimeur.GAUCHER].clear();
+		this.listeDistancesChangeRecemment[Escrimeur.DROITIER].clear();
+		historique.vider();
+		// Reset deck
+		while(!deckDefausse.deckVide()) {
+			deckPioche.reposerCarte(deckDefausse.reprendreDerniereCarte());
+		}
+		deckPioche.melanger();
+		
+		// Reset Mains Escrimeurs
+		int nbCartesMain = getCurrentEscrimeur().getNbCartes();
+		for (int i = 0; i < nbCartesMain; i++) {
+			for (int j = 0; j < 2; j++) {
+				Carte currentCard = escrimeurs[j].getCarte(i);
+				if (currentCard != null) {
+					deckPioche.reposerCarte(currentCard);
+				}
+				escrimeurs[j].getCartes()[i] = null;
+			}
+		}
+		try {
+			plateau.setPosition(positionsDeparts[Escrimeur.GAUCHER], Escrimeur.GAUCHER);
+			plateau.setPosition(positionsDeparts[Escrimeur.DROITIER], Escrimeur.DROITIER);
+		} catch (IncorrectPlateauException e) {
+			System.err.println(e.getMessage());
+		};
+	}
+
+	public ArrayList<Integer> popListeCartesChangeRecemment(int indice) {
+		return listeCartesChangeRecemment[indice].pop();
+	}
+
+	public ArrayList<Integer> popListeDistancesChangeRecemment(int indice) {
+		return listeDistancesChangeRecemment[indice].pop();
 	}
 }

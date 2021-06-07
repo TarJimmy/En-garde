@@ -175,18 +175,18 @@ public class ControlerJeu extends Controler {
 				if (winner != null) {
 					winner.addMancheGagnee();
 					if(winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
-						jeu.nouvelleManche();
+						commenceMancheSuivante(winner.getIndice());
 					}else {
 						//fin de partie, winner gagne
 					}
 				} else {
-					jeu.nouvelleManche();
+					commenceMancheSuivante(winner.getIndice());
 				}
 			}
 		} else {
 			winner.addMancheGagnee();
 			if(winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
-				jeu.nouvelleManche();
+				commenceMancheSuivante(winner.getIndice());
 			}else {
 				//fin de partie, winner gagne
 			}
@@ -242,8 +242,10 @@ public class ControlerJeu extends Controler {
 				nouvellePartie();
 				return true;
 			case "sauvPartie":
+				partieSauvegardee.sauvegardeJeu(jeu);
 				return false;
 			case "chargePartie":
+				
 				return true;
 			case "annuleCoup":
 				jeu.getHistorique().annulerCoup();
@@ -267,6 +269,12 @@ public class ControlerJeu extends Controler {
 	}
 	
 	public boolean finirAction() {
+		HashSet<Integer> cases = jeu.casesJouables();
+		if(cases.size() == 1 && cases.contains(-1)) {
+			jeu.changerTour();
+		} else {
+			jeu.modifieVue(Action.ACTUALISER_PLATEAU);
+		}
 		if (jeu.isDernierTour()) {
 			finDeManche(null);
 		} else {
@@ -280,12 +288,6 @@ public class ControlerJeu extends Controler {
 				return true;
 			}
 		}
-		HashSet<Integer> cases = jeu.casesJouables();
-		if(cases.size() == 1 && cases.contains(-1)) {
-			jeu.changerTour();
-		} else {
-			jeu.modifieVue(Action.ACTUALISER_PLATEAU);
-		}
 		return true;
 	}
 	
@@ -297,4 +299,29 @@ public class ControlerJeu extends Controler {
 		animations.clear();
 		jeu.nouvellePartie();
 	}
+	
+	public void commenceMancheSuivante(int indiceWinner) {
+		animationsActives = false;
+		if (animations.size() > 0) {
+			animations.getFirst().termine();
+		}
+		animations.clear();
+		jeu.resetAction();
+		jeu.setIndiceWinnerManche(indiceWinner);
+		jeu.modifieVue(Action.ACTUALISER_PLATEAU_SANS_CASE);
+		jeu.modifieVueAnimation(Action.ANIMATION_FIN_MANCHE);
+		jeu.nouvelleManche();
+	}
+	
+	
+	@Override
+	public void SuiteChargerPartie(Jeu jeu) {
+		// TODO Auto-generated method stub
+		InterfaceGraphiqueJeu.close();
+		this.jeu = jeu;
+		this.animations.clear();
+		animationsActives = false;
+		InterfaceGraphiqueJeu.demarrer(this, jeu);
+	}
+	
 }
