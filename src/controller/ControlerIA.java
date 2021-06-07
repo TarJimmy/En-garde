@@ -1,11 +1,8 @@
 package controller;
 
 import model.Carte;
-import model.DeckDefausse;
 import model.DeckPioche;
-import model.Escrimeur;
 import model.Jeu;
-import model.Plateau;
 
 public class ControlerIA extends ControlerJeu {
 
