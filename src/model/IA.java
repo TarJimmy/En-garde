@@ -3,8 +3,10 @@ package model;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Stack;
 
 import controller.ControlerJeu;
+import view.InterfaceGraphiqueRegles;
 
 public abstract class IA {
 	protected ControlerJeu controlerJeu;
@@ -45,17 +47,33 @@ public abstract class IA {
 		 
 		 return caseByCartes;
 	}
+		
+	public int[] getCarteDansPioche(int[] totalCartes, Carte[] carteEGauche, Carte[] carteEDroitier, DeckDefausse defausse) {
+		int[] cartesRes = new int[]{totalCartes[0],totalCartes[1],totalCartes[2],totalCartes[3],totalCartes[4]};
+		for (Carte c: carteEGauche) { cartesRes[c.getDistance()-1]--; }
+		for (Carte c: carteEDroitier) { cartesRes[c.getDistance()-1]--; }
+		for (int i=0; i<defausse.cartes.size();i++) { cartesRes[defausse.cartes.elementAt(i).getDistance()-1]--; }
+		return cartesRes;
+	}
 	
-	public abstract int[] getCarteDansPioche(Carte[] carteEGauche, Carte[] eDroitier, DeckDefausse defausse);
+	public CarteProbable getCarteProbable(int[] cartesDisponible, int nbCarte) throws IncorrectCarteException {
+		float probMax = 0;
+		int distance = 0;
+		for (int i=0; i<cartesDisponible.length; i++){
+			float probaCourante = cartesDisponible[i]/nbCarte;
+			if (probaCourante>probMax) {
+				probMax = probaCourante;
+				distance = i+1;
+			}
+		}
+		return new CarteProbable(distance, probMax);
+	}
 	
-	public abstract CarteProbable getCarteProbable(Carte[] cartesDisponible, int nbCarte);
-	
-	public class CarteProbable {
-		public Carte c;
+	public class CarteProbable extends Carte {
 		public float proba;
 		
-		public CarteProbable(Carte c, float proba) {
-			this.c = c;
+		public CarteProbable(int distance, float proba) throws IncorrectCarteException {
+			super(distance);
 			this.proba = proba; 
 		}
 	}
