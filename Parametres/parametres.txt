@@ -1,12 +1,12 @@
 23
-Jimmy
+Joueur 1
 HUMAIN
 1
-Luc
-HUMAIN
+Joueur 2
+IA_FACILE
 23
-Avance
-7
+Basique
+5
 5
 5
 5
@@ -14,3 +14,4 @@ Avance
 5
 5
 Actif
+Gauche

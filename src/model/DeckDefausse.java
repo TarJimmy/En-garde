@@ -23,5 +23,7 @@ public class DeckDefausse extends Deck {
 		return cartes.peek();
 	}
 	
-	
+	public DeckDefausse copySimple() {
+		return new DeckDefausse((Carte[])cartes.clone());
+	}
 }

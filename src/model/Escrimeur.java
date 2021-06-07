@@ -44,6 +44,8 @@ public class Escrimeur {
 		setNom(nom);
 	}
 	
+	private Escrimeur() {}
+	
 	public int getNbCartes() {
 		return this.cartes.length;
 	}
@@ -174,5 +176,17 @@ public class Escrimeur {
 	
 	public void resetMancheGagner() {
 		mancheGagner = 0;
+	}
+
+	public Escrimeur copySimple() {
+		Escrimeur e = new Escrimeur();
+		e.nom = new String(nom);
+		e.type = type;
+		e.indice = indice;
+		e.cartes = new Carte[cartes.length];
+		for (int i = 0; i < cartes.length; i++) {
+			e.cartes[i] = cartes[i].copySimple();
+		}
+		return e;
 	}
 }

@@ -19,4 +19,11 @@ public class DeckPioche extends Deck {
 	public void melanger() {
 		Collections.shuffle(cartes);
 	}
+
+	@Override
+	public DeckPioche copySimple() {
+		return new DeckPioche((Carte[])cartes.clone());
+	}
+	
+	
 }

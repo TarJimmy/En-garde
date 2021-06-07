@@ -4,16 +4,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import controller.ControlerJeu;
+
 public abstract class IA {
-	protected Escrimeur e;
-	protected Plateau p;
+	protected ControlerJeu controlerJeu;
 	
-	public IA(Escrimeur e, Plateau p) {
-		this.e = e;
-		this.p = p;
+	public IA(ControlerJeu controlerJeu) {
+		this.controlerJeu = controlerJeu;
 	}
 	
-	public abstract int[] getChoixCoup(int typeCoup, int valeurDefense);
+	public abstract int[] getChoixCoup(Escrimeur e, int typeCoup, int valeurDefense);
 	
 	/**
 	 * 
@@ -44,5 +44,19 @@ public abstract class IA {
 		 }
 		 
 		 return caseByCartes;
+	}
+	
+	public abstract int[] getCarteDansPioche(Carte[] carteEGauche, Carte[] eDroitier, DeckDefausse defausse);
+	
+	public abstract CarteProbable getCarteProbable(Carte[] cartesDisponible, int nbCarte);
+	
+	public class CarteProbable {
+		public Carte c;
+		public float proba;
+		
+		public CarteProbable(Carte c, float proba) {
+			this.c = c;
+			this.proba = proba; 
+		}
 	}
 }

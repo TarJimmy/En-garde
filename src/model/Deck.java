@@ -39,4 +39,6 @@ public abstract class Deck {
 		}
 		return res;
 	}
+	
+	public abstract Deck copySimple();
 }

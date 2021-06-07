@@ -136,4 +136,13 @@ public class Historique {
 		
 		return false;
 	}
+
+	public Historique copySimple(Jeu jeu) {
+		Historique newHistorique = new Historique(jeu);
+		newHistorique.historique = new Stack<>();
+		for (Coup c: historique) {
+			newHistorique.historique.add(c.copySimple(jeu.getEscrimeurs()));
+		}
+		return newHistorique;
+	}
 }

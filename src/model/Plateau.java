@@ -9,6 +9,8 @@ public class Plateau extends Observable {
 	private int positionJoueurs[]; // gaucher a l'indice 0, droitier a l'indice 1
 	private int nbCase;
 	
+	private Plateau() {}
+	
 	public Plateau(int positionGaucher, int positionDroitier, int nbCase) throws IncorrectPlateauException {
 		if (positionGaucher >= positionDroitier) {
 			throw new IncorrectPlateauException("Position gaucher (n°" + positionGaucher + ") >= position droitier (n°" + positionDroitier + ")");
@@ -152,6 +154,13 @@ public class Plateau extends Observable {
 	public int getNbCartesAttaque(Escrimeur e) {
 		int distance = Math.abs(getPosition((e.getIndice() + 1) % 2) - getPosition(e.getIndice()));
 		return e.getNbCartes(distance);
+	}
+
+	public Plateau copySimple() {
+		Plateau p = new Plateau();
+		p.positionJoueurs = new int[] {positionJoueurs[0], positionJoueurs[1]};
+		p.nbCase = nbCase;
+		return p;
 	}
 	
 	

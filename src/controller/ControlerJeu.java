@@ -324,4 +324,7 @@ public class ControlerJeu extends Controler {
 		InterfaceGraphiqueJeu.demarrer(this, jeu);
 	}
 	
+	public ControlerJeu copySimple() {
+		return new ControlerJeu(jeu.copySimple());
+	}
 }

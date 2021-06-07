@@ -2,7 +2,7 @@ package model;
 
 import java.util.ArrayList;
 
-public class Coup {
+public class Coup implements Cloneable {
 	Escrimeur escrimeur;
 	Carte[] cartes;
 	int action;
@@ -21,6 +21,8 @@ public class Coup {
 		action = a;
 		indicesCartesJouees = new ArrayList<>();
 	}
+	
+	private Coup() {}
 	
 	public void viderCartesJouees() {
 		indicesCartesJouees = new ArrayList<>();
@@ -71,6 +73,19 @@ public class Coup {
 		this.action = action;
 	}
 	
-	
+	public Coup copySimple(Escrimeur[] escrimeurs) {
+		Coup coup = new Coup();
+		coup.action = action;
+		coup.escrimeur = escrimeurs[escrimeur.getIndice()];
+		Carte[] newCartes = new Carte[cartes.length];
+		for (int i = 0; i < cartes.length; i++) {
+			newCartes[i] = cartes[i].copySimple();
+		}
+		coup.indicesCartesJouees = new ArrayList<>();
+		for (Integer integer : indicesCartesJouees) {
+	        coup.indicesCartesJouees.add(integer);
+	    }
+		return coup;
+	}
 
 }

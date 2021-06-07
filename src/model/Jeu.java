@@ -66,6 +66,7 @@ public class Jeu extends Observable {
 
 	private int lastWinner;
 	
+	private Jeu() {}
 	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, int[] positionsDeparts, boolean animationAutoriser) {
 		super();
 		this.indiceCurrentEscrimeur = 0;
@@ -592,4 +593,19 @@ public class Jeu extends Observable {
 	public ArrayList<Integer> popListeDistancesChangeRecemment(int indice) {
 		return listeDistancesChangeRecemment[indice].pop();
 	}
+
+	public Jeu copySimple() {
+		Jeu jeu = new Jeu();
+		jeu.escrimeurs = new Escrimeur[2];
+		jeu.escrimeurs[Escrimeur.GAUCHER] = escrimeurs[Escrimeur.GAUCHER].copySimple();
+		jeu.escrimeurs[Escrimeur.DROITIER] = escrimeurs[Escrimeur.DROITIER].copySimple();
+		jeu.plateau = plateau.copySimple();
+		jeu.deckDefausse = deckDefausse.copySimple();
+		jeu.deckPioche = deckPioche.copySimple();
+		jeu.indiceCurrentEscrimeur = indiceCurrentEscrimeur;
+		jeu.historique = historique.copySimple(jeu);
+		return jeu;
+	}
+	
+	
 }

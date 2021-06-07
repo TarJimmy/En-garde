@@ -19,4 +19,13 @@ public class Carte {
 	public int getDistance() {
 		return this.distance;
 	}
+	
+	public Carte copySimple() {
+		try {
+			return new Carte(distance);
+		} catch (IncorrectCarteException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
