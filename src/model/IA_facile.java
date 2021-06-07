@@ -14,7 +14,7 @@ public class IA_facile {
 	/**
 	 * choixCarteIA : permet a l'IA de choisir une carte parmis sa main.
 	 * Parametre :/
-	 * Retour : un tableau de int : valeurCarte et indice . (un int representant la valeur de la carte choisie.) 
+	 * Retour :  valeurCarte. (un int representant la valeur de la carte choisie.) 
 	 */
 	public int choixCarteIA() {
 		Carte[] cartes = coup.getCartes();
@@ -44,7 +44,7 @@ public class IA_facile {
 	
 	/**
 	 * transfoEnCase : permet de transformer une action et une valeurCarte en une case d'arrivee de l escrimeur.
-	 * Parametre : (int) action, (int) valeurCarte.
+	 * Parametre : (int) action, (int) valeurCarte, (int) valeurCarte2, (boolean) estGaucher, (int) positionG, (int) positionD.
 	 * Retour : (int) caseArrivee : la case atteinte apres avoir effectuer l action "action" avec la carte "valeurCarte". 
 	 */	
 	public int transfoEnCase(int action, int valeurCarte, int valeurCarte2, boolean estGaucher, int positionG, int positionD) {
@@ -68,7 +68,7 @@ public class IA_facile {
 	/**
 	 * choisirComplementaire : permet de choisir la deuxieme carte de l attaque indirecte.
 	 * Parametre : int valeurCarte , int distanceManquante
-	 * Retour : (int) carteChoisie : la valeur de la carte choisie si elle existe, -1 sinon.
+	 * Retour : (int) carteChoisie : la valeur de la carte choisie si elle existe, une valeur negative sinon.
 	 */
 	public int choisirComplementaire(int valeurCarte , int distanceManquante ) {
 		Carte[] cartes = coup.cartes;
@@ -92,9 +92,7 @@ public class IA_facile {
 	/**
 	 * actionIA : permet a l'IA de choisir une action a jouer en fonction de la carte choisie.
 	 * Parametre : /
-	 * Retour : un tableau de deux int : (int)action et (int)valeurCarteChoisie. (un int representant l'action a effectuer, compris entre 0 et 3 
-	 * et un int representant la carte jouee.) 
-	 * ATTENTION : LE RETOUR EST A CHANGER EN FONCTION DE CE QUI EST ATTENDU PAR LE JEU.
+	 * Retour : un int : la case choisie par l'IA.
 	 */
 	public int actionIA( ){
 		int valeurCarteChoisie, valeurCarteChoisie2=0, valeurTotale;
@@ -123,7 +121,7 @@ public class IA_facile {
 	
 	//TODO : parades ??
 	
-	/*public static void main(String[] args) throws IncorrectCarteException, IncorrectPlateauException {
+	public static void main(String[] args) throws IncorrectCarteException, IncorrectPlateauException {
 		Plateau p = new Plateau(18, 20, 24) ;
 	
 		Escrimeur esc1 = new Escrimeur("IA", TypeEscrimeur.IA_FACILE, 1 , 5);
@@ -139,5 +137,5 @@ public class IA_facile {
 		int case_IA = IA.actionIA();
 		
 		System.out.println("case d arrivee :"+ case_IA );
-	} */
+	} 
 }

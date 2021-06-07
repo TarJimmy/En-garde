@@ -2,19 +2,31 @@ package model;
 
 import java.util.Random;
 
+
+
 public class IA_moyenne {
 	
-
+	/*
+	 * TODO : (du plus au moins important)
+	 * estCoupFort : COMPLETER 
+	 * ChoixPhase : tester estToucheAdverse pour le passage en phase 3.
+	 * jouerPhase3 : changer certaines variable dans  (contre attaque + valeurAttaque)
+	 * ameliorer probaExploitable
+	 * gestionCartes : changer valeurMileu en fonction du jeu ??? (pas sur)
+	 * 
+	 */
 	Coup coup;
 	Coup coupAdverse;
 	Plateau plateau;
-	Deck deck;
+	DeckPioche pioche;
+	DeckDefausse defausse;
 	
-	public IA_moyenne(Coup c, Plateau p, Deck d, Coup a) {
+	public IA_moyenne(Coup c, Plateau p, DeckPioche pp, Coup a, DeckDefausse d) {
 		coup = c;
 		plateau = p;
-		deck = d;
+		pioche = pp;
 		coupAdverse =a ;
+		defausse = d;
 	}
 	
 	/**???? Utile ????
@@ -22,7 +34,7 @@ public class IA_moyenne {
 	 * Parametre : (Coup)coup.
 	 * Retour : (int)valeurCarte. (un int representant la valeur de la carte choisie.) 
 	 */
-	public int choixCarteIA(Coup coup) {
+	public int choixCarteIA() {
 		int valeurCarte = 0;
 
 		// A completer ...
@@ -30,71 +42,121 @@ public class IA_moyenne {
 		return valeurCarte;
 	}
 	
-	/**NON
-	 * rangerCartes :l'indice du premier tableau correspond a la valeur (+1), a  cette indice ce trouve dans un tableau les indice des cartes de cette valeur.
-	 * exemple :  [ 1:[4,3] , 2:[5] , 3:[], 4:[1,2] ]
+	/**OK
+	 * rangerCartes : range les cartes dans l'ordres croissant.
 	 * Parametre : les cartes de la main du joueur.
 	 * Retour : un tableau de tableau qui contient des int.
 	 */	
 	public int [][] rangerCartes(Carte[] cartes){
-		int[] a = {1};
-		int[][] res = {a};
-		return res;
+		   
+	    int taille = cartes.length;  
+	    int [][] tab = new int[taille][2];
+	    int tmp = 0;  
+	    for (int k = 0; k < taille; k++) {
+	    	tab[k][0] = cartes[k].getDistance();
+	    	tab[k][1] = k;
+	    }
+	    for(int i=0; i < taille; i++) 
+	    {
+	            for(int j=1; j < (taille-i); j++)
+	            {  
+	                    if(tab[j-1][0] > tab[j][0])
+	                    {
+	                            //échanges des elements
+	                                tmp = tab[j-1][0];  
+	                                tab[j-1][0] = tab[j][0];  
+	                                tab[j][0] = tmp;  
+	                        }
+	 
+	                }
+	        }
+		   return tab;
 	}
 	
-	/**NON
+	/**OK
 	 * totalCartes : total des carte se trouvant dans la main du joueur.
 	 * Parametre : les cartes de la main du joueur.
 	 * Retour : un int representant le total.
 	 */	
 	public int totalCartes(Carte[] cartes){
-		return 0;
+		int total = 0;
+		
+		for (int k=0; k < cartes.length ; k++) {
+			total = total + cartes[k].getDistance();
+		}
+		return total;
 	}
 	
-	/**NON
+	/**OK
 	 * max : trouve la carte de valeur la plus grande en ignorant les cartes doubles.
 	 * Parametre : (Carte[]) cartes, (int) valeurCarteDouble
 	 * Retour : (int) max
 	 */	
-	public int max(Carte[] cartes, int valeurCarteDouble) {
-		return 0;
+	public int max(Carte[] cartes, int valeurCarteDouble) {// si valeurCarteDouble = 0 : prendre max,  si valeurCarteDouble = max :prendre 2eme max , sinon prendre max.
+		int max = 0;
+		//System.out.println("Je suis dans MAX");
+		for( int k = 0; k < cartes.length ; k++) {
+			if ( (cartes[k].getDistance() > max) && (cartes[k].getDistance() != valeurCarteDouble) ) {
+				
+				max = cartes[k].getDistance();
+				//System.out.println("max = " + max);
+			}
+		}
+		return max;
 	}
 	
-	/**NON
+	/**OK
 	 * min : trouve la carte de valeur la plus petite en ignorant les cartes doubles.
 	 * Parametre : (Carte[]) cartes, (int) valeurCarteDouble
 	 * Retour : (int) min
 	 */	
 	public int min(Carte[] cartes, int valeurCarteDouble) {
-		return 0;
+		int min = 6;
+		//System.out.println("Je suis dans MIN");
+		for( int k = 0; k < cartes.length ; k++) {
+			if ( (cartes[k].getDistance() < min) && (cartes[k].getDistance() != valeurCarteDouble) ) {
+				min = cartes[k].getDistance();
+				//System.out.println("min = " + min);
+			}
+		}
+		return min;
 	}
 	
-	/**NON
+	/**OK
 	 * gestionCartes : permet de choisir les cartes adequate selon la strategie de l'IA moyenne.
-	 * Parametre : ...
+	 * Parametre : /
 	 * Retour : un tableau de int contenant les valeurs des cartes interessantes a jouer.
 	 */
 	public int[] gestionCartes() {
-		int valeurCarteChoisie = 0, i=0, valeurMilieu = 16 ,valeurCarteDouble = 0;
-		int [] cartesInteressantes = {valeurCarteChoisie};
-		
+		int i=0, valeurMilieu = 15 ,valeurCarteDouble = 0;
+		int [] cartesInteressantes2 = new int[50];
+		int [] cartesInteressantes; 
 		Carte[] cartes = coup.getCartes();
 		int [][] cartesRangees = rangerCartes(cartes);
-		//  [ 1:[4,3] , 2:[5] , 3:[], 4:[1,2] ]
 		
-		for( int k=0 ; k < cartesRangees.length ; k++) {
-			if( cartesRangees[k].length > 2 ) { // si on a plus de 2 cartes de meme valeur
-				for (int j=0 ; j< cartesRangees[k].length -2 ; j++) { // pour chaque cartes apres 2 cartes de meme valeur
-					cartesInteressantes[i] = cartes[cartesRangees[k][j]].getDistance();// on ajoute la valeur de la carte au tableau de retour (cartesRangees[k][j] correspond a un indice dans le tableau presente en commentaire au dessus).
-					i++;
-				}
+		
+		for(int k = 0; k < cartesRangees.length; k++) {
+			//System.out.println("cartes testée : " + cartesRangees[k][0]);
+			if(k < (cartesRangees.length -2) && cartesRangees[k][0] == cartesRangees[k+1][0] && cartesRangees[k][0] == cartesRangees[k+2][0]) {
+				//System.out.println("On a 3 fois un "+ cartesRangees[k][0]);
+				cartesInteressantes2[i] = cartesRangees[k+2][0];
+				valeurCarteDouble = cartesRangees[k+2][0];
+				i++;
 			}
 		}
 		
 		if( totalCartes(cartes) > valeurMilieu ) {
-			cartesInteressantes[i] = max(cartes, valeurCarteDouble); // si valeurCarteDouble = 0 : prendre max,  si valeurCarteDouble = max :prendre 2eme max , sinon prendre max.
+			cartesInteressantes2[i] = max(cartes, valeurCarteDouble); // si valeurCarteDouble = 0 : prendre max,  si valeurCarteDouble = max :prendre 2eme max , sinon prendre max.
+			i++;
 		}else if( totalCartes(cartes) <= valeurMilieu ) {
-			cartesInteressantes[i] = min(cartes, valeurCarteDouble); // si valeurCarteDouble = 0 : prendre min,  si valeurCarteDouble = min :prendre 2eme min , sinon prendre min.
+			cartesInteressantes2[i] = min(cartes, valeurCarteDouble); // si valeurCarteDouble = 0 : prendre min,  si valeurCarteDouble = min :prendre 2eme min , sinon prendre min.
+			i++;
+		}
+		cartesInteressantes = new int[i];
+		
+		for( int i2 = 0 ; i2 <i; i2++) {
+			cartesInteressantes[i2] = cartesInteressantes2[i2];
+			//System.out.println("VALEUR de cartes = " + cartesInteressantes[i2]);
 		}
 		
 		return cartesInteressantes;
@@ -106,13 +168,14 @@ public class IA_moyenne {
 	 * retour : true si les proba deviennent interessantes, false sinon.
 	 */
 	public boolean probaExploitable( int nbCartesPioche ) {
-		int taillePioche = 15;
-		// A complexifier ...
+		int nbCartesTotale = nbCartesPioche + defausse.nbCartes() + coup.getCartes().length + coupAdverse.getCartes().length;
+		//System.out.println("(nbCartesTotale/2) =  " + (nbCartesTotale/2));
+		//System.out.println("nbCartesPioche =  " + nbCartesPioche);
 		
-		return nbCartesPioche < (taillePioche/2); 
+		return nbCartesPioche < (nbCartesTotale/2); 
 	}
 	
-	/**OK
+	/**OK?
 	 * estToucheAdverse : permet de savoir si le coup precedent etait une touche adverse.
 	 * Parametre : ...
 	 * Retour : true si le coup precedent etait une touche, false sinon.
@@ -141,50 +204,86 @@ public class IA_moyenne {
 	}
 	
 	/**OK
+	 * choisirComplementaire : permet de choisir la deuxieme carte de l attaque indirecte.
+	 * Parametre : int valeurCarte , int distanceManquante
+	 * Retour : (int) carteChoisie : la valeur de la carte choisie si elle existe, une valeur negative sinon.
+	 */
+	public int choisirComplementaire(int valeurCarte , int distanceManquante ) {
+		Carte[] cartes = coup.cartes;
+		int compt = 0, carteChoisie = -50, carte;
+		for(int k=0 ; k < cartes.length ; k++) {
+			carte = cartes[k].getDistance();
+			
+			if (carte == distanceManquante) {
+				if (valeurCarte == carte && compt == 1 ) { // si elle a la meme valeur que la premiere mais que s en est une autre on peut la choisir
+					return carte;
+				}else if (valeurCarte == carte && compt == 0) {// si elle a la meme valeur que la premiere et que c est la premiere qu on voit on ne peut pas la choisir
+					compt ++;
+				}else { // c est la bonne carte et elle ne correspond pas a la premiere carte choisie, on peut la choisir.
+					return carte;
+				}
+			}
+		}
+		return carteChoisie;
+	}
+	
+	/**OK
 	 * cartesEtActionsPossibles : permet de connaitre toutes les actions associées a une carte qui sont jouable actuellement par l'IA.
-	 * Parametre : (Coup) coup , (Plateau) plateau
+	 * Parametre : (int) phase
 	 * Retour : Un tableau contenenant des tableaux de 2 int : (int) action et (int)valeurCarte. 
 	 * (Represente toutes les combinaison d'actions et de cartes jouable).
 	 */
-	public int [][] cartesEtActionsPossibles (Coup coup , Plateau plateau, int phase){
-		int[] tuple1 = { 0, 0 };
-		int[] tuple2 = { 0, 0 };
+	public int [][] cartesEtActionsPossibles ( int phase){
 		int k = 0;
 		int valPlusGrandeCarte = 5 ;
 		Carte[] cartes = coup.getCartes();
-		int [][] res = {tuple1, tuple2 };
-		for (int action = 0; action < 3 ; action++ ) { // 
+		int [][] res = new int [50][3];
+		int valeurTotale = 0, valeurCarteChoisie2 =0; 
+	    int posG = plateau.getPosition(0);
+	    int posD = plateau.getPosition(1);
+		
+		for (int action = 0; action < 4 ; action++ ) { 
 			for( int indiceCarte = 0 ; indiceCarte < coup.escrimeur.getNbCartes() ; indiceCarte++ ) {
-				if (estBonCoup (coup.escrimeur, cartes[indiceCarte].getDistance() , action)) {
+			    if (action == 3) {
+			    	valeurCarteChoisie2 = choisirComplementaire(cartes[indiceCarte].getDistance() , posD - posG - cartes[indiceCarte].getDistance() );
+			    }
+			    valeurTotale = cartes[indiceCarte].getDistance() + valeurCarteChoisie2;
+				//System.out.println("DUO = "+ action + " ; " +cartes[indiceCarte].getDistance()+ " ; " +valeurCarteChoisie2 );
+				if (estBonCoup (coup.escrimeur, valeurTotale , action)) {
+					
 					if(phase == 1) { // durant la phase 1 on souhaite rester a plus de 5 cases de l'adversaire.
+						//System.out.println("valeurCarte = "+ cartes[indiceCarte].getDistance()  + " ; " +  action );
 						if(distanceApresCoup(action,cartes[indiceCarte].getDistance()) > valPlusGrandeCarte ) {
+							res[k][1] =cartes[indiceCarte].getDistance();
 							res[k][0] = action;
-							res[k][1] = cartes[indiceCarte].getDistance();
-							k++;	
-						}
+							k++;
+							//System.out.println("PHASE 1 dans if");
+						}//System.out.println("PHASE 1");
 						
 					}else {
 						res[k][0] = action;
 						res[k][1] = cartes[indiceCarte].getDistance();
+						res[k][2] = valeurCarteChoisie2;
+						//System.out.println("DEUXIEME CARTE : "+ res[k][2]);
 						k++;
+						//System.out.println("PHASE autres"); 
+						//System.out.println("DUO = "+ res[k-1][0] + " ; " +res[k-1][1] );
 					}
 				}
 			}
+	
 		}
-		// attaque indirecte
-		for (int premiereCarte = 0; premiereCarte < coup.escrimeur.getNbCartes() ; premiereCarte ++) {
-			for(int deuxiemeCarte = 0; deuxiemeCarte < coup.escrimeur.getNbCartes() ; deuxiemeCarte ++) {
-				int valeurCarte1 = cartes[premiereCarte].getDistance();
-				int valeurCarte2 = cartes[deuxiemeCarte].getDistance();
-				
-				if ( (plateau.getPosition(1) - valeurCarte1 - valeurCarte2) == plateau.getPosition(0) ) {
-					res[k][0] =  3;
-					res[k][1] = valeurCarte1;
-					res[k][2] = valeurCarte2;
-				}
-			}
+		
+		int[][] resFinal= new int[k][3];
+		//System.out.println("taille res = "+ k);
+		for( int i = 0; i < k ; i++) {
+			//System.out.println("valeurCarte = "+ res[i][1]  + " ; " +  res[i][0] );
+			resFinal[i][0] = res[i][0];
+			resFinal[i][1] = res[i][1];
+			resFinal[i][2] = res[i][2];
+			
 		}
-		return res;
+		return resFinal;
 	}
 	
 	/**OK
@@ -192,31 +291,164 @@ public class IA_moyenne {
 	 * Parametre : int [][] tabRes (un tableau qui contient toutes les actions associee a leur cartes interessantes a jouer.)
 	 * Retour : un tableau de int contenant l'action associee a la carte choisie.
 	 */
-	public int [] choix (int [][] tabRes) {
+	public int [] choix (int [][] tabRes, int [][] choixActions) {
 		Random rand = new Random();
-	    int indice = rand.nextInt(tabRes.length);
-	    
-		return tabRes[indice];
+		int indice;
+		//System.out.println(" taille : " + tabRes.length);
+		if (tabRes.length == 0 && choixActions.length == 0) {
+			// si aucune action interessantes na ete trouvee parmis 
+			// les actions possible de la phase 1 
+			// et si aucune action possible de la phase 1 na ete trouvee
+			// alors on choisie une action possible tout court
+
+			tabRes = cartesEtActionsPossibles(2);
+			indice = rand.nextInt(tabRes.length);
+			return  tabRes[indice];
+		}else if (tabRes.length == 0) {
+			// si aucune action interessantes na ete trouvee parmis 
+			// les actions possible de la phase 1 alors on choisie une action possible au hasard			
+
+			indice = rand.nextInt(choixActions.length);
+			return choixActions[indice];		
+		}else {
+			indice = rand.nextInt(tabRes.length);
+			return tabRes[indice];
+		}
+	}
+	/**NON
+	 * estCoupFort : permet de savoir si l attaque possible de l IA va reussir 
+	 * ( probabilite que lautre joueur ai assez de carte de la meme valeur dans sa main pour pouvoir contrer l attaque OU PIRE  de contrer et riposter)
+	 * Parametre : (int) valeurCarte1 (la valeur de la carte qu'on va jouer pour attaquer si valeurCarte2 est null)
+	 * 				(int) valeurCarte2 (la valeur de la carte qu'on va jouer pour attaquer )
+	 * 				(int) nbCartes (le nombre de carte qu on jou en cas d attaque renforcee)
+	 * Retour : (boolean) true si on a 0% de chance de perdre en lancant cette attaque ou si on a plus de 60% de chance de victoire. 
+	 */
+	public boolean estCoupFort(int valeurCarte1 , int valeurCarte2  , int nbCartes) {
+		
+		// A completer ...
+		
+		return false;
 	}
 	
+	
+	/**OK
+	 * nbCartesValeur : calcule le nb de carte que l ia a dans sa main de cette valeur
+	 * Parametre :int valeur1, int valeur2.
+	 * Retour : (int) le nombre de carte de la valeur1 si valeur2 est null, sinon le nombre de carte de la valeur2.  
+	 */
+	public int nbCartesValeur(int valeur1, int valeur2, Carte[] cartes) {
+		
+
+		int [][] cartesRangees = rangerCartes(cartes);
+		int nb = 0 ;
+		for(int i = 0; i <cartesRangees.length ; i++) {
+			if(valeur2 == 0) {
+				if(cartesRangees[i][0] == valeur1) {
+					nb = nb + 1;
+				}
+			}else {
+				if(cartesRangees[i][0] == valeur2) {
+					nb = nb + 1;
+				}
+			}
+		}
+		
+		return nb;
+	}
+	
+	/**OK
+	 * carteMoinsProbable : regarde la defausse et la main de l IA : plus une carte est tombee moins elle a de chance d etre dans la main adverse 
+	 * on veux donc aller a cette distance de l adversaire. 
+	 * Parametre : Carte[] cartes
+	 * Retour : un int : la valeur de la carte a jouer pour etre a la bonne distance de l adversaire
+	 */
+	public int carteMoinsProbable(Carte[] cartes) {
+		int distanceOpti = 0;
+		int tmp = 0;
+		int carteOpti =0;
+		int[] ordreOpti = new int[cartes.length];
+		for(int k = 0; k <5 ; k++) {
+			ordreOpti[k] = nbCartesValeur(k+1,0, defausse.defausseTableau()) 
+					+ nbCartesValeur(k+1,0,coup.getCartes()) ;
+		}
+		// Max proba
+		for( int l = 0; l <ordreOpti.length; l++ ) {
+			//max 
+			for (int k = 0; k <ordreOpti.length; k++) {
+				// Ne pas utiliser la carte *2 ? 
+				if (ordreOpti[k] > distanceOpti) {
+					distanceOpti = ordreOpti[k];
+					tmp = k;
+					carteOpti = k+1;
+					}
+			}
+			// distance apres coup == max 
+			for( int i = 0; i <cartes.length;i++) {
+						
+				if (this.distanceApresCoup(1,cartes[i].getDistance()) == carteOpti) {
+					return cartes[i].getDistance();
+				}
+			}
+		ordreOpti[tmp] = -1;
+		distanceOpti = 0;
+		}
+		
+		return cartes[0].getDistance();
+	}	
+	
+	/**
+	 * transfoEnCase : permet de transformer une action et une valeurCarte en une case d'arrivee de l escrimeur.
+	 * Parametre : (int) action, (int) valeurCarte, (int) valeurCarte2, (boolean) estGaucher, (int) positionG, (int) positionD.
+	 * Retour : (int) caseArrivee : la case atteinte apres avoir effectuer l action "action" avec la carte "valeurCarte". 
+	 */	
+	public int[] transfoEnCase(int action, int valeurCarte, int valeurCarte2, boolean estGaucher, int positionG, int positionD) {
+		int position;
+		int[] res = new int [2];
+		if (estGaucher) {
+			if (action == 1) { // reculer
+				position = positionG - valeurCarte - valeurCarte2;
+			}else { // autres actions qui ne font qu avancer
+				position = positionG + valeurCarte + valeurCarte2;
+			}
+		}else {
+			if (action == 1) { // reculer
+				position = positionD + valeurCarte + valeurCarte2;
+			}else { // autres actions qui ne font qu avancer
+				position = positionD - valeurCarte - valeurCarte2;
+			}
+		}
+		if(valeurCarte2 == 0 ) {
+			res[1] = 1;
+		}else {
+			res[1] = 2;
+		}
+		res[0] = position;
+		return res;
+	}
+		
+
 	/**OK
 	 * choixPhase : permet de choisir dans quelle phase se trouve la partie.
 	 * Parametre : /
 	 * Retour : le numero de la phase actuelle.
 	 */
 	public int choixPhase() {
-		int nbCartesPioche = deck.nbCartes();
+		int nbCartesPioche = pioche.nbCartes();
 		
 		if (!probaExploitable( nbCartesPioche ) ) {
+			System.out.println("Phase 1");
 			return 1;
 		}
 		if( !estToucheAdverse() && nbCartesPioche > 1 ) {
+			System.out.println("Phase 2");
 			return 2;
 		}
 		if ( estToucheAdverse() ) {
+			System.out.println("Phase 3");
 			return 3;
 		}
 		if ( nbCartesPioche >= 1 ) {
+			System.out.println("Phase 4");
 			return 4;
 		}
 		return -1;
@@ -224,61 +456,110 @@ public class IA_moyenne {
 	
 	/**OK
 	 * jouerPhase1 : permet d'appliquer la strategie de l'IA moyenne durant la phase 1.
-	 * Parametre : (Coup) coup, (Plateau) plateau.
+	 * Parametre : /
 	 * Retour : un tableau de deux int : (int)action et (int)valeurCarteChoisie. (un int representant l'action a effectuer, compris entre 0 et 3 
 	 * et un int representant la carte jouee.)
-	 * ATTENTION : LE RETOUR EST A CHANGER EN FONCTION DE CE QUI EST ATTENDU PAR LE JEU.
 	 */
-	public int[] jouerPhase1(Coup coup, Plateau plateau){
+	public int[] jouerPhase1(){
 		int k = 0;
 		int [] res;
-		int [][] resultat = {{0,0}};
+		int [][] resultat1 = new int[50][3];
 		
-		int [][] tabRes = cartesEtActionsPossibles(coup, plateau, 1);
+		int [][] tabRes = cartesEtActionsPossibles(1);
 		int [] cartesInteressantes = gestionCartes();
 		
 		for (int i = 0; i <cartesInteressantes.length; i++ ) {
+			//System.out.println("JouerPhase1 : cartesInteressantes[i] " + cartesInteressantes[i]);
 			for (int j = 0; j < tabRes.length ; j++) {
+				//System.out.println("JouerPhase1 :tabRes[j][1]  " + tabRes[j][1] );
 				if (cartesInteressantes[i] == tabRes[j][1] ) {
-					resultat[k] = tabRes[j];
+					resultat1[k] = tabRes[j];
+					
 					k++;
 				}
 			}
 		}
-		
-		res = choix (resultat);		
+		int i = 0;
+		int [][] resultat = new int[k][3];
+		//System.out.println("JouerPhase1 : resultat1[i][0]  " +  resultat1[i][1]);
+		while (resultat1[i][1] != 0 ) {
+			//System.out.println("JouerPhase1 : resultat1[i][0] " +   resultat1[i][1]);
+			resultat[i] = resultat1[i];
+			i++;
+		}
+		res = choix (resultat, tabRes);		
 		
 		// Rester a plus de 5 en avancant / reculant.
 		
 		return res ;
 	}
 	
-	/**NON
+	/**OK
 	 * jouerPhase2 : permet d'appliquer la strategie de l'IA moyenne durant la phase 2.
-	 * Parametre : (Coup) coup, (Plateau) plateau.
+	 * Parametre : /
 	 * Retour : un tableau de deux int : (int)action et (int)valeurCarteChoisie. (un int representant l'action a effectuer, compris entre 0 et 3 
 	 * et un int representant la carte jouee.)
-	 * ATTENTION : LE RETOUR EST A CHANGER EN FONCTION DE CE QUI EST ATTENDU PAR LE JEU.
 	 */
-	public int[] jouerPhase2(Coup coup, Plateau plateau){
-		int [] res = {0,0}; 
+	public int[] jouerPhase2(){
+		int [] res =new int[3]; 
+		//TODO : faire monter res jusqua 6 pour pouvoir faire des attaque directe et indirecte renforcee 
+		int [][] tabRes = cartesEtActionsPossibles(2);		
 		
-		// A completer ...
+		for (int j = 0; j < tabRes.length ; j++) {	// parcours les coups possibles
+			if( tabRes[j][0] == 2 || tabRes[j][0] == 3 ) { // si le coup est une attaque directe ou indirecte 
+				//System.out.println("ATTAQUE INDIRECTE");
+				if( estCoupFort(tabRes[j][1], tabRes[j][2], nbCartesValeur(tabRes[j][1], tabRes[j][2], coup.getCartes())) ) { // on verifie que c est un bon coup a jouer 
+					res[0]=  tabRes[j][0];
+					res[1]=  tabRes[j][1];
+					res[2]=  tabRes[j][2];
+					return res;
+				}
+			}		
+		}
+		res = jouerPhase1(); // sinon on n attaque pas on continue a rester en retrait.
+		
 		
 		return res ;
 	}
 	
-	/**NON
+	/**OK mais attention a valeurCarteAttaque et AJOUTER UNE CONTRE ATTAQUE 
 	 * jouerPhase3 : permet d'appliquer la strategie de l'IA moyenne durant la phase 3.
 	 * Parametre : (Coup) coup, (Plateau) plateau.
 	 * Retour : un tableau de deux int : (int)action et (int)valeurCarteChoisie. (un int representant l'action a effectuer, compris entre 0 et 3 
 	 * et un int representant la carte jouee.)
-	 * ATTENTION : LE RETOUR EST A CHANGER EN FONCTION DE CE QUI EST ATTENDU PAR LE JEU.
 	 */
-	public int[] jouerPhase3(Coup coup, Plateau plateau){
-		int [] res = {0,0}; 
+	public int[] jouerPhase3(){
+		int [] res = {0,0,0}; 
+		Carte[] cartes = coup.cartes;
+		int[][] cartesEtActions = cartesEtActionsPossibles(3);
+		int valeurCarteAttaque = 2; //ATTENTION VALEUR A CHANGER EN FONCTION DE LA CARTE JOUEE PAR L ADVERSAIRE
+		if( nbCartesValeur(valeurCarteAttaque,0, coup.getCartes())>= 1) { // si on a une carte de la meme valeur que l'attaque on pare avec cette carte.
+			//AJOUTER UNE CONTRE ATTAQUE SI  nbCartesValeur(valeurCarteAttaque,0)> 1
+			res[0] = 4;
+			res[1] = valeurCarteAttaque;
+			return res ;
+		}else {
+			for(int k=0; k < cartesEtActions.length ; k++) {
+				if(cartesEtActions[k][0] == 1) {
+					if( distanceApresCoup(1 , max( cartes, 0) ) > 5 ) {// si la plus grande carte a jouer amene a distance de plus de 5 de l adversaire, la jouer
+						res[0] = 1;
+						res[1] = max( cartes, 0);
+						return res ;
+					}else {// sinon jouer une carte pour arriver a une cases a distance de l autre la moins probable quil ai cette carte... 
+						//(ne pas se faire battre au prochain coup)
+						res[0] = 1;
+						res[1] = carteMoinsProbable(cartes);
+						return res ;
+						}
+						
+					}
+					
+				}
+				
+			}
+			
+		//SINON : PASSER TOUR.
 		
-		// A completer ...
 		
 		return res ;
 	}
@@ -288,48 +569,57 @@ public class IA_moyenne {
 	 * Parametre : (Coup) coup, (Plateau) plateau.
 	 * Retour : un tableau de deux int : (int)action et (int)valeurCarteChoisie. (un int representant l'action a effectuer, compris entre 0 et 3 
 	 * et un int representant la carte jouee.)
-	 * ATTENTION : LE RETOUR EST A CHANGER EN FONCTION DE CE QUI EST ATTENDU PAR LE JEU.
 	 */
-	public int[] jouerPhase4(Coup coup, Plateau plateau){
-		int [] res = {0,0}; 
+	public int[] jouerPhase4(){
+		int [] res = new int[3]; 
+		int [][] cartesEtActions =  cartesEtActionsPossibles (4);
 		
-		// A completer ...
-		
+		for(int k = 0; k < cartesEtActions.length ; k++) {
+			if(cartesEtActions[k][0] == 2 ||cartesEtActions[k][0] == 3 ) {
+				res[0] = cartesEtActions[k][0];
+				res[1] = cartesEtActions[k][1];
+				res[2] = cartesEtActions[k][2];
+				return res ;
+			}
+		}
+		// PASSER SON TOUR ? JOUER PLUS PETITE CARTE ?
 		return res ;
 	}
 	
 	/**OK
 	 * actionIA : fonction de retour globale ( permet de choisir la phase et d'envoyer les informations attendu par le jeu pour jouer un tour / coup).
-	 * Parametre : (Coup)coup.
-	 * Retour : un tableau de deux int : (int)action et (int)valeurCarteChoisie. (un int representant l'action a effectuer, compris entre 0 et 3 
-	 * et un int representant la carte jouee.) 
-	 * ATTENTION : LE RETOUR EST A CHANGER EN FONCTION DE CE QUI EST ATTENDU PAR LE JEU.
+	 * Parametre : /
+	 * Retour : un tableau de deux int : (int)case et (int)nbCarte. (un int representant la case d arrivee de l IA,
+	 * et un int representant le nombre de carte a jouer.) 
 	 */
-	public int[] actionIA( Coup coup, Plateau plateau ){
-		int action = 0 , valeurCarteChoisie = 0;
-		int [] res = {action, valeurCarteChoisie};
+	public int[] actionIA(  ){
+		int action = 0 , valeurCarteChoisie = 0, valeurCarteChoisie2 = 0;
+		int [] res = {action, valeurCarteChoisie,valeurCarteChoisie2};
+	    int posG = plateau.getPosition(0);
+	    int posD = plateau.getPosition(1);
 		
 		int phase = choixPhase();
 		
 		switch(phase) {
 		case 1 :
-			res = jouerPhase1( coup,  plateau);
+			res = jouerPhase1();
+			
 			break;
 		case 2 :
-			res = jouerPhase2( coup,  plateau);
+			res = jouerPhase2();
 			break;
 		case 3 :
-			res = jouerPhase3( coup,  plateau);
+			res = jouerPhase3();
 			break;
 		case 4 :
-			res = jouerPhase4( coup,  plateau);
+			res = jouerPhase4();
 			break;
 		default :
 			System.out.println("Erreur");
 			break;
 		}
-		
-		return res;
+		System.out.println("Valeur de cartes = "+ res[1] +" Valeur de cartes2 = "+ res[2] + " action = "+ res[0]); 
+		return transfoEnCase(res[0], res[1], res[2], coup.escrimeur.getIsGaucher(), posG , posD);
 	}
 	
 	
@@ -340,41 +630,107 @@ public class IA_moyenne {
 	 */
 	public boolean estBonCoup (Escrimeur e, int valeurCarte, int action) {
 		
+		boolean var;
 		if( action == 1 || action == 0) {
 			if (action == 1) {
 				valeurCarte = valeurCarte * -1;
 			}
-			System.out.println("verif : " + plateau.deplacerEscrimeur( e, valeurCarte));
-			return plateau.deplacerEscrimeur( e, valeurCarte);
+			
+			var =  plateau.mouvementPossible( e, valeurCarte);
+			//System.out.println("valeurCarte = "+ valeurCarte + " ; " +  action + " var : "+var );
+			return var;
 		}
-		System.out.println("verif : " + plateau.escrimeurPeutAttaquer(e, valeurCarte));
-		return plateau.escrimeurPeutAttaquer(e, valeurCarte);
+		var =  plateau.escrimeurPeutAttaquer( e, valeurCarte);
+		return var;
 		
 	}
 	
+	public static void main(String[] args) throws IncorrectCarteException, IncorrectPlateauException {
+		Plateau p = new Plateau(5, 11, 23) ;
 
-	
-	
-	
-	
-	/*public static void main(String[] args) throws IncorrectCarteException, IncorrectPlateauException {
-		Plateau p = new Plateau(7, 9, 24) ;
-		
-		Escrimeur esc1 = new Escrimeur("IA", TypeEscrimeur.IAFACILE, true , 5);
-		Carte[] cartes1 = {new Carte(2), new Carte(2), new Carte(2),new Carte(2),new Carte(2) };
+		DeckPioche pioche ;
+		Carte[] cartesPioche = {new Carte(2)};
+		pioche = new DeckPioche(cartesPioche);
+
+		DeckDefausse defausse;
+		Carte[] cartesDefausse = {new Carte(2),new Carte(1),new Carte(2),new Carte(3),new Carte(5), new Carte(5),new Carte(5),new Carte(3)
+				,new Carte(2), new Carte(1),new Carte(3), new Carte(4), new Carte(4),new Carte(4),new Carte(4)};
+		defausse = new DeckDefausse(cartesDefausse);
+				
+		Escrimeur esc1 = new Escrimeur("IA", TypeEscrimeur.IA_MOYENNE, 0 , 5);//0 si l'escrimeur est gaucher, 1 sinon
+		Carte[] cartes1 = { new Carte(5),new Carte(5),new Carte(3), new Carte(1),new Carte(1)};
 		Coup coup1 = new Coup(esc1,cartes1, 0);
-	
 		
-		Escrimeur esc2 = new Escrimeur("Humain", TypeEscrimeur.HUMAIN, false, 5);
-		Carte[] cartes2 = {new Carte(1), new Carte(2), new Carte(3),new Carte(4),new Carte(5) };
+		Escrimeur esc2 = new Escrimeur("Humain", TypeEscrimeur.HUMAIN, 1, 5);//0 si l'escrimeur est gaucher, 1 sinon
+		Carte[] cartes2 = {  new Carte(3),new Carte(4),new Carte(3),new Carte(2), new Carte(1) };
 		Coup coup2 = new Coup(esc2, cartes2, 0);
+
+		IA_moyenne IA = new IA_moyenne(coup1, p,  pioche,  coup2, defausse);
 		
-		IA_facile IA = new IA_facile(coup1, p);
-		int[] act_IA = IA.actionIA(coup1);
+		//************* GLOBALE*************
+		int[] res = IA.actionIA();
+		System.out.println("Nombre de carte a jouer  = "+ res[1] + " Case d arrivee = "+ res[0]); 
 		
-		System.out.println("action choisie :" + act_IA[0] + "carte choisie :"+act_IA[1]);
-	} */
-
-
-
+		//************* PHASE 1*************
+		
+		// test de jouerPhase1()
+		//int[] res = IA.jouerPhase1();
+		//System.out.println("Valeur de cartes = "+ res[1] + "action = "+ res[0]); 
+		 
+		 
+		// test de cartesEtActionsPossibles
+		/*int [][] res = IA.cartesEtActionsPossibles(2);
+		System.out.println("taille res = "+ res.length);
+		for ( int k = 0;  res.length > k ; k++) {
+			System.out.println("Valeur de cartes = "+ res[k][1] + "  Valeur de cartes2 = "+ res[k][2] + ", action = " + res[k][0]);
+			
+		}*/
+		
+		
+		//test de gestionCartes
+		/*int[] res = IA.gestionCartes();
+		
+		for( int k =0; k < res.length ; k++) {
+			System.out.println( res[k] );
+		}
+		System.out.println("Taille res : " + res.length);*/
+		
+		
+		 
+		//test de rangerCartes
+		/*int [][] res = IA.rangerCartes( cartes1 );
+		for( int k = 0; k < 7; k++) {
+			System.out.print("Valeur de cartes = "+ k + ", indices = ");
+			for (int i = 0 ; i< res.length; i++) {
+				if (res[i][0] == k ) {
+					System.out.print(res[i][1]+", ");
+				}
+			}
+			System.out.println(";");
+		}*/
+		
+		//************* PHASE 2*************
+		
+		// test de jouerPhase2()
+		//int[] res = IA.jouerPhase2();
+		//System.out.println("Valeur de cartes = "+ res[1] +" Valeur de cartes2 = "+ res[2] + " action = "+ res[0]); 
+		
+		//test de nbCartesValeur
+		/*int nb = IA.nbCartesValeur(4, 3);
+		System.out.println("nb = " + nb);*/
+		
+		
+		//************* PHASE 3*************
+		// test de jouerPhase3()
+		//int[] res = IA.jouerPhase3();
+		//System.out.println("Valeur de cartes = "+ res[1] +" Valeur de cartes2 = "+ res[2] + " action = "+ res[0]); 
+		
+		//test de carteMoinsProbable
+		/*int res = IA.carteMoinsProbable(cartes1);
+		System.out.print("Valeur carte a jouer : " + res);*/
+		
+		//************* PHASE 4*************
+		//int[] res = IA.jouerPhase4();
+		//System.out.println("Valeur de cartes = "+ res[1] +" Valeur de cartes2 = "+ res[2] + " action = "+ res[0]); 
+	} 
 }

@@ -81,7 +81,6 @@ public class Plateau extends Observable {
 		int distanceAttaque = getValeurOrientation(e, distance);
 		int currentIndice = e.getIndice();
 		int indiceAutre = (currentIndice + 1) % 2;
-
 		if (positionJoueurs[currentIndice] + distanceAttaque == positionJoueurs[indiceAutre]) {
 			return true;
 		} else {
