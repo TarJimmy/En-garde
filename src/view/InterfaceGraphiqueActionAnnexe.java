@@ -7,6 +7,8 @@ import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -69,7 +71,7 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 					label = new JLabel(banner);
 					label.setText("Actions annexes");
 					label.setFont(new Font("Century", Font.PLAIN, 25));
-					label.setBounds(67, 15, 250, 75);
+					label.setBounds(67, 25, 250, 75);
 					break;
 				default:
 					banner = new ImageIcon(new ImageIcon(ImageIO.read(Configuration.charge("cadre4.png", Configuration.MENU))).getImage().getScaledInstance(200, 50, Image.SCALE_SMOOTH));
@@ -119,7 +121,7 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		JLabel titre = Label("Titre");
 		contentPane.add(titre);
 		
-		JLabel partieEnCours = Label("Partie en cours :");
+		JLabel partieEnCours = Label("Partie en cours");
 		partieEnCours.setBounds(92, 150, 200, 50);
 		contentPane.add(partieEnCours);
 		
@@ -138,7 +140,7 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		chargePartie.setBounds(92, 330, 200, 50);
 		contentPane.add(chargePartie);
 		
-		JLabel dernierCoup = Label("Dernier coup :");
+		JLabel dernierCoup = Label("Dernier coup");
 		dernierCoup.setBounds(92, 400, 200, 50);
 		contentPane.add(dernierCoup);
 		
@@ -152,7 +154,7 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		refaireCoup.setBounds(92, 520, 200, 50);
 		contentPane.add(refaireCoup);
 		
-		JLabel aide = Label("Aide :");
+		JLabel aide = Label("Aide");
 		aide.setBounds(92, 590, 200, 50);
 		contentPane.add(aide);
 		
@@ -171,13 +173,27 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		montrerCartes.setBounds(92, 710, 200, 50);
 		contentPane.add(montrerCartes);
 		
-		JButton fermer = new ButtonCustom("FERMER", "cadre3", new Dimension(150, 50), font);
-		fermer.setBounds(10, 790, 150, 50);
+		JButton animation = new ButtonCustom("Activer les animations", "cadre2", new Dimension(200, 50), font);
+		animation.addActionListener(new AdaptateurCommande(controle, "montrerCartes"));
+		animation.addActionListener(new ActionListener() {
+			private boolean showAnimation = false;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showAnimation = !showAnimation;
+				JButton button = (JButton) e.getSource();
+				button.setText((showAnimation ? "Desactiver " : "Activer ") + "les animations");
+			}
+		});
+		animation.setBounds(92, 770, 200, 50);
+		contentPane.add(animation);
+		
+		JButton fermer = new ButtonCustom("FERMER", "cadre3", new Dimension(150, 30), font);
+		fermer.setBounds(10, 835, 150, 50);
 		fermer.addActionListener(new AdaptateurCommande(controle, "close"));
 		contentPane.add(fermer);
 		
 		fenetreActionAnnexe.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		fenetreActionAnnexe.setBounds(100, 100, 400, 900);
+		fenetreActionAnnexe.setBounds(100, 100, 400, 925);
 		fenetreActionAnnexe.setResizable(false);
 		fenetreActionAnnexe.setVisible(true);
 		
