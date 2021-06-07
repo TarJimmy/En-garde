@@ -1,6 +1,5 @@
 package view;
 
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -11,21 +10,16 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Point;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -41,8 +35,8 @@ import Global.Configuration;
 public class InterfaceGraphiqueRegles implements Runnable {
 	
     private JFrame frame;
-    private BtnNavigation plus;
-    private BtnNavigation moins;
+    private ButtonCustom plus;
+    private ButtonCustom moins;
     private JPanel center;
     private final CardLayout c1 = new CardLayout();
     private final int widthImageRegle = 866;
@@ -59,7 +53,7 @@ public class InterfaceGraphiqueRegles implements Runnable {
     }
    
     private InterfaceGraphiqueRegles() {
-        frame = new JFrame("Règle");
+        frame = new JFrame("EN GARDE ! - Règles");
         frame.addWindowListener(new WindowListener() {
 			@Override
 			public void windowOpened(WindowEvent e) {}
@@ -100,8 +94,8 @@ public class InterfaceGraphiqueRegles implements Runnable {
         panelBoutons.setPreferredSize(new Dimension(frame.getWidth(),100));
         frame.add(panelBoutons,BorderLayout.NORTH);
         //Dimension et taille du textes des boutons
-        final Dimension dim =new Dimension(200,80);
-        final Font f = new Font(Font.SERIF,Font.BOLD,dim.height/4);
+        final Dimension dim =new Dimension(280,60);
+        final Font f = new Font("Century",Font.PLAIN,dim.height/3);
         //boutons mois et plus
         JPanel panelMoins = new JPanel();
         panelMoins.setBackground(Color.white);
@@ -109,18 +103,16 @@ public class InterfaceGraphiqueRegles implements Runnable {
         JPanel panelPlus= new JPanel();
         panelPlus.setBackground(Color.white);
         panelBoutons.add(panelPlus );
-        plus = new BtnNavigation("Suivant >>");
-        plus.setFont(f);
-        plus.setPreferredSize(dim);
+        plus = new ButtonCustom("Suivant >>", "cadre4", dim, f);
+        plus.setForeground(Color.white);
         plus.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 c1.next(center);
             }
         });
-        moins = new BtnNavigation("<< Précedent");
-        moins.setPreferredSize(dim);
-        moins.setFont(f);
+        moins = new ButtonCustom("<< Précedent", "cadre4", dim, f);
+        moins.setForeground(Color.white);
         moins.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -140,48 +132,6 @@ public class InterfaceGraphiqueRegles implements Runnable {
         frame.add(center);
         frame.repaint();
         frame.setVisible(true);
-    }
-       
-    //Permet la customisations des Boutons
-    private class BtnNavigation extends JButton implements MouseListener {
-        private final Color couleur = Color.lightGray;
-        
-        public BtnNavigation(String nom){
-            super(nom);
-            setFocusable(false);
-            setBackground(couleur);
-        }
-        @Override
-        public void paintComponent(Graphics g) {
-	        Graphics2D g2 = (Graphics2D) g;
-	        super.paintComponent(g);
-	        g2.setColor(Color.BLACK);
-	        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-	        g2.setStroke(new BasicStroke(1.2f));
-	        g2.draw(new RoundRectangle2D.Double(1, 1, (getWidth() - 3), (getHeight() - 3), 12, 8));
-	        g2.setStroke(new BasicStroke(1.5f));
-	        g2.drawLine(4, getHeight() - 3, getWidth() - 4, getHeight() - 3);
-	        g2.dispose();
-        } 
-
-        @Override
-        public void mouseClicked(MouseEvent arg0) {}
-
-        @Override
-        public void mousePressed(MouseEvent arg0) {
-            setBackground(Color.white);
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent arg0) {
-            setBackground(couleur);
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent arg0) {}
-
-        @Override
-        public void mouseExited(MouseEvent arg0) {}
     }
     
     public class ScrollPanelImage extends JPanel {
