@@ -40,6 +40,7 @@ public class Jeu extends Observable {
 	
 	protected Boolean modeSimple; 
 	public Boolean peutPasserTour;
+	
 	protected Plateau plateau;
 	protected DeckPioche deckPioche;
 	protected DeckDefausse deckDefausse;

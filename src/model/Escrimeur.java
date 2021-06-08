@@ -205,4 +205,55 @@ public class Escrimeur {
 			}
 		}
 	}
+	
+	
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		int totalMain = 0;
+		int s = this.cartes.length;
+		for(int i = 0; i < s; i++) {
+			totalMain += (this.cartes[i] != null ? this.cartes[i].getDistance() : 0);
+		}
+		hash = 89 * hash + totalMain;
+		return hash;
+
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || this.getClass() != obj.getClass()){
+            return false;
+		}
+		Escrimeur other = (Escrimeur) obj;
+		int s = this.cartes.length;
+		if(other.cartes.length != s) {
+			return false;
+		}
+		int[] element1 = new int[5];
+		int[] element2 = new int [5];
+		
+		for(int i = 0; i < s; i++) {
+			if(this.cartes[i] != null) {
+				element1[this.cartes[i].getDistance() - 1] ++;
+			}
+			if(other.cartes[i] != null) {
+				element2[other.cartes[i].getDistance() - 1] ++;
+			}
+		}
+		boolean res = true;
+		for(int i = 0; i < 5; i++) {
+			if(element1[i] != element2[i]) {
+				res = false;
+			}
+		}
+		return res;
+	}
+	
+	
+	
+	
 }

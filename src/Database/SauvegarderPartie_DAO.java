@@ -107,7 +107,7 @@ public class SauvegarderPartie_DAO {
             if (idJeu != -1) {
             	return idJeu;
             } else {
-            	sql = "SELECT * FROM SauvegarderPartie BY idPartie DESC LIMIT 1";
+            	sql = "SELECT * FROM SauvegarderPartie ORDER BY idPartie DESC LIMIT 1";
                 
                 Statement stmt  = conn.createStatement();
                 ResultSet rs    = stmt.executeQuery(sql);

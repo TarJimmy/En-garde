@@ -93,9 +93,15 @@ public class ControlerJeu extends Controler {
 		Coup coupAJouer;
 		Carte[] cartesAJouer;
 
-		if (positionCurrentEscrimeur == x) {
+		if (x == -1) {
+			if(dernierCoup.getEscrimeur() == jeu.getCurrentEscrimeur()) {
+				jeu.changerTour();
+				return finirAction();
+			}
+			coupAJouer = null;
+		}else if(positionCurrentEscrimeur == x) {
 			//il faut defendre
-			int puissanceAttaque = jeu.getHistorique().voirDernierCoup().getCartes().length;
+			int puissanceAttaque = dernierCoup.getCartes().length;
 			cartesAJouer = new Carte[puissanceAttaque];
 			int i = 0;
 			int nbCartesCurrentEscrimeur = currentEscrimeur.getNbCartes();

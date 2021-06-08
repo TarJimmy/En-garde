@@ -1,19 +1,28 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Random;
 
 import controller.ControlerIA;
+import controller.ControlerIA.JeuIA;
 
-public class IA_Difficile {
+public class IA_Difficile extends IA{
 	
-
+	ControlerIA controlerIA;
 	Coup coup;
 	Coup coupAdverse;
 	Plateau plateau;
 	Deck deck;
+	HashMap<JeuIA, Float> memoisation;
 	
-	public IA_Difficile(ControlerIA controlerIA) {
+	public static final int PROFONDEURMAX = 5;
+	
+	public IA_Difficile(ControlerIA controlerIA){
+		super((JeuIA)controlerIA.getJeu());
 		this.controlerIA = controlerIA;
+		memoisation = new HashMap<>();
 	}
 	
 	public IA_Difficile(Coup c, Plateau p, Deck d, Coup a) {
@@ -410,4 +419,109 @@ public class IA_Difficile {
             this.proba = proba; 
         }
     }
+
+	@Override
+	public int[] getChoixCoup() {
+		// TODO Auto-generated method stub
+		ArrayList<int[]> coups = getCoupsPossibles(controlerIA);
+		Iterator<int[]> it = coups.iterator();
+		int[] meilleurCoup = new int[2];
+		float scoreMax = 0;
+		while (it.hasNext()){
+			int[] currentCoup = it.next();
+			ControlerIA copie = new ControlerIA(controlerIA.generateNewJeuIA((JeuIA)controlerIA.getJeu()));
+			copie.clickCase(currentCoup[0],currentCoup[1]);
+			float scoreCoup = scoreConfig(copie, 0);
+			if (scoreCoup > scoreMax){
+				scoreMax = scoreCoup;
+				meilleurCoup = currentCoup;
+			}
+		}
+		if(meilleurCoup[0] == 0){
+            it = coups.iterator();
+            meilleurCoup = (int[])it.next();
+		}
+		return meilleurCoup;
+	}
+	
+	public ArrayList<int[]> getCoupsPossibles(ControlerIA config) {
+		ArrayList<int[]> res = new ArrayList<>();
+		Iterator<Integer> itCases = config.getJeu().casesJouables().iterator();
+		while (itCases.hasNext()) {
+			int distance = itCases.next();
+			int[] monCoup = new int[2];
+			if (distance == -1) {
+				monCoup[0] = distance;
+				monCoup[1] = 0;
+			}else {
+				for(int i = 1; i <= config.getJeu().getCurrentEscrimeur().getNbCartes(distance); i++) {
+					monCoup[0] = distance;
+					monCoup[1] = i;
+					res.add(monCoup);
+				}
+			}
+		}
+		return res;
+	}
+
+	/**
+	 *
+	 * @param copie est la config qu'on veut tester
+	 * @return retourne un score a cette config, ce score est la probabilité de victoire estimée pour le currentEscrimeur de la config
+	 */
+	public float scoreConfig(ControlerIA copie,int profondeur) {
+		//memoisation
+		if (memoisation.containsKey((JeuIA)copie.getJeu())) {
+			//pour ça il faut avoir override les methode equals et peut etre Hash jsp quoi Sde Jeu pour que 2 jeux equivalents soient egaux meme
+			//si les cartes des joueurs sont pas dans le meme ordre etc
+			return memoisation.get((JeuIA)copie.getJeu());
+		}else {
+			//cas de base
+			if (copie.getEWinner() != Jeu.NONE) {
+				//je sais pas trop comment tester ça mais peut etre avec jeu.getWinnerManche par exemple
+				if(copie.getEWinner() == copie.getJeu().getIndiceCurrentEscrimeur()) {
+					memoisation.put((JeuIA)copie.getJeu(),(float)1);
+					return memoisation.get((JeuIA)copie.getJeu());
+				}else {
+					memoisation.put((JeuIA)copie.getJeu(),(float)0.1);
+					return memoisation.get((JeuIA)copie.getJeu());
+				}
+			}else if(profondeur > IA_Difficile.PROFONDEURMAX){
+				return approximationScore((JeuIA)copie.getJeu());
+			}else {
+				//recurrence
+				
+				ArrayList<int[]> coups = getCoupsPossibles(copie);
+				Iterator<int[]> it = coups.iterator();
+				float scoreMax = 0;
+				while (it.hasNext()){
+					int[] currentCoup = it.next();
+					ControlerIA copie2 = new ControlerIA(copie.generateNewJeuIA((JeuIA)copie.getJeu()));
+					copie2.clickCase(currentCoup[0],currentCoup[1]);
+					float score;
+					if(copie2.getJeu().getIndiceCurrentEscrimeur() == copie2.getJeu().getIndiceCurrentEscrimeur()) {
+						score = scoreConfig(copie2, profondeur+1);
+					}else {
+						score = 1 - scoreConfig(copie2, profondeur+1);
+					}
+					if(score > scoreMax) {
+						scoreMax = score;
+					}
+				}
+				memoisation.put((JeuIA)copie.getJeu(),scoreMax);
+				return memoisation.get((JeuIA)copie.getJeu());
+
+			}
+		}
+	}
+
+	/**
+	 *
+	 * @param j
+	 * @return le score estimé de la config donnée en parametre
+	 */
+	public float approximationScore(Jeu j) {
+
+		return (float)1;
+	}
 }

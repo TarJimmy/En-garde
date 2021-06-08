@@ -178,4 +178,25 @@ public class Plateau extends Observable {
 		return Math.abs(positionJoueurs[0] - positionJoueurs[1]);
 	}
 	
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 89 * hash + this.getPosition(0);
+		hash = 89 * hash + this.getPosition(1);
+		return hash;
+
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || this.getClass() != obj.getClass()){
+            return false;
+		}
+		Plateau other = (Plateau) obj;
+		
+		return this.getPosition(0) == other.getPosition(0) && this.getPosition(1) == other.getPosition(1);
+	}
 }
