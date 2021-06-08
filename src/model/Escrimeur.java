@@ -17,8 +17,11 @@ public class Escrimeur {
 	public static final int GAUCHER = 0;
 	public static final int DROITIER = 1;
 	private int mancheGagner;
-	private LinkedList<Integer> indicesCartesModifierRecemment;
-	private LinkedList<Integer> distancesCartesModifierRecemment;
+	private LinkedList<Integer> indicesCartesAjouterRecemment;
+	private LinkedList<Integer> distancesCartesAjouterRecemment;
+	private LinkedList<Integer> indicesCartesSupprimerRecemment;
+	private LinkedList<Integer> distancesCartesSupprimerRecemment;
+	private LinkedList<Carte[]> etatCarteDefausser;
 	public boolean isIA;
 	public IA m_IA;
 	/**
@@ -34,8 +37,11 @@ public class Escrimeur {
 		this.indice = indice;
 		this.cartes = new Carte[nbCarte];
 		this.mancheGagner = 0;
-		this.indicesCartesModifierRecemment = new LinkedList<>();
-		this.distancesCartesModifierRecemment = new LinkedList<>();
+		this.indicesCartesAjouterRecemment = new LinkedList<>();
+		this.distancesCartesAjouterRecemment = new LinkedList<>();
+		this.indicesCartesSupprimerRecemment = new LinkedList<>();
+		this.distancesCartesSupprimerRecemment = new LinkedList<>();
+		etatCarteDefausser = new LinkedList<>();
 	}
 	
 	private Escrimeur() {}
@@ -64,8 +70,8 @@ public class Escrimeur {
 		for (int i = 0; i < cartes.length; i++) {
 			if (cartes[i] == null) {
 				cartes[i] = c;
-				indicesCartesModifierRecemment.add(i);
-				distancesCartesModifierRecemment.add(cartes[i].getDistance());
+				indicesCartesAjouterRecemment.add(i);
+				distancesCartesAjouterRecemment.add(cartes[i].getDistance());
 				return true;
 			}
 		}
@@ -85,13 +91,17 @@ public class Escrimeur {
 	public int supprimerCarte(Carte c) {
 		for (int i = 0; i < cartes.length; i++) {
 			if (cartes[i] == c) {
-				distancesCartesModifierRecemment.add(cartes[i].getDistance());
+				distancesCartesSupprimerRecemment.add(cartes[i].getDistance());
+				Carte[] copyMain = copyMainCourante();
+				copyMain[i] = null;
+				etatCarteDefausser.add(copyMain);
 				for (int j = i; j < cartes.length - 1; j++) {
 					cartes[j] = cartes [j + 1];
 				}
-				indicesCartesModifierRecemment.add(i);
+				indicesCartesSupprimerRecemment.add(i);
 				cartes[cartes.length - 1] = null;
-				System.out.println("indice carte changer recemment : " + Arrays.toString(indicesCartesModifierRecemment.toArray()));
+				System.out.println("indice carte supprimer recemment : " + Arrays.toString(indicesCartesSupprimerRecemment.toArray()));
+				System.out.println("Main sauvegarder : " + Arrays.toString(copyMain));
 				return i;
 			}
 		}
@@ -152,17 +162,30 @@ public class Escrimeur {
 		return res;
 	}
 	
-	public void prepareChangeCartes() {
-		indicesCartesModifierRecemment.clear();
-		distancesCartesModifierRecemment.clear();
+	public void prepareAjouteCartes() {
+		indicesCartesAjouterRecemment.clear();
+		distancesCartesAjouterRecemment.clear();
 	}
 	
-	public LinkedList<Integer> getIndicesCartesModifierRecemment() {
-		return indicesCartesModifierRecemment;
+	public void prepareSupprimeCartes() {
+		indicesCartesSupprimerRecemment.clear();
+		distancesCartesSupprimerRecemment.clear();
 	}
 	
-	public LinkedList<Integer> getDistancesCartesModifierRecemment() {
-		return distancesCartesModifierRecemment;
+	public LinkedList<Integer> getIndicesCartesAjouterRecemment() {
+		return indicesCartesAjouterRecemment;
+	}
+	
+	public LinkedList<Integer> getDistancesCartesAjouterRecemment() {
+		return distancesCartesAjouterRecemment;
+	}
+	
+	public LinkedList<Integer> getIndicesCartesSupprimerRecemment() {
+		return indicesCartesSupprimerRecemment;
+	}
+	
+	public LinkedList<Integer> getDistancesCartesSupprimerRecemment() {
+		return distancesCartesSupprimerRecemment;
 	}
 	
 	public void resetMancheGagner() {
@@ -174,11 +197,16 @@ public class Escrimeur {
 		e.nom = new String(nom);
 		e.type = type;
 		e.indice = indice;
-		e.cartes = new Carte[cartes.length];
-		for (int i = 0; i < cartes.length; i++) {
-			e.cartes[i] = cartes[i].copySimple();
-		}
+		e.cartes = copyMainCourante();
 		return e;
+	}
+	
+	private Carte[] copyMainCourante() {
+		Carte[] mainCourante = new Carte[cartes.length];
+		for (int i = 0; i < cartes.length; i++) {
+			mainCourante[i] = cartes[i] != null ? cartes[i].copySimple() : null;
+		}
+		return mainCourante;
 	}
 	
 	public int[] getArrayCartes() {
@@ -204,6 +232,7 @@ public class Escrimeur {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("escr : " + cartes.toString());
 	}
 	
 	
@@ -252,8 +281,14 @@ public class Escrimeur {
 		}
 		return res;
 	}
-	
-	
-	
-	
+	public Carte[] popMainCourante() {
+		return etatCarteDefausser.pop();
+	}
+
+	public void clear() {
+		this.indicesCartesAjouterRecemment.clear();
+		this.distancesCartesAjouterRecemment.clear();
+		this.indicesCartesSupprimerRecemment.clear();
+		this.distancesCartesSupprimerRecemment.clear();
+	}
 }

@@ -15,6 +15,7 @@ public class AdaptateurChargerPartie implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		InterfaceGraphiqueChargerPartie.close();
 		control.chargerPartie(id);
 	}
 }

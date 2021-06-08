@@ -99,7 +99,20 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 			for(int i=0; i<6; i++) {
 				JButton button = parties.get(i);
 				rs.next();
-				name = rs.getString("idPartie")+" \n"+rs.getString("nomJoueurG")+"\n"+rs.getString("nomJoueurD");
+				name = "<html><body>"
+						+ "<section style=\"text-align: center;\">\r\n"
+						+ "    <div style=\"margin: 3px auto; font-weight: 500; font-family: serif;\">\r\n"
+						+ "    " + rs.getString("dateMatch") + "\r\n"
+						+ "    </div>\r\n"
+						+ "    <div style=\"margin: 3px auto; font-weight: 400; font-family: serif;\">\r\n"
+						+ "    " + rs.getString("nomJoueurG") + "\r\n"
+						+ "    </div>\r\n"
+						+ "    <div style=\"margin: 3px auto; font-weight: 400; font-family: serif;\">\r\n"
+						+ "    " + rs.getString("nomJoueurD") + "\r\n"
+						+ "    </div>\r\n"
+						+ "</section>"
+						+ "</body></html>";
+						
 				button.setText(name);
 				button.addActionListener(new AdaptateurChargerPartie(controle,rs.getInt("idPartie")));
 			}

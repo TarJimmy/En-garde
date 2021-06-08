@@ -72,7 +72,6 @@ public class ControlerJeu extends Controler {
 		this.animations = new LinkedList<>();
 		animationsActives = false;
 		InterfaceGraphiqueJeu.demarrer(this, jeu);
-		InterfaceGraphiqueJeu.demarrer(this, jeu);
 	}
 	
 	public void piocher(Escrimeur e) {
@@ -284,7 +283,8 @@ public class ControlerJeu extends Controler {
 				nouvellePartie();
 				return true;
 			case "sauvPartie":
-				partieSauvegardee.sauvegardeJeu(jeu);
+				int idJeu = partieSauvegardee.sauvegardeJeu(jeu);
+				jeu.setIdJeu(idJeu);
 				return false;
 			case "chargePartie":
 				
@@ -355,6 +355,7 @@ public class ControlerJeu extends Controler {
 			animations.getFirst().termine();
 		}
 		animations.clear();
+		jeu.setIdJeu(-1);
 		jeu.nouvellePartie();
 	}
 	

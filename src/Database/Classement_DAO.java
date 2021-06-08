@@ -2,6 +2,7 @@ package Database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -92,6 +93,46 @@ public class Classement_DAO {
         }
         return null;
 	}
+	
+	public void insertJoueur(String nom) {
+        String sql = "INSERT INTO Joueur(nom) VALUES(?)";
+        
+        sql = "SELECT * FROM Joueur WHERE nom = '" + nom + "';";
+        try{
+	        Connection conn = this.connect();
+	        Statement stmt  = conn.createStatement();
+	        ResultSet rs    = stmt.executeQuery(sql);
+	        if (rs.next()) {
+	        	
+	            PreparedStatement pstmt = conn.prepareStatement(sql);
+	            pstmt.setString(1, nom);
+	            pstmt.executeUpdate();
+	           
+	        }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        
+    }
+	
+
+	 //	gagnant = 'nulle' | 'Gaucher' | 'Droitier'
+	 public void insertMatch(String nomJoueurG, String nomJoueurD,int mancheGagnerGauche,int mancheGagnerDroit,String Gagnant) {
+	        String sql = "INSERT INTO Match(nomJoueurG, nomJoueurD,mancheGagnerGauche,mancheGagnerDroit,Gagnant) VALUES(?,?,?,?,?)";
+
+	        try{
+	            Connection conn = this.connect();
+	            PreparedStatement pstmt = conn.prepareStatement(sql);
+	            pstmt.setString(1, nomJoueurG);
+	            pstmt.setString(2, nomJoueurD);
+	            pstmt.setInt(3, mancheGagnerGauche);
+	            pstmt.setInt(4, mancheGagnerDroit);
+	            pstmt.setString(5, Gagnant);
+	            pstmt.executeUpdate();
+	        } catch (SQLException e) {
+	            System.out.println(e.getMessage());
+	        }
+	    }
 	
 	
 	
