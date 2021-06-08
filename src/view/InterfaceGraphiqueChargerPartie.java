@@ -75,7 +75,7 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 		String supp = "Supprime";
 		String charge = "Charge";
 		try {
-			contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("fondChargePartie.png", Configuration.MENU))));
+			contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("PartiesSauv.png", Configuration.MENU))));
 			fenetreChargerPartie.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -124,7 +124,7 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 			}
 			
 		});
-		supprimerPartie.setBounds(217, 500, 300, 40);
+		supprimerPartie.setBounds(217, 500, 332, 40);
 		
 		majParties();
 		
