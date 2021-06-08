@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,6 +33,7 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 	private static JFrame fenetreChargerPartie;
 	private static CollecteurEvenements controle;
 	private static List<JButton> parties = new ArrayList<JButton>();
+	private static List<JButton> supprimer = new ArrayList<JButton>();
 	ResultSet rs;
 	SauvegarderPartie_DAO sp_dao;
 	private InterfaceGraphiqueChargerPartie(CollecteurEvenements controle) {
@@ -56,8 +59,8 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 		}
 	}
 	
-	private static ButtonCustom createButtonChargerPartie(String name, int x, int y) {
-		ButtonCustom button = new ButtonCustom(name, "contourChargePartie", new Dimension(150, 150), new Font("Century", Font.PLAIN, 15));
+	private static ButtonCustom createButtonPartie(String name, String choix, int x, int y) {
+		ButtonCustom button = new ButtonCustom(name, "contour"+choix+"Partie", new Dimension(150, 150), new Font("Century", Font.PLAIN, 15));
 		button.setBounds(x, y, 150, 150);
 		button.setHorizontalTextPosition(SwingConstants.CENTER);
 		return button;
@@ -65,10 +68,12 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 
 	@Override
 	public void run() {
-		fenetreChargerPartie = new JFrame("EN GARDE ! - CHARGER UNE PARTIE");
+		fenetreChargerPartie = new JFrame("EN GARDE ! - PARTIES SAUVEGARDEES");
 		fenetreChargerPartie.setIconImage(Configuration.imgIcone);
 		JLabel contentPane = null;
 		String name = "Vide";
+		String supp = "Supprime";
+		String charge = "Charge";
 		try {
 			contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("fondChargePartie.png", Configuration.MENU))));
 			fenetreChargerPartie.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
@@ -83,21 +88,49 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 		int x3 = 395;
 		int y1 = 161;
 		int y2 = 322;
-		parties.add(createButtonChargerPartie(name, x1, y1));
-		parties.add(createButtonChargerPartie(name, x2, y1));
-		parties.add(createButtonChargerPartie(name, x3, y1));
-		parties.add(createButtonChargerPartie(name, x1, y2));
-		parties.add(createButtonChargerPartie(name, x2, y2));
-		parties.add(createButtonChargerPartie(name, x3, y2));
+		parties.add(createButtonPartie(name, charge, x1, y1));
+		supprimer.add(createButtonPartie(name, supp, x1, y1));
+		
+		parties.add(createButtonPartie(name, charge, x2, y1));
+		supprimer.add(createButtonPartie(name, supp, x2, y1));
+		
+		parties.add(createButtonPartie(name, charge, x3, y1));
+		supprimer.add(createButtonPartie(name, supp, x3, y1));
+		
+		parties.add(createButtonPartie(name, charge, x1, y2));
+		supprimer.add(createButtonPartie(name, supp, x1, y2));
+		
+		parties.add(createButtonPartie(name, charge, x2, y2));
+		supprimer.add(createButtonPartie(name, supp, x2, y2));
+		
+		parties.add(createButtonPartie(name, charge, x3, y2));
+		supprimer.add(createButtonPartie(name, supp, x3, y2));
 
 		JButton annuler = new ButtonCustom("Annuler", "cadre4", new Dimension(150, 40), new Font("Century", Font.PLAIN, 15));
 		annuler.addActionListener(new AdaptateurCommande(controle, "annuler"));
 		annuler.setBounds(35, 500, 150, 40);
 		annuler.setForeground(Color.WHITE);
+		
+		JButton supprimerPartie = new ButtonCustom("Supprimer une partie", "cadre3", new Dimension(300, 40), new Font("Century", Font.PLAIN, 15));
+		supprimerPartie.addActionListener(new ActionListener() {
+			private Boolean clic = false;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for(JButton Partie : parties) { Partie.setVisible(clic); }
+				for(JButton Supp : supprimer) { Supp.setVisible(!clic); }
+				clic = !clic;
+				JButton button = (JButton) e.getSource();
+				button.setText((clic ? "Charger " : "Supprimer ") + "une partie");
+			}
+			
+		});
+		supprimerPartie.setBounds(217, 500, 300, 40);
+		
 		try {
 			rs = sp_dao.getAll();
 			for(int i=0; i<6; i++) {
-				JButton button = parties.get(i);
+				JButton buttonCharge = parties.get(i);
+				JButton buttonSupp = supprimer.get(i);
 				rs.next();
 				name = "<html><body>"
 						+ "<section style=\"text-align: center;\">\r\n"
@@ -112,9 +145,12 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 						+ "    </div>\r\n"
 						+ "</section>"
 						+ "</body></html>";
-				button.setText(name);
-				button.setHorizontalAlignment(SwingConstants.CENTER);
-				button.addActionListener(new AdaptateurChargerPartie(controle,rs.getInt("idPartie")));
+				buttonCharge.setText(name);
+				buttonSupp.setText(name);
+				buttonCharge.setHorizontalAlignment(SwingConstants.CENTER);
+				buttonSupp.setHorizontalAlignment(SwingConstants.CENTER);
+				buttonCharge.addActionListener(new AdaptateurSauvPartie(controle,rs.getInt("idPartie"), "Charger"));
+				buttonSupp.addActionListener(new AdaptateurSauvPartie(controle,rs.getInt("idPartie"), "Supprimer"));
 			}
 		} catch (SQLException e) {
 			System.out.println("Pas plus de parties enregistrees");
@@ -123,7 +159,12 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 		for(JButton Partie : parties) {
 			contentPane.add(Partie);
 		}
+		for(JButton Supp : supprimer) {
+			Supp.setVisible(false);
+			contentPane.add(Supp);
+		}
 		contentPane.add(annuler);
+		contentPane.add(supprimerPartie);
 
 		fenetreChargerPartie.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		fenetreChargerPartie.setBounds(100, 100, 600, 600);

@@ -238,7 +238,6 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 				changeTour = !changeTour;
 				JButton button = (JButton) e.getSource();
 				button.setText((changeTour ? "Retablir " : "Accelerer ") + "changement tour");
-				System.out.println(changeTour + " : "+InterfaceGraphiqueJeu.ajoutVitesse);
 			}
 		});
 		changementTour.setBounds(92, 830, 200, 50);
