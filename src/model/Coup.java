@@ -87,5 +87,14 @@ public class Coup implements Cloneable {
 	    }
 		return coup;
 	}
+	
+	public void printCoup() {
+		System.out.println("--------------------------------------------");
+		System.out.println("coup : " + this.getAction());
+		System.out.println("escrimeur : " + this.getEscrimeur().getIndice());
+		System.out.println("cartes : " + this.getCartes().length + " distance : "+this.getCartes()[0].getDistance());
+		System.out.println("nb cartesJouees :" +this.getIndicesCartesJouees().size());
+		System.out.println("--------------------------------------------");
+	}
 
 }

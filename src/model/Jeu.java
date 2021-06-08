@@ -39,12 +39,12 @@ public class Jeu extends Observable {
 	public Boolean peutPasserTour;
 	private Plateau plateau;
 	protected DeckPioche deckPioche;
-	private DeckDefausse deckDefausse;
-	private int indiceCurrentEscrimeur;
+	protected DeckDefausse deckDefausse;
+	protected int indiceCurrentEscrimeur;
 	private int indicePremierJoueur;
 	private boolean animationAutoriser;
 	
-	private Escrimeur[] escrimeurs;
+	protected Escrimeur[] escrimeurs;
 	private int winner;
 	private Historique historique;
 	private boolean dernierTour;

@@ -482,8 +482,11 @@ public class IA_Difficile extends IA{
 				if(copie.getEWinner() == copie.getJeu().getIndiceCurrentEscrimeur()) {
 					memoisation.put((JeuIA)copie.getJeu(),(float)1);
 					return memoisation.get((JeuIA)copie.getJeu());
-				}else {
+				}else if(copie.getEWinner() == Jeu.EGALITE){
 					memoisation.put((JeuIA)copie.getJeu(),(float)0.1);
+					return memoisation.get((JeuIA)copie.getJeu());
+				}else {
+					memoisation.put((JeuIA)copie.getJeu(),(float)0);
 					return memoisation.get((JeuIA)copie.getJeu());
 				}
 			}else if(profondeur > IA_Difficile.PROFONDEURMAX){
@@ -521,7 +524,7 @@ public class IA_Difficile extends IA{
 	 * @return le score estimé de la config donnée en parametre
 	 */
 	public float approximationScore(Jeu j) {
-
+		System.out.println("estimation coup ia");
 		return (float)1;
 	}
 }
