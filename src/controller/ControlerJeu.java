@@ -344,7 +344,7 @@ public class ControlerJeu extends Controler {
 		} else {
 			HashSet<Integer> cj = jeu.casesJouables();
 			if ((!jeu.getDeckPioche().deckVide() && cj.isEmpty()) || (cj.isEmpty() && (jeu.getHistorique().voirDernierCoup().getAction() == Coup.ATTAQUEDIRECTE || jeu.getHistorique().voirDernierCoup().getAction() == Coup.ATTAQUEINDIRECTE))) {
-				System.out.println("defense impossible");
+				System.out.println("defense impossible ou aucun coup jouable");
 				finDeManche(jeu.getNotCurrentEscrimeur());
 				return true;
 			} else if (jeu.getDeckPioche().deckVide()) {
