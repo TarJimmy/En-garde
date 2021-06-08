@@ -41,8 +41,8 @@ public class Classement_DAO {
 
 	            +"SELECT Joueur.nom, win, defaite, nulle\n"
 	            +"FROM Joueur INNER JOIN nbWin USING (nom) INNER JOIN nbNull USING (nom) INNER JOIN nbDefaite USING (nom)\n"
-	            +"GROUP BY Joueur.nom"
-	            +"ORDER BY nbWin LIMIT 10;";
+	            +"GROUP BY Joueur.nom\n"
+	            +"ORDER BY win LIMIT 10;";
         
         try {
         	Connection conn = this.connect();

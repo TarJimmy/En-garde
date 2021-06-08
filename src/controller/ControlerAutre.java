@@ -101,7 +101,7 @@ public class ControlerAutre extends Controler {
 					Plateau plateau = new Plateau(posJ1, posJ2, nbDalles);
 					Jeu jeu = new Jeu(modeSimple, plateau, deckPioche, deckDefausse, nbManches, Escrimeur.GAUCHER, eGaucher, eDroitier, positonDepart, animationAutoriser);
 					
-					new ControlerJeu(jeu);
+					new ControlerJeu(jeu, true, true);
 				} catch (IncorrectPlateauException e) {
 					e.printStackTrace();
 				} catch (IncorrectCarteException e) {
@@ -165,7 +165,7 @@ public class ControlerAutre extends Controler {
 	@Override
 	public void SuiteChargerPartie(Jeu jeu) {
 		// TODO Auto-generated method stub
-		new ControlerJeu(jeu, true);
+		new ControlerJeu(jeu, false);
 	}
 }
 

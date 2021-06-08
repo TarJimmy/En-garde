@@ -54,7 +54,6 @@ public class ControlerJeu extends Controler {
 		this.animations = new LinkedList<>();
 		this.lancerNouvellePartie = lancerNouvellePartie;
 		animationsActives = false;
-		InterfaceGraphiqueJeu.demarrer(this, jeu);
 		initIA();
 		if (showGraphique) {
 			InterfaceGraphiqueJeu.demarrer(this, jeu);
@@ -300,10 +299,13 @@ public class ControlerJeu extends Controler {
 				InterfaceGraphiqueActionAnnexe.close(); 
 				return true;
 			case "PageInitialiser":
+				System.out.println("PageInitialiser");
 				if (lancerNouvellePartie) {
-					lancerNouvellePartie = false;
+					System.out.println("nouvelle Partie");
+					lancerNouvellePartie = true;
 					nouvellePartie();
 				} else {
+					System.out.println("Actualiser jeu");
 					jeu.modifieVue(Action.ACTUALISER_JEU);
 				}
 				return true;

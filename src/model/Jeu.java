@@ -521,7 +521,6 @@ public class Jeu extends Observable {
 	public void demarreActionSuivante() {
 		if (!actionEnCours && !listeActions.isEmpty()) {
 			actionEnCours = true;
-			//System.out.println(Arrays.toString(listeActions.toArray()));
 			metAJour();
 		}
 	}
