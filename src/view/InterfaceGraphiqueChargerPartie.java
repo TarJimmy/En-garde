@@ -96,8 +96,9 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 			for(int i=0; i<6; i++) {
 				JButton button = parties.get(i);
 				rs.next();
-				name = rs.getString("idPartie")+" \n"+rs.getString("nomJoueurG")+"\n"+rs.getString("nomJoueurD");
+				name = "<HTML><BODY><center>"+rs.getString("idPartie")+"<BR>"+rs.getString("nomJoueurG")+"<BR>"+rs.getString("nomJoueurD")+"</center></BODY></HTML>";
 				button.setText(name);
+				button.setHorizontalAlignment(SwingConstants.CENTER);
 				button.addActionListener(new AdaptateurChargerPartie(controle,rs.getInt("idPartie")));
 			}
 		} catch (SQLException e) {
