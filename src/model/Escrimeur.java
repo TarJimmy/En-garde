@@ -44,7 +44,12 @@ public class Escrimeur {
 		etatCarteDefausser = new LinkedList<>();
 	}
 	
-	private Escrimeur() {}
+	private Escrimeur() {
+		this.indicesCartesAjouterRecemment = new LinkedList<>();
+		this.distancesCartesAjouterRecemment = new LinkedList<>();
+		this.indicesCartesSupprimerRecemment = new LinkedList<>();
+		this.distancesCartesSupprimerRecemment = new LinkedList<>();
+	}
 	
 	public int getNbCartes() {
 		return this.cartes.length;

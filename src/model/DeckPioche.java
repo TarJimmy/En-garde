@@ -1,6 +1,7 @@
 package model;
 
 import java.util.Collections;
+import java.util.Stack;
 
 public class DeckPioche extends Deck {
 
@@ -10,6 +11,10 @@ public class DeckPioche extends Deck {
 	
 	public DeckPioche() {
 		super();
+	}
+	
+	public Stack<Carte> getCartes(){
+		return this.cartes;
 	}
 	
 	public Carte piocher() {
@@ -26,7 +31,17 @@ public class DeckPioche extends Deck {
 
 	@Override
 	public DeckPioche copySimple() {
-		return new DeckPioche((Carte[])cartes.clone());
+		int s = cartes.size();
+		Carte[] newCartes = new Carte[s];
+		for(int i = 0; i < s; i++) {
+			try {
+				newCartes[i] = new Carte(cartes.elementAt(i).getDistance());
+			} catch (IncorrectCarteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return new DeckPioche(newCartes);
 	}
 	
 	

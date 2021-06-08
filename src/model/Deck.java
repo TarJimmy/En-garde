@@ -9,7 +9,7 @@ import org.json.JSONException;
 
 public abstract class Deck {
 
-	Stack<Carte> cartes;
+	protected Stack<Carte> cartes;
 	
 	Deck(Carte[] cartes) {
 		this.cartes = new Stack<Carte>();

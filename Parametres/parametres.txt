@@ -13,5 +13,5 @@ Avance
 5
 5
 5
-Actif
+NonActif
 Gauche
