@@ -53,11 +53,16 @@ public class SauvegarderPartie_DAO {
 	        		+ "CartesMaxJoueur = ?,"
 	        		+ "AnimationAutoriser = ?,"
 	        		+ "indicePremierJoueur = ?,"
-	        		+ "indiceCurrentJoueur = ?"
+	        		+ "indiceCurrentJoueur = ?,"
+	        		+ "dateMatch = DATE('now','localtime') "
 	                + "WHERE idPartie = ?";
 		
 		} else {
-			sql = "INSERT OR REPLACE INTO SauvegarderPartie(nomJoueurG,nomJoueurD,mancheGagnerGauche,mancheGagnerDroit,posJoueurG,posJoueurD,nbCasesJeu,nbManchesWin,mainGaucherJSON,mainDroitierJSON,DefausseJSON,PiocheJSON,posDepartGauche,posDepartDroit,modeSimple,TypeEscrimeurG,TypeEscrimeurD,CartesMaxJoueur,AnimationAutoriser,indicePremierJoueur,indiceCurrentJoueur) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";  
+			sql = "INSERT OR REPLACE INTO SauvegarderPartie(nomJoueurG,nomJoueurD,mancheGagnerGauche,mancheGagnerDroit"
+					+ ",posJoueurG,posJoueurD,nbCasesJeu,nbManchesWin,mainGaucherJSON,mainDroitierJSON,DefausseJSON,"
+					+ "PiocheJSON,posDepartGauche,posDepartDroit,modeSimple,TypeEscrimeurG,TypeEscrimeurD,CartesMaxJoueur,"
+					+ "AnimationAutoriser,indicePremierJoueur,indiceCurrentJoueur,dateMatch) "
+					+ "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,DATE('now','localtime'))";  
 		}
    
         try{  

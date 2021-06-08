@@ -15,6 +15,7 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
@@ -27,6 +28,7 @@ import javax.swing.SwingUtilities;
 
 import Global.Configuration;
 import Patterns.Observateur;
+import model.Carte;
 import controller.ControlerJeu;
 import model.Escrimeur;
 import model.Jeu;
@@ -136,11 +138,11 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				vueEscrimeurs[Escrimeur.DROITIER].actualise();
 				break;
 			case ANIMATION_PIOCHER:
-				int indicePiocher = jeu.getIndiceEscrimeurChangeCarte();
-				LinkedList<Integer> indicesCartesADeplacerPiocher = jeu.popListeCartesChangeRecemment(indicePiocher);
-				LinkedList<Integer> distancesListPiocher = jeu.popListeDistancesChangeRecemment(indicePiocher);
-				
-				Point[] destinationsPiocher = getPosCartesModifierRecemment(indicePiocher, indicesCartesADeplacerPiocher);
+				int indicePiocher = jeu.popListeIndiceEscrimeurPiocheCarte();
+				System.out.println("on anime pioche pour : " + indicePiocher);
+				LinkedList<Integer> indicesCartesAPiocher = jeu.popListeIndicesPiocheRecemment(indicePiocher);
+				LinkedList<Integer> distancesListPiocher = jeu.popListeDistancesPiocheRecemment(indicePiocher);
+				Point[] destinationsPiocher = getPosCartesModifierRecemment(indicePiocher, indicesCartesAPiocher);
 				Point[] departsPiocher = new Point[destinationsPiocher.length];
 				int[] distancesPiocher = new int[departsPiocher.length];
 				
@@ -148,20 +150,22 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 					departsPiocher[i] = posDeckPioche;
 					distancesPiocher[i] = distancesListPiocher.get(i);
 				}
-				controle.animation("Ajouter", panelAnimation.generateAnimationDeplacerCartes(departsPiocher, destinationsPiocher, distancesPiocher, indicePiocher));
+				controle.animation("Ajouter", panelAnimation.generateAnimationDeplacerCartes(departsPiocher, destinationsPiocher, distancesPiocher, null, indicePiocher));
 				break;
 			case ANIMATION_DEFAUSSER:
-				int indiceDefausser = jeu.getIndiceEscrimeurChangeCarte();
-				LinkedList<Integer> indicesCartesADeplacerDefausser = jeu.popListeCartesChangeRecemment(indiceDefausser);
-				LinkedList<Integer> distancesListDefausser = jeu.popListeDistancesChangeRecemment(indiceDefausser);
-				Point[] departsDefausser = getPosCartesModifierRecemment(indiceDefausser, indicesCartesADeplacerDefausser);
+				int indiceDefausser = jeu.popListeIndiceEscrimeurDefausseCarte();
+				LinkedList<Integer> indicesCartesADefausser = jeu.popListeIndiceDefausseRecemment(indiceDefausser);
+				LinkedList<Integer> distancesListDefausser = jeu.popListeDistancesDefausseRecemment(indiceDefausser);
+				System.out.println("Distance a defausser : " + Arrays.toString(distancesListDefausser.toArray()));
+				Carte[] etatMain = jeu.popEtatMainDefausse(indiceDefausser);
+				Point[] departsDefausser = getPosCartesModifierRecemment(indiceDefausser, indicesCartesADefausser);
 				Point[] destinationsDefausser = new Point[departsDefausser.length];
 				int[] distancesDefausser = new int[departsDefausser.length];
 				for (int i = 0; i < departsDefausser.length; i++) {
 					destinationsDefausser[i] = posDeckDefausse;
 					distancesDefausser[i] = distancesListDefausser.get(i);
 				}
-				controle.animation("Ajouter",panelAnimation.generateAnimationDeplacerCartes(departsDefausser, destinationsDefausser, distancesDefausser, indiceDefausser));
+				controle.animation("Ajouter",panelAnimation.generateAnimationDeplacerCartes(departsDefausser, destinationsDefausser, distancesDefausser, etatMain, indiceDefausser));
 				break;
 			case ANIMATION_FIN_MANCHE:
 				controle.animation("Ajouter", panelAnimation.generateAnimationFinManche(jeu.getIndiceWinnerManche()));
@@ -277,7 +281,8 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		private BufferedImage imgDos;
 		
 		private BufferedImage imgChangementTour;
-		
+		private Carte[] etatMain;
+		private int indiceEscrimeurCarte;
 		private boolean showFace;
 		private boolean[] sauveShowFaceVue;
 		public PanelAnimation(int largeur, int hauteur) {
@@ -333,10 +338,12 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 			}
 		}
 		
-		public Animation generateAnimationDeplacerCartes(Point[] departs, Point[] destinations, int[] distanceCarte, int indiceEscrimeur) {
+		public Animation generateAnimationDeplacerCartes(Point[] departs, Point[] destinations, int[] distanceCarte, Carte[] etatMain, int indiceEscrimeur) {
 			if (departs.length != destinations.length || departs.length != distanceCarte.length) {
 				throw new IllegalArgumentException("La taille des tableaux doivent être égal");
 			}
+			this.etatMain = etatMain;
+			this.indiceEscrimeurCarte = indiceEscrimeur;
 			posADessiner = departs;
 			distanceCarteADessiner = distanceCarte; // Va peut etre poser un probleme si les action senchaine trop vite
 			Point[] distances = new Point[departs.length];
@@ -382,6 +389,14 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				vueEscrimeurs[Escrimeur.DROITIER].setShowFace(false);
 				vuePlateau.actualise(jeu.getCurrentEscrimeur());
 			}
+			if (animActif == Animation.ANIM_CARTES && etatMain != null) {
+				System.out.println("Pos a dessiner : " + posADessiner);
+				System.out.println("restoreMain : " + Arrays.toString(etatMain));
+				vueEscrimeurs[indiceEscrimeurCarte].getVueMain().actualise(etatMain);
+			} else {
+				System.out.println("distanceCarteADessiner a dessiner : " + distanceCarteADessiner);
+				System.out.println("restoreMain : " + Arrays.toString(etatMain));
+			}
 		};
 		
 		public void deplacePanel(int newX) {
@@ -391,7 +406,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		
 		public void deplaceCartes(Point[] newPoints, int indiceEscrimeur) {
 			posADessiner = newPoints;
-			this.showFace = vueEscrimeurs[indiceEscrimeur].getShowFace();
+			this.showFace = vueEscrimeurs[indiceEscrimeurCarte].getShowFace();
 			repaint();
 		}
 	}

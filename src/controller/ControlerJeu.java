@@ -55,7 +55,6 @@ public class ControlerJeu extends Controler {
 		this.animations = new LinkedList<>();
 		this.lancerNouvellePartie = lancerNouvellePartie;
 		animationsActives = false;
-		InterfaceGraphiqueJeu.demarrer(this, jeu);
 		initIA();
 		if (showGraphique) {
 			InterfaceGraphiqueJeu.demarrer(this, jeu);
@@ -73,7 +72,6 @@ public class ControlerJeu extends Controler {
 		this.jeu = jeu;
 		this.animations = new LinkedList<>();
 		animationsActives = false;
-		InterfaceGraphiqueJeu.demarrer(this, jeu);
 		InterfaceGraphiqueJeu.demarrer(this, jeu);
 	}
 	
@@ -290,7 +288,8 @@ public class ControlerJeu extends Controler {
 				nouvellePartie();
 				return true;
 			case "sauvPartie":
-				partieSauvegardee.sauvegardeJeu(jeu);
+				int idJeu = partieSauvegardee.sauvegardeJeu(jeu);
+				jeu.setIdJeu(idJeu);
 				return false;
 			case "chargePartie":
 				
@@ -305,10 +304,13 @@ public class ControlerJeu extends Controler {
 				InterfaceGraphiqueActionAnnexe.close(); 
 				return true;
 			case "PageInitialiser":
+				System.out.println("PageInitialiser");
 				if (lancerNouvellePartie) {
-					lancerNouvellePartie = false;
+					System.out.println("nouvelle Partie");
+					lancerNouvellePartie = true;
 					nouvellePartie();
 				} else {
+					System.out.println("Actualiser jeu");
 					jeu.modifieVue(Action.ACTUALISER_JEU);
 				}
 				return true;
@@ -358,6 +360,7 @@ public class ControlerJeu extends Controler {
 			animations.getFirst().termine();
 		}
 		animations.clear();
+		jeu.setIdJeu(-1);
 		jeu.nouvellePartie();
 	}
 	

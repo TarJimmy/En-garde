@@ -132,7 +132,19 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 				JButton buttonCharge = parties.get(i);
 				JButton buttonSupp = supprimer.get(i);
 				rs.next();
-				name = "<HTML><BODY><center>"+rs.getString("idPartie")+"<BR>"+rs.getString("nomJoueurG")+"<BR>"+rs.getString("nomJoueurD")+"</center></BODY></HTML>";
+				name = "<html><body>"
+						+ "<section style=\"text-align: center;\">\r\n"
+						+ "    <div style=\"margin: 3px auto; font-weight: 500; font-family: serif;\">\r\n"
+						+ "    " + rs.getString("dateMatch") + "\r\n"
+						+ "    </div>\r\n"
+						+ "    <div style=\"margin: 3px auto; font-weight: 400; font-family: serif;\">\r\n"
+						+ "    " + rs.getString("nomJoueurG") + "\r\n"
+						+ "    </div>\r\n"
+						+ "    <div style=\"margin: 3px auto; font-weight: 400; font-family: serif;\">\r\n"
+						+ "    " + rs.getString("nomJoueurD") + "\r\n"
+						+ "    </div>\r\n"
+						+ "</section>"
+						+ "</body></html>";
 				buttonCharge.setText(name);
 				buttonSupp.setText(name);
 				buttonCharge.setHorizontalAlignment(SwingConstants.CENTER);

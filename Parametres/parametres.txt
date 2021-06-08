@@ -3,7 +3,7 @@ Leo
 HUMAIN
 1
 IA_FACILE
-IA_FACILE
+HUMAIN
 23
 Avance
 5
