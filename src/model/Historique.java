@@ -35,10 +35,10 @@ public class Historique {
 	
 	public boolean rejouerCoupAnnule() {
 		if(coupsAnnules.empty()) {
-			System.err.println("aucun coup annul�");
+			System.err.println("aucun coup annulé");
 			return false;
 		}else {
-			System.out.println("coup rejou� :");
+			System.out.println("coup rejoué :");
 		}
 		Coup c = coupsAnnules.pop();
 		
@@ -54,6 +54,8 @@ public class Historique {
 		}
 		if(cases.size() == 1 && cases.contains(-1)) {
 			jeu.changerTour();
+		}else {
+			jeu.modifieVue(Action.ACTUALISER_PLATEAU);
 		}
 		return true;
 	}

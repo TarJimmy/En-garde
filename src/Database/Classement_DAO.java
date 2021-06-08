@@ -12,7 +12,7 @@ public class Classement_DAO {
 	private final static String url = "jdbc:sqlite:src/Database/En_garde.db";
 	
 
-	private static Connection connect() {  
+	private Connection connect() {  
         // SQLite connection string  
         Connection conn = null;  
         try {  
@@ -23,16 +23,11 @@ public class Classement_DAO {
         return conn;  
     }
 	
-	public static ResultSet getPodium() {
+	public ResultSet getPodium() {
 		String sql = "WITH nbWin AS (\n"
                 +"SELECT nom, count(*) as win\n"
                 +"FROM Match,Joueur\n"
                 +"Where (nom = nomJoueurG and Gagnant = 'Gaucher') or (nom = nomJoueurD and Gagnant = 'Droitier')\n"
-                +"GROUP BY nom\n"
-                +"), nbNull AS (\n"
-                +"SELECT nom, count(*) as nulle\n"
-                +"FROM Match,Joueur\n"
-                +"Where (nom = nomJoueurG and Gagnant = 'nulle') or (nom = nomJoueurD and Gagnant = 'nulle')\n"
                 +"GROUP BY nom\n"
                 +"), nbDefaite AS (\n"
                 +"SELECT nom, count(*) as defaite\n"
@@ -40,10 +35,10 @@ public class Classement_DAO {
                 +"Where (nom = nomJoueurG and Gagnant = 'Droitier') or (nom = nomJoueurD and Gagnant = 'Gaucher')\n"
                 +"GROUP BY nom)\n"
 
-                +"SELECT Joueur.nom, win, defaite, nulle\n"
-                +"FROM Joueur INNER JOIN nbWin USING (nom) INNER JOIN nbNull USING (nom) INNER JOIN nbDefaite USING (nom)\n"
+                +"SELECT Joueur.nom, IFNULL(win,0) as win, IFNULL(defaite,0) as defaite\n"
+                +"FROM Joueur LEFT JOIN nbWin USING (nom) LEFT JOIN nbDefaite USING (nom)\n"
                 +"GROUP BY Joueur.nom\n"
-                +"ORDER BY win LIMIT 10;";
+                +"ORDER BY win DESC,defaite ASC LIMIT 10;";
         
         try {
         	Connection conn = connect();
@@ -65,19 +60,14 @@ public class Classement_DAO {
 	            +"FROM Match,Joueur\n"
 	            +"Where (nom = nomJoueurG and Gagnant = 'Gaucher') or (nom = nomJoueurD and Gagnant = 'Droitier')\n"
 	            +"GROUP BY nom\n"
-	            +"), nbNull AS (\n"
-	            +"SELECT nom, count(*) as nulle\n"
-	            +"FROM Match,Joueur\n"
-	            +"Where (nom = nomJoueurG and Gagnant = 'nulle') or (nom = nomJoueurD and Gagnant = 'nulle')\n"
-	            +"GROUP BY nom\n"
 	            +"), nbDefaite AS (\n"
 	            +"SELECT nom, count(*) as defaite\n"
 	            +"FROM Match,Joueur\n"
 	            +"Where (nom = nomJoueurG and Gagnant = 'Droitier') or (nom = nomJoueurD and Gagnant = 'Gaucher')\n"
 	            +"GROUP BY nom)\n"
 
-	            +"SELECT Joueur.nom, win, defaite, nulle\n"
-	            +"FROM Joueur INNER JOIN nbWin USING (nom) INNER JOIN nbNull USING (nom) INNER JOIN nbDefaite USING (nom)\n"
+				+"SELECT Joueur.nom, IFNULL(win,0) as win, IFNULL(defaite,0) as defaite\n"
+				+"FROM Joueur LEFT JOIN nbWin USING (nom) LEFT JOIN nbDefaite USING (nom)\n"
 	            +"GROUP BY Joueur.nom;";
         
         try {
@@ -97,17 +87,17 @@ public class Classement_DAO {
 	public void insertJoueur(String nom) {
         String sql = "INSERT INTO Joueur(nom) VALUES(?)";
         
-        sql = "SELECT * FROM Joueur WHERE nom = '" + nom + "';";
+        String sql2 = "SELECT * FROM Joueur WHERE nom = '" + nom + "';";
         try{
 	        Connection conn = this.connect();
 	        Statement stmt  = conn.createStatement();
-	        ResultSet rs    = stmt.executeQuery(sql);
-	        if (rs.next()) {
+	        ResultSet rs    = stmt.executeQuery(sql2);
+	        if (!rs.next()) {
 	        	
 	            PreparedStatement pstmt = conn.prepareStatement(sql);
-	            pstmt.setString(1, nom);
+	            pstmt.setString(1, nom.toLowerCase());
 	            pstmt.executeUpdate();
-	           
+	            
 	        }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -116,15 +106,15 @@ public class Classement_DAO {
     }
 	
 
-	 //	gagnant = 'nulle' | 'Gaucher' | 'Droitier'
+	 //	gagnant = 'Gaucher' | 'Droitier'
 	 public void insertMatch(String nomJoueurG, String nomJoueurD,int mancheGagnerGauche,int mancheGagnerDroit,String Gagnant) {
 	        String sql = "INSERT INTO Match(nomJoueurG, nomJoueurD,mancheGagnerGauche,mancheGagnerDroit,Gagnant) VALUES(?,?,?,?,?)";
 
 	        try{
 	            Connection conn = this.connect();
 	            PreparedStatement pstmt = conn.prepareStatement(sql);
-	            pstmt.setString(1, nomJoueurG);
-	            pstmt.setString(2, nomJoueurD);
+	            pstmt.setString(1, nomJoueurG.toLowerCase());
+	            pstmt.setString(2, nomJoueurD.toLowerCase());
 	            pstmt.setInt(3, mancheGagnerGauche);
 	            pstmt.setInt(4, mancheGagnerDroit);
 	            pstmt.setString(5, Gagnant);
@@ -134,6 +124,28 @@ public class Classement_DAO {
 	        }
 	    }
 	
-	
+	    public static void main(String[] args) {
+	    	Classement_DAO c_dao = new Classement_DAO();
+//	    	c_dao.insertJoueur("jimmy");
+//	    	c_dao.insertJoueur("telmo");
+	    	c_dao.insertJoueur("macron");
+	    	c_dao.insertJoueur("la gifle de macron");
+	    	c_dao.insertMatch("macron","la gifle de macron",3,4,"Droitier");
+//	    	c_dao.insertMatch("la gifle de macron","macron",6,4,"Gaucher");
+//	    	c_dao.insertMatch("jimmy","telmo",0,7,"Droitier");
+//	    	c_dao.insertMatch("jimmy","telmo",3,4,"Gaucher");
+	    	ResultSet rs = c_dao.getPodium();
+	    	try {
+				while (rs.next()) {
+				    System.out.println(rs.getString("nom") +  "\t" +
+				                       rs.getInt("win") + "\t" +
+				                       rs.getInt("defaite"));
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+	    }
 	
 }

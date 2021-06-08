@@ -34,6 +34,7 @@ public class InterfaceGraphiqueClassement implements Runnable {
 	private static JFrame fenetreClassement;
 	private static CollecteurEvenements controle;
 	private static List<JLabel> labels = new ArrayList<>();
+	protected final Classement_DAO classDAO = new Classement_DAO();
 	ResultSet rs;
 	private InterfaceGraphiqueClassement(CollecteurEvenements controle) {
 		InterfaceGraphiqueClassement.controle = controle;
@@ -99,16 +100,16 @@ public class InterfaceGraphiqueClassement implements Runnable {
 			e.printStackTrace();
 		}
 		try {
-			rs = Classement_DAO.getPodium();
+			rs = classDAO.getPodium();
 			for(int i=0; i<10; i++) {
 				JLabel label = labels.get(i);
 				rs.next();
-				name = rs.getString("Joueur.nom")+" : "+rs.getString("win")+" / "+rs.getString("defaite");
+				name = "<html>" + capitalize(rs.getString("nom"))+" : "+ rs.getString("win")+"<strong> V</strong> "+ rs.getString("defaite") + " <strong>D</strong></html>";
+
 				label.setText(name);
 			}
 			
 		} catch (SQLException e) {
-			System.out.println("Pas de parties classées enregistrées");
 		}
 		
 		for(JLabel label : labels) {
@@ -120,6 +121,10 @@ public class InterfaceGraphiqueClassement implements Runnable {
 		fenetreClassement.setResizable(false);
 		fenetreClassement.setVisible(true);
 		
+	}
+	
+	private String capitalize(String name) {
+		return name.substring(0, 1).toUpperCase() + name.substring(1);
 	}
 	
 	public static void main(String[] args) {

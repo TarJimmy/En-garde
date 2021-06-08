@@ -91,7 +91,7 @@ public class VueDeck extends JComponent {
 				posCarteDeckPioche.y = posy + 58 - 3 * (nbCarte > 4 ? 3 : nbCarte - 1);
 			}
 		}
-		drawable.setFont(new Font("Arial", Font.BOLD, 30));
+		drawable.setFont(new Font("Century", Font.BOLD, 30));
 		drawable.drawString("" + nbCarte, posx + largeurDeck - 30 - (nbCarte >= 10 ? 10 : 0), posy + 35); 
 	}
 

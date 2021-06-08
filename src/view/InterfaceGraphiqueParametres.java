@@ -266,11 +266,14 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		J1 = true;
 		J2 = true;
 		fenetreParametres = new JFrame("EN GARDE ! - PARAMETRES");
-		JPanel contentPane = new JPanel();
+		//Font font = new Font("Century", Font.PLAIN, 20);
+		JLabel contentPane = null;
+		try {
+		contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("parametres.png", Configuration.MENU))));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		fenetreParametres.setContentPane(contentPane);
 		fenetreParametres.setIconImage(Configuration.imgIcone);
-		try {
+		
 			fenetreParametres.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
 		} catch (HeadlessException | IndexOutOfBoundsException | IOException e1) {
 			// TODO Auto-generated catch block
@@ -279,82 +282,90 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	
 		contentPane.setLayout(null);
 		
-		// Titre principal - PAREMETRES
-		JLabel titreFenetre = new JLabel("Param\u00E8tres");
-		titreFenetre.setFont(new Font("Tahoma", Font.BOLD, 20));
-		titreFenetre.setBounds(55, 11, 156, 43);
-		contentPane.add(titreFenetre);
-		
 		/// Section 1 - Terrain
 		titreSectionTerrain = new JLabel("Terrain");
-		titreSectionTerrain.setFont(new Font("Tahoma", Font.BOLD, 14));
-		titreSectionTerrain.setBounds(55, 70, 63, 37);
+		titreSectionTerrain.setFont(new Font("Century", Font.BOLD, 14));
+		titreSectionTerrain.setBounds(55, 50, 63, 37);
 		contentPane.add(titreSectionTerrain);
 		
 		//// Option - Taille du terrain
 		labelTerrain = new JLabel("Taille du terrain");
-		labelTerrain.setBounds(55, 115, 100, 20);
+		labelTerrain.setBounds(55, 100, 100, 20);
+		labelTerrain.setFont(new Font("Century", Font.BOLD, 12));
 		contentPane.add(labelTerrain);
 		spinner_map = new JSpinner();
 		spinner_map.setModel(new SpinnerNumberModel(map, 13, 25, 1));
-		spinner_map.setBounds(174, 115, 46, 20);
+		spinner_map.setFont(new Font("Century", Font.BOLD, 12));
+		spinner_map.setBounds(174, 100, 46, 20);
+		spinner_map.setOpaque(false);
 		((JSpinner.DefaultEditor) spinner_map.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_map);
 		
 		//// Options - Escrimeur Gauche
 		labelJ1 = new JLabel("Escrimeur Gauche");
 		labelJ1.setBounds(55, 140, 130, 20);
+		labelJ1.setFont(new Font("Century", Font.BOLD, 12));
 		
 		/////nom du joueur 1
 		txtJoueur1 = new JTextField();
 		txtJoueur1.setDocument(new JTextFieldLimit(15));
 		txtJoueur1.setText(nomJoueur1);
+		txtJoueur1.setFont(new Font("Century", Font.PLAIN, 12));
 		txtJoueur1.setBounds(175, 140, 130, 20);
+		txtJoueur1.setBorder(null);
+		txtJoueur1.setOpaque(false);
 		contentPane.add(txtJoueur1);
 		txtJoueur1.setColumns(10);
 		warning_J1 = new JLabel("ATTENTION : le nom du joueur ne peut pas \u00EAtre vide");
-		warning_J1.setFont(new Font("Tahoma", Font.BOLD, 11));
+		warning_J1.setFont(new Font("Century", Font.BOLD, 11));
 		warning_J1.setForeground(new Color(128, 0, 0));
 		warning_J1.setBounds(330, 140, 300, 20);
 		warning_J1.setVisible(false);
 		contentPane.add(warning_J1);
 		
 		/////type du joueur 1
+		buttonGroup_TypeJ1 = new ButtonGroup();
 		btnRadioJ1_Humain = new JRadioButton("Humain");
 		btnRadioJ1_Humain.setActionCommand("HUMAIN");
-		buttonGroup_TypeJ1 = new ButtonGroup();
+		btnRadioJ1_Humain.setFont(new Font("Century", Font.PLAIN, 12));
 		buttonGroup_TypeJ1.add(btnRadioJ1_Humain);
 		btnRadioJ1_Humain.setBounds(175, 170, 100, 25);
 		contentPane.add(btnRadioJ1_Humain);
 		btnRadioJ1_Facile = new JRadioButton("IA Facile");
 		btnRadioJ1_Facile.setActionCommand("IA_FACILE");
 		buttonGroup_TypeJ1.add(btnRadioJ1_Facile);
+		btnRadioJ1_Facile.setFont(new Font("Century", Font.PLAIN, 12));
 		btnRadioJ1_Facile.setBounds(275, 170, 100, 25);
 		contentPane.add(btnRadioJ1_Facile);
 		btnRadioJ1_Moyenne = new JRadioButton("IA Moyenne");
 		btnRadioJ1_Moyenne.setActionCommand("IA_MOYENNE");
 		buttonGroup_TypeJ1.add(btnRadioJ1_Moyenne);
+		btnRadioJ1_Moyenne.setFont(new Font("Century", Font.PLAIN, 12));
 		btnRadioJ1_Moyenne.setBounds(375, 170, 100, 25);
 		contentPane.add(btnRadioJ1_Moyenne);
 		btnRadioJ1_Difficile = new JRadioButton("IA Difficile");
 		btnRadioJ1_Difficile.setActionCommand("IA_DIFFICILE");
 		buttonGroup_TypeJ1.add(btnRadioJ1_Difficile);
+		btnRadioJ1_Difficile.setFont(new Font("Century", Font.PLAIN, 12));
 		btnRadioJ1_Difficile.setBounds(475, 170, 100, 25);
 		contentPane.add(btnRadioJ1_Difficile);
 		
 		/////emplacement du joueur 1 au debut de la partie
 		labelPositionJ1 = new JLabel("D\u00E9part :");
 		labelPositionJ1.setBounds(600, 170, 50, 20);
+		labelPositionJ1.setFont(new Font("Century", Font.PLAIN, 12));
 		contentPane.add(labelPositionJ1);
 		spinner_positionJ1 = new JSpinner();
 		spinner_positionJ1.setModel(new SpinnerNumberModel(posJ1, 1, map-1, 1));
 		spinner_positionJ1.setBounds(660, 170, 40, 20);
+		spinner_positionJ1.setBorder(null);
 		((JSpinner.DefaultEditor) spinner_positionJ1.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_positionJ1);
 		
 		//// Options - Escrimeur Droit
 		labelJ2 = new JLabel("Escrimeur Droit");
 		labelJ2.setBounds(55, 207, 130, 14);
+		labelJ2.setFont(new Font("Century", Font.PLAIN, 12));
 		contentPane.add(labelJ2);
 		
 		/////nom du joueur 2
@@ -362,52 +373,59 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		txtJoueur2.setDocument(new JTextFieldLimit(15));
 		txtJoueur2.setText(nomJoueur2);
 		txtJoueur2.setColumns(10);
+		txtJoueur2.setFont(new Font("Century", Font.PLAIN, 12));
 		txtJoueur2.setBounds(175, 204, 130, 20);
 		contentPane.add(txtJoueur2);
 		warning_J2 = new JLabel("ATTENTION : le nom du joueur ne peut pas \u00EAtre vide");
-		warning_J2.setFont(new Font("Tahoma", Font.BOLD, 11));
+		warning_J2.setFont(new Font("Century", Font.BOLD, 11));
 		warning_J2.setForeground(new Color(128, 0, 0));
 		warning_J2.setBounds(330, 204, 300, 14);
 		warning_J2.setVisible(false);
 		contentPane.add(warning_J2);
 		
 		/////type du joueur 2
+		buttonGroup_TypeJ2 = new ButtonGroup();
 		btnRadioJ2_Humain = new JRadioButton("Humain");
 		btnRadioJ2_Humain.setActionCommand("HUMAIN");
-		buttonGroup_TypeJ2 = new ButtonGroup();
 		buttonGroup_TypeJ2.add(btnRadioJ2_Humain);
+		btnRadioJ2_Humain.setFont(new Font("Century", Font.PLAIN, 12));
 		btnRadioJ2_Humain.setBounds(175, 237, 100, 25);
 		contentPane.add(btnRadioJ2_Humain);
 		btnRadioJ2_Facile = new JRadioButton("IA Facile");
 		btnRadioJ2_Facile.setActionCommand("IA_FACILE");
 		buttonGroup_TypeJ2.add(btnRadioJ2_Facile);
+		btnRadioJ2_Facile.setFont(new Font("Century", Font.PLAIN, 12));
 		btnRadioJ2_Facile.setBounds(275, 237, 100, 25);
 		contentPane.add(btnRadioJ2_Facile);
 		btnRadioJ2_Moyenne = new JRadioButton("IA Moyenne");
 		btnRadioJ2_Moyenne.setActionCommand("IA_MOYENNE");
 		buttonGroup_TypeJ2.add(btnRadioJ2_Moyenne);
+		btnRadioJ2_Moyenne.setFont(new Font("Century", Font.PLAIN, 12));
 		btnRadioJ2_Moyenne.setBounds(375, 237, 100, 25);
 		contentPane.add(btnRadioJ2_Moyenne);
 		btnRadioJ2_Difficile = new JRadioButton("IA Difficile");
 		btnRadioJ2_Difficile.setActionCommand("IA_DIFFICILE");
 		buttonGroup_TypeJ2.add(btnRadioJ2_Difficile);
+		btnRadioJ2_Difficile.setFont(new Font("Century", Font.PLAIN, 12));
 		btnRadioJ2_Difficile.setBounds(475, 237, 100, 25);
 		contentPane.add(btnRadioJ2_Difficile);
 		
 		/////emplacement du joueur 2 au debut de la partie
 		labelPositionJ2 = new JLabel("D\u00E9part :");
 		labelPositionJ2.setBounds(600, 237, 50, 20);
+		labelPositionJ2.setFont(new Font("Century", Font.PLAIN,12));
 		contentPane.add(labelPositionJ2);
 		spinner_positionJ2 = new JSpinner();
 		spinner_positionJ2.setModel(new SpinnerNumberModel(posJ2, 2, map, 1));
 		spinner_positionJ2.setBounds(660, 237, 40, 20);
+		spinner_positionJ2.setBorder(null);
 		((JSpinner.DefaultEditor) spinner_positionJ2.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_positionJ2);
 		contentPane.add(labelJ1);
 		
 		/// Section 2 - Jeu
 		titreSectionJeu = new JLabel("Jeu");
-		titreSectionJeu.setFont(new Font("Tahoma", Font.BOLD, 14));
+		titreSectionJeu.setFont(new Font("Century", Font.BOLD, 14));
 		titreSectionJeu.setBounds(55, 280, 46, 14);
 		contentPane.add(titreSectionJeu);
 		
@@ -454,7 +472,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		contentPane.add(labelNbManches);
 		spinner_manches = new JSpinner();
 		spinner_manches.setModel(new SpinnerNumberModel(manches, 1, 10, 1));
-		spinner_manches.setBounds(181, 425, 39, 20);
+		spinner_manches.setBounds(200, 425, 39, 20);
+		spinner_manches.setBorder(null);
 		((JSpinner.DefaultEditor) spinner_manches.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_manches);
 		
@@ -464,7 +483,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		contentPane.add(labelCartesMax);
 		spinner_cartesMax = new JSpinner();
 		spinner_cartesMax.setModel(new SpinnerNumberModel(cartes_max, 3, 7, 1));
-		spinner_cartesMax.setBounds(279, 460, 39, 20);
+		spinner_cartesMax.setBounds(300, 460, 39, 20);
+		spinner_cartesMax.setBorder(null);
 		((JSpinner.DefaultEditor) spinner_cartesMax.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_cartesMax);
 		
@@ -480,6 +500,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		spinner_cartes1 = new JSpinner();
 		spinner_cartes1.setModel(new SpinnerNumberModel(cartes1, 0, 10, 1));
 		spinner_cartes1.setBounds(120, 530, 40, 20);
+		spinner_cartes1.setBorder(null);
 		((JSpinner.DefaultEditor) spinner_cartes1.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_cartes1);
 		
@@ -490,6 +511,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		spinner_cartes2 = new JSpinner();
 		spinner_cartes2.setModel(new SpinnerNumberModel(cartes2, 0, 10, 1));
 		spinner_cartes2.setBounds(285, 530, 40, 20);
+		spinner_cartes2.setBorder(null);
 		((JSpinner.DefaultEditor) spinner_cartes2.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_cartes2);
 		
@@ -500,6 +522,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		spinner_cartes3 = new JSpinner();
 		spinner_cartes3.setModel(new SpinnerNumberModel(cartes3, 0, 10, 1));
 		spinner_cartes3.setBounds(450, 530, 40, 20);
+		spinner_cartes3.setBorder(null);
 		((JSpinner.DefaultEditor) spinner_cartes3.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_cartes3);
 		
@@ -510,22 +533,24 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		spinner_cartes4 = new JSpinner();
 		spinner_cartes4.setModel(new SpinnerNumberModel(cartes4, 0, 10, 1));
 		spinner_cartes4.setBounds(615, 530, 40, 20);
+		spinner_cartes4.setBorder(null);
 		((JSpinner.DefaultEditor) spinner_cartes4.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_cartes4);
 		
 		/////cartes de valeur 5
 		labelCartes5 = new JLabel("Cartes 5");
-		labelCartes5.setBounds(715, 530, 80, 20);
+		labelCartes5.setBounds(725, 530, 80, 20);
 		contentPane.add(labelCartes5);
 		spinner_cartes5 = new JSpinner();
 		spinner_cartes5.setModel(new SpinnerNumberModel(cartes5, 0, 10, 1));
-		spinner_cartes5.setBounds(780, 530, 40, 20);
+		spinner_cartes5.setBounds(790, 530, 40, 20);
+		spinner_cartes5.setBorder(null);
 		((JSpinner.DefaultEditor) spinner_cartes5.getEditor()).getTextField().setEditable(false);
 		contentPane.add(spinner_cartes5);
 		
 		///Boutons
 		warnEnregistrement = new JLabel("Enregistrement des parametres impossible");
-		warnEnregistrement.setFont(new Font("Tahoma", Font.BOLD, 11));
+		warnEnregistrement.setFont(new Font("Century", Font.BOLD, 11));
 		warnEnregistrement.setForeground(new Color(128, 0, 0));
 		warnEnregistrement.setBounds(70, 590, 300, 40);
 		warnEnregistrement.setVisible(false);

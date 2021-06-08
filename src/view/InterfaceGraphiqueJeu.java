@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
@@ -16,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
@@ -59,6 +61,8 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	
 	private PanelAnimation panelAnimation;
 	
+	private static boolean jeuPresent = false;
+	
 	private InterfaceGraphiqueJeu(CollecteurEvenements controle, Jeu jeu) {
 		this.controle = controle;
 		this.jeu = jeu;
@@ -66,19 +70,29 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	}
 	
 	public static void demarrer(CollecteurEvenements control, Jeu jeu) {
+		if (jeuPresent) {
+			frame.setVisible(false);
+			frame.dispose();
+		}
 		SwingUtilities.invokeLater(new InterfaceGraphiqueJeu(control, jeu));
+		jeuPresent = true;
 	}
 	
 
 	public static void demarrer(ControlerJeu controlerJeu) {
+		if (jeuPresent) {
+			frame.setVisible(false);
+			frame.dispose();
+		}
 		SwingUtilities.invokeLater(new InterfaceGraphiqueJeu(controlerJeu, controlerJeu.getJeu()));
+		jeuPresent = true;
 	}
 	
 	/**
 	 * Ferme la fenetre de jeu
 	 */
 	public static void close() {
-		if(frame != null) {
+		if (frame != null) {
 			frame.setVisible(false);
 			frame.dispose();
 		}
@@ -100,7 +114,11 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		switch (action) {
 			case ACTUALISER_JEU:
 			case ACTUALISER_PLATEAU: // Actualise les cases accessibles du plateau
-				vuePlateau.actualise(jeu.casesJouables(), jeu.getCurrentEscrimeur());
+				HashSet<Integer> casesJouables = jeu.casesJouables();
+				int indiceCurrent = jeu.getIndiceCurrentEscrimeur();
+				vueEscrimeurs[indiceCurrent].setBtnPasserTourVisibility(casesJouables.contains(-1));
+				vueEscrimeurs[(indiceCurrent + 1) % 2].setBtnPasserTourVisibility(false);
+				vuePlateau.actualise(casesJouables, jeu.getCurrentEscrimeur());
 				if (action == Action.ACTUALISER_PLATEAU) { // Stop si ce n'est pas  un changement de tour
 					controle.commande("ActionTerminer");
 					break;
@@ -113,13 +131,13 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				}
 			case ACTUALISER_ESCRIMEUR:
 			case ACTUALISER_ESCRIMEUR_DROITIER :
-				vueEscrimeurs[Escrimeur.DROITIER].actualise(jeu.popShowCarte(Escrimeur.DROITIER), jeu.getIsTourGaucher() == false || jeu.getShowAllCartes(), jeu.getPeutPasserTour());
+				vueEscrimeurs[Escrimeur.DROITIER].actualise(jeu.popShowCarte(Escrimeur.DROITIER), jeu.getIsTourGaucher() == false || jeu.getShowAllCartes());
 				if (action == Action.ACTUALISER_ESCRIMEUR_DROITIER) { // Stop si ce n'est pas  un changement de tour ou l'actualisation des 2 mains
 					controle.commande("ActionTerminer");
 					break;
 				}
 			case ACTUALISER_ESCRIMEUR_GAUCHER:
-				vueEscrimeurs[Escrimeur.GAUCHER].actualise(jeu.popShowCarte(Escrimeur.GAUCHER), jeu.getIsTourGaucher() || jeu.getShowAllCartes(), jeu.getPeutPasserTour());
+				vueEscrimeurs[Escrimeur.GAUCHER].actualise(jeu.popShowCarte(Escrimeur.GAUCHER), jeu.getIsTourGaucher() || jeu.getShowAllCartes());
 				controle.commande("ActionTerminer");
 				break;
 			case ANIMATION_DEPLACER_ESCRIMEUR:
@@ -139,7 +157,6 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				break;
 			case ANIMATION_PIOCHER:
 				int indicePiocher = jeu.popListeIndiceEscrimeurPiocheCarte();
-				System.out.println("on anime pioche pour : " + indicePiocher);
 				LinkedList<Integer> indicesCartesAPiocher = jeu.popListeIndicesPiocheRecemment(indicePiocher);
 				LinkedList<Integer> distancesListPiocher = jeu.popListeDistancesPiocheRecemment(indicePiocher);
 				Point[] destinationsPiocher = getPosCartesModifierRecemment(indicePiocher, indicesCartesAPiocher);
@@ -156,7 +173,6 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				int indiceDefausser = jeu.popListeIndiceEscrimeurDefausseCarte();
 				LinkedList<Integer> indicesCartesADefausser = jeu.popListeIndiceDefausseRecemment(indiceDefausser);
 				LinkedList<Integer> distancesListDefausser = jeu.popListeDistancesDefausseRecemment(indiceDefausser);
-				System.out.println("Distance a defausser : " + Arrays.toString(distancesListDefausser.toArray()));
 				Carte[] etatMain = jeu.popEtatMainDefausse(indiceDefausser);
 				Point[] departsDefausser = getPosCartesModifierRecemment(indiceDefausser, indicesCartesADefausser);
 				Point[] destinationsDefausser = new Point[departsDefausser.length];
@@ -177,7 +193,6 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				controle.animation("Ajouter", panelAnimation.generateAnimationChangementJoueur());
 				break;
 			default:
-				System.out.println("Action non reconnu");
 				break;
 			}
 	}
@@ -188,35 +203,6 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		frame.setResizable(false);
 		frame.setIconImage(Configuration.imgIcone);
 		JLabel background = new JLabel();
-		background.addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped(KeyEvent e) {}
-			
-			@Override
-			public void keyReleased(KeyEvent e) {
-			}
-			
-			@Override
-			public void keyPressed(KeyEvent e) {
-				switch (e.getKeyCode()) {
-				case KeyEvent.VK_P:
-					if (InterfaceGraphiqueJeu.ajoutVitesse > -2000) {
-						InterfaceGraphiqueJeu.ajoutVitesse -= 500;
-					}
-					break;
-				case KeyEvent.VK_M:
-					if (InterfaceGraphiqueJeu.ajoutVitesse < 2000) {
-						InterfaceGraphiqueJeu.ajoutVitesse += 500;
-					}
-					break;
-				case KeyEvent.VK_A:
-					controle.commande("ChangeModeAnimation");
-				default:
-					break;
-				}
-				System.out.println(InterfaceGraphiqueJeu.ajoutVitesse);
-			}
-		});
 		
 		try {
 			background.setIcon(new ImageIcon(ImageIO.read(Configuration.charge("Background.png", Configuration.BG))));
@@ -321,11 +307,11 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				case Animation.ANIM_FIN_MANCHE:
 					drawable.drawImage(imgFinDeManche[winnerManche], ptDebutPanelAnimation.x, ptDebutPanelAnimation.y, sizeImgPanelAnimation.width, sizeImgPanelAnimation.height, null);
 					drawable.setFont(new Font("Century", Font.PLAIN, 50));
-					if (winnerManche == Jeu.NONE) {
-						drawable.drawString("Manche nulle", ptDebutPanelAnimation.x + 200, ptDebutPanelAnimation.y + 150);
-					} else {
-						drawable.drawString(jeu.getEscrimeurs()[winnerManche].getNom(), ptDebutPanelAnimation.x + 220, ptDebutPanelAnimation.y + 150);
-					}
+					String text = winnerManche == Jeu.EGALITE ? "Manche nulle" : jeu.getEscrimeurs()[winnerManche].getNom();
+					FontMetrics fm = drawable.getFontMetrics();
+		            int x = ptDebutPanelAnimation.x - (fm.stringWidth(text) / 2) + (sizeImgPanelAnimation.width / 2);
+		            drawable.drawString(text, x, ptDebutPanelAnimation.y + 150);
+		            drawable.drawLine(ptDebutPanelAnimation.x, ptDebutPanelAnimation.y + ptDebutPanelAnimation.y / 2, ptDebutPanelAnimation.x + fm.stringWidth(text), ptDebutPanelAnimation.y + ptDebutPanelAnimation.y / 2);
 					break;
 				case Animation.ANIM_CARTES:
 					for (int i = 0; i < posADessiner.length; i++) {
@@ -350,7 +336,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 			for (int i = 0; i < departs.length; i++) {
 				distances[i] = new Point(destinations[i].x - departs[i].x, destinations[i].y - departs[i].y);
 			}
-			return new AnimationDeplacerCarte(controle, this, departs, distances, indiceEscrimeur);
+			return new AnimationDeplacerCarte(controle, this, departs, distances, indiceEscrimeur, distanceCarteADessiner, vueEscrimeurs[indiceEscrimeurCarte].getVueMain(), etatMain);
 		} 
 		
 		public Animation generateAnimationFinManche(int winnerManche) {
@@ -389,14 +375,6 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				vueEscrimeurs[Escrimeur.DROITIER].setShowFace(false);
 				vuePlateau.actualise(jeu.getCurrentEscrimeur());
 			}
-			if (animActif == Animation.ANIM_CARTES && etatMain != null) {
-				System.out.println("Pos a dessiner : " + posADessiner);
-				System.out.println("restoreMain : " + Arrays.toString(etatMain));
-				vueEscrimeurs[indiceEscrimeurCarte].getVueMain().actualise(etatMain);
-			} else {
-				System.out.println("distanceCarteADessiner a dessiner : " + distanceCarteADessiner);
-				System.out.println("restoreMain : " + Arrays.toString(etatMain));
-			}
 		};
 		
 		public void deplacePanel(int newX) {
@@ -404,7 +382,8 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 			repaint();
 		}
 		
-		public void deplaceCartes(Point[] newPoints, int indiceEscrimeur) {
+		public void deplaceCartes(Point[] newPoints, int indiceEscrimeur, int[] distanceCarteADessiner) {
+			this.distanceCarteADessiner = distanceCarteADessiner;
 			posADessiner = newPoints;
 			this.showFace = vueEscrimeurs[indiceEscrimeurCarte].getShowFace();
 			repaint();

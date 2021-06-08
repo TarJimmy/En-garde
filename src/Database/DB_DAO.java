@@ -98,6 +98,8 @@ public class DB_DAO {
 				+ " AnimationAutoriser boolean NOT NULL\n,"
 				+ " indicePremierJoueur int NOT NULL,\n"
 				+ " indiceCurrentJoueur int NOT NULL,\n"
+				+ " indicePremierJouerPartie int NOT NULL,\n"
+				
 				+ " dateMatch text NOT NULL\n"
                 
                 + ");";
@@ -150,13 +152,6 @@ public class DB_DAO {
      * @param args the command line arguments
      * @throws ClassNotFoundException
      */
-    public static void main(String[] args) {
-    	DB_DAO db = new DB_DAO();
-    	db.createNewDatabase();
-    	db.createTables();
-    	//db.insertJoueur("Telmo", "gaucher", 10, 3);
-    	db.selectAll();
 
-    }
 
 }
