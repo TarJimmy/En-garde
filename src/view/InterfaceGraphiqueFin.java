@@ -92,7 +92,7 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 			btnMenu.setBounds(50, 350, 200, 40);
 			contentPane.add(btnMenu);
 			
-			JButton btnRecommencer = new ButtonCustom("Rejouer", "cadre2", dim, font);
+			JButton btnRecommencer = new ButtonCustom("Jouer match revanche", "cadre2", dim, font);
 			btnRecommencer.addActionListener(new AdaptateurCommande(controle, "nouveauMatch"));
 			btnRecommencer.setBounds(342, 350, 200, 40);
 			contentPane.add(btnRecommencer);

@@ -618,6 +618,15 @@ public class Jeu extends Observable {
 	public void setDeckPioche(DeckPioche deckPioche) {
 		this.deckPioche = deckPioche;
 	}
+
+	public void echangeEscrimeurs() {
+		String sauvG = escrimeurs[Escrimeur.GAUCHER].getNom();
+		TypeEscrimeur sauvType = escrimeurs[Escrimeur.GAUCHER].getType();
+		escrimeurs[Escrimeur.GAUCHER].setNom(escrimeurs[Escrimeur.DROITIER].getNom());
+		escrimeurs[Escrimeur.GAUCHER].setType(escrimeurs[Escrimeur.DROITIER].getType());
+		escrimeurs[Escrimeur.DROITIER].setNom(sauvG);
+		escrimeurs[Escrimeur.DROITIER].setType(sauvType);
+	}
 	
 	
 }

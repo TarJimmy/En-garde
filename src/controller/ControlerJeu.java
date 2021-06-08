@@ -202,9 +202,8 @@ public class ControlerJeu extends Controler {
 					if(winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
 						commenceMancheSuivante(winner.getIndice());
 					}else {
-						InterfaceGraphiqueActionAnnexe.close();
-						InterfaceGraphiqueJeu.close();
-						InterfaceGraphiqueFin.demarrer(new ControlerJeu(), winner);
+						closeAll();
+						InterfaceGraphiqueFin.demarrer(this, winner);
 					}
 				} else {
 					commenceMancheSuivante(winner.getIndice());
@@ -215,9 +214,8 @@ public class ControlerJeu extends Controler {
 			if(winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
 				commenceMancheSuivante(winner.getIndice());
 			}else {
-				InterfaceGraphiqueActionAnnexe.close();
-				InterfaceGraphiqueJeu.close();
-				InterfaceGraphiqueFin.demarrer(new ControlerJeu(), winner);
+				closeAll();
+				InterfaceGraphiqueFin.demarrer(this, winner);
 			}
 		}
 	}
@@ -339,6 +337,9 @@ public class ControlerJeu extends Controler {
 	}
 	
 	public void nouveauMatch() {
+		animations = new LinkedList<>();
+		jeu.echangeEscrimeurs();
+		nouvellePartie();
 	}
 	
 	public void commenceMancheSuivante(int indiceWinner) {
@@ -371,5 +372,11 @@ public class ControlerJeu extends Controler {
 	
 	public Jeu getJeu() {
 		return jeu;
+	}
+	
+	public void closeAll() {
+		InterfaceGraphiqueActionAnnexe.close();
+		InterfaceGraphiqueFin.close();
+		InterfaceGraphiqueJeu.close();
 	}
 }
