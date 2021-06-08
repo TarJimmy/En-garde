@@ -65,7 +65,7 @@ public class ControlerJeu extends Controler {
 	}
 	
 	protected void initIA() {
-		IA_conseil = new IA_Moyenne(jeu);
+		IA_conseil = new IA_Difficile(this);
 	}
 
 	public ControlerJeu(Jeu jeu, boolean lancerNouvellePartie) {
