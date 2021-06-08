@@ -125,10 +125,15 @@ public class VueMain extends JComponent {
 	}
 	
 	public void actualise(Carte[] cartes, Boolean showFace) {
+		actualise(cartes);
+ 		actualise(showFace);
+	}
+	
+	public void actualise(Carte[] cartes) {
 		for (int i = 0; i < cartes.length; i++) {
 			this.cartes[i] = cartes[i] != null ? cartes[i].getDistance() : -1;
 		}
- 		actualise(showFace);
+ 		actualise(this.showFace);
 	}
 	
 	public Point[] extractPosCarte(LinkedList<Integer> listI, int ajoutY) {

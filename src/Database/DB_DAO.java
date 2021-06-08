@@ -49,9 +49,6 @@ public class DB_DAO {
         // SQL statement for creating a new table
         String sqlJoueur = "CREATE TABLE IF NOT EXISTS Joueur (\n"
                 + " nom text NOT NULL PRIMARY KEY,\n"
-                + " type text NOT NULL,\n"
-                + " position integer NOT NULL,\n"
-                + " nbManches integer\n"
                 + ");";
 
         String sqlJoueurCarte = "CREATE TABLE IF NOT EXISTS CarteJoueur (\n"
@@ -100,7 +97,8 @@ public class DB_DAO {
 				+ " CartesMaxJoueur integer NOT NULL,\n"
 				+ " AnimationAutoriser boolean NOT NULL\n,"
 				+ " indicePremierJoueur int NOT NULL,\n"
-				+ " indiceCurrentJoueur int NOT NULL\n"
+				+ " indiceCurrentJoueur int NOT NULL,\n"
+				+ " dateMatch text NOT NULL\n"
                 
                 + ");";
 
@@ -124,21 +122,7 @@ public class DB_DAO {
         }
     }
 
-    public void insertJoueur(String nom, String type,int pos,int nbManches) {
-        String sql = "INSERT INTO Joueur(nom, type,position,nbManches) VALUES(?,?,?,?)";
-
-        try{
-            Connection conn = this.connect();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, nom);
-            pstmt.setString(2, type);
-            pstmt.setInt(3, pos);
-            pstmt.setInt(4, nbManches);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
+    
 
 
     public void selectAll(){

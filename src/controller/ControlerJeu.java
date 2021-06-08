@@ -27,6 +27,7 @@ import model.Plateau;
 import model.TypeEscrimeur;
 import view.Animation;
 import view.InterfaceGraphiqueActionAnnexe;
+import view.InterfaceGraphiqueFin;
 import view.InterfaceGraphiqueJeu;
 import view.InterfaceGraphiqueMenu;
 
@@ -72,7 +73,6 @@ public class ControlerJeu extends Controler {
 		this.jeu = jeu;
 		this.animations = new LinkedList<>();
 		animationsActives = false;
-		InterfaceGraphiqueJeu.demarrer(this, jeu);
 		InterfaceGraphiqueJeu.demarrer(this, jeu);
 	}
 	
@@ -220,7 +220,8 @@ public class ControlerJeu extends Controler {
 					if(winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
 						commenceMancheSuivante(winner.getIndice());
 					}else {
-						//fin de partie, winner gagne
+						closeAll();
+						InterfaceGraphiqueFin.demarrer(this, winner);
 					}
 				} else {
 					commenceMancheSuivante(winner.getIndice());
@@ -231,7 +232,8 @@ public class ControlerJeu extends Controler {
 			if(winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
 				commenceMancheSuivante(winner.getIndice());
 			}else {
-				//fin de partie, winner gagne
+				closeAll();
+				InterfaceGraphiqueFin.demarrer(this, winner);
 			}
 		}
 	}
@@ -274,18 +276,21 @@ public class ControlerJeu extends Controler {
 				jeu.changerTour();
 				return true;
 			case "Menu":
-				InterfaceGraphiqueActionAnnexe.close();
-				InterfaceGraphiqueJeu.close();
+				closeAll();
 				InterfaceGraphiqueMenu.demarrer(new ControlerAutre());
 				return true;
 			case "QuitterJeu":
 				System.exit(0);
 				return false;
+			case "nouveauMatch":
+				nouveauMatch();
+				return true;
 			case "nouvellePartie":
 				nouvellePartie();
 				return true;
 			case "sauvPartie":
-				partieSauvegardee.sauvegardeJeu(jeu);
+				int idJeu = partieSauvegardee.sauvegardeJeu(jeu);
+				jeu.setIdJeu(idJeu);
 				return false;
 			case "chargePartie":
 				
@@ -300,10 +305,13 @@ public class ControlerJeu extends Controler {
 				InterfaceGraphiqueActionAnnexe.close(); 
 				return true;
 			case "PageInitialiser":
+				System.out.println("PageInitialiser");
 				if (lancerNouvellePartie) {
-					lancerNouvellePartie = false;
+					System.out.println("nouvelle Partie");
+					lancerNouvellePartie = true;
 					nouvellePartie();
 				} else {
+					System.out.println("Actualiser jeu");
 					jeu.modifieVue(Action.ACTUALISER_JEU);
 				}
 				return true;
@@ -353,7 +361,16 @@ public class ControlerJeu extends Controler {
 			animations.getFirst().termine();
 		}
 		animations.clear();
+		jeu.setIdJeu(-1);
 		jeu.nouvellePartie();
+	}
+	
+	public void nouveauMatch() {
+		animations = new LinkedList<>();
+		jeu.echangeEscrimeurs();
+		jeu.resetAction();
+		closeAll();
+		InterfaceGraphiqueJeu.demarrer(this);
 	}
 	
 	public void commenceMancheSuivante(int indiceWinner) {
@@ -386,5 +403,11 @@ public class ControlerJeu extends Controler {
 	
 	public Jeu getJeu() {
 		return jeu;
+	}
+	
+	public void closeAll() {
+		InterfaceGraphiqueActionAnnexe.close();
+		InterfaceGraphiqueFin.close();
+		InterfaceGraphiqueJeu.close();
 	}
 }

@@ -28,4 +28,8 @@ public class Carte {
 		}
 		return null;
 	}
+	
+	public String toString() { 
+        return Integer.toString(distance);
+     } 
 }

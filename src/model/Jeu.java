@@ -57,10 +57,14 @@ public class Jeu extends Observable {
 	
 	protected LinkedList<Action> listeActions;
 	protected LinkedList<Carte[]> cartesShowEscrimeurs[];
-	protected LinkedList<Integer> listeIndiceEscrimeurChangeCarte;
+	protected LinkedList<Integer> listeIndiceEscrimeurDefausseCarte;
+	protected LinkedList<Integer> listeIndiceEscrimeurPiocheCarte;
 	protected LinkedList<Integer[]> carteShowDeck;
-	protected LinkedList<LinkedList<Integer>> listeCartesChangeRecemment[];
-	protected LinkedList<LinkedList<Integer>> listeDistancesChangeRecemment[];
+	protected LinkedList<LinkedList<Integer>> listeIndiceDefausseRecemment[];
+	protected LinkedList<LinkedList<Integer>> listeDistancesDefausseRecemment[];
+	protected LinkedList<Carte[]> listeEtatMainDefausse[];
+	protected LinkedList<LinkedList<Integer>> listeIndicesPiocheRecemment[];
+	protected LinkedList<LinkedList<Integer>> listeDistancesPiocheRecemment[];
 	protected Boolean actionEnCours;
 	protected Boolean showGraphique;
 	
@@ -117,16 +121,14 @@ public class Jeu extends Observable {
 		this.escrimeurs[1] = droitier;
 		this.positionsDeparts = positionsDeparts;
 		this.listeActions = new LinkedList<>();
-		this.listeIndiceEscrimeurChangeCarte = new LinkedList<>();
-		this.listeCartesChangeRecemment = new LinkedList[2];
-		this.listeCartesChangeRecemment[Escrimeur.GAUCHER] = new LinkedList<>();
-		this.listeCartesChangeRecemment[Escrimeur.DROITIER] = new LinkedList<>();
-		this.listeDistancesChangeRecemment = new LinkedList[2];
-		this.listeDistancesChangeRecemment[Escrimeur.GAUCHER] = new LinkedList<>();
-		this.listeDistancesChangeRecemment[Escrimeur.DROITIER] = new LinkedList<>();
-		this.cartesShowEscrimeurs = new LinkedList[2];
-		this.cartesShowEscrimeurs[Escrimeur.GAUCHER] = new LinkedList<>();
-		this.cartesShowEscrimeurs[Escrimeur.DROITIER] = new LinkedList<>();
+		this.listeIndiceEscrimeurDefausseCarte = new LinkedList<>();
+		this.listeIndiceEscrimeurPiocheCarte = new LinkedList<>();
+		this.listeIndiceDefausseRecemment = new LinkedList[] { new LinkedList<>(), new LinkedList<>()};
+		this.listeIndicesPiocheRecemment = new LinkedList[] { new LinkedList<>(), new LinkedList<>()};
+		this.listeDistancesDefausseRecemment = new LinkedList[] { new LinkedList<>(), new LinkedList<>()};
+		this.listeDistancesPiocheRecemment = new LinkedList[] { new LinkedList<>(), new LinkedList<>()};
+		this.cartesShowEscrimeurs = new LinkedList[] {new LinkedList<>(), new LinkedList<>()};
+		this.listeEtatMainDefausse = new LinkedList[] {new LinkedList<>(), new LinkedList<>()};
 		this.carteShowDeck = new LinkedList<>();
 		this.lastWinner = NONE;
 		this.actionEnCours = false;
@@ -182,6 +184,10 @@ public class Jeu extends Observable {
 		return idJeu;
 	}
 
+	public void setIdJeu(int idJeu) {
+		this.idJeu = idJeu;
+	}
+	
 	public int getIndiceCurrentEscrimeur() {
 		return indiceCurrentEscrimeur;
 	}
@@ -203,13 +209,14 @@ public class Jeu extends Observable {
 	}
 
 	public void piocher(Escrimeur e) {
-		e.prepareChangeCartes();
+		e.prepareAjouteCartes();
 		while (e.manqueCarte() && !deckPioche.deckVide()) {
 			e.ajouterCarte(deckPioche.piocher());
 		}
-		listeIndiceEscrimeurChangeCarte.add(e.getIndice());
-		listeCartesChangeRecemment[e.getIndice()].add(e.getIndicesCartesModifierRecemment());
-		listeDistancesChangeRecemment[e.getIndice()].add(e.getDistancesCartesModifierRecemment());
+		listeIndiceEscrimeurPiocheCarte.add(e.getIndice());
+		System.out.println("On doit animer pour l'indice : " + e.getIndice());
+		listeIndicesPiocheRecemment[e.getIndice()].add(e.getIndicesCartesAjouterRecemment());
+		listeDistancesPiocheRecemment[e.getIndice()].add(e.getDistancesCartesAjouterRecemment());
 		modifieVueAnimation(Action.ANIMATION_PIOCHER);
 		modifieVue(e.getIndice() == Escrimeur.GAUCHER ? Action.ACTUALISER_ESCRIMEUR_GAUCHER : Action.ACTUALISER_ESCRIMEUR_DROITIER);
 		modifieVue(Action.ACTUALISER_DECK);
@@ -242,7 +249,7 @@ public class Jeu extends Observable {
 	 */
 	public int defausser(Escrimeur e, Carte c, boolean actualiser) {
 		if (actualiser) {
-			e.prepareChangeCartes();
+			e.prepareSupprimeCartes();
 		}
 		
 		int res = e.supprimerCarte(c);
@@ -258,9 +265,10 @@ public class Jeu extends Observable {
 	}
 	
 	protected void animerDefausser(int indice) {
-		listeIndiceEscrimeurChangeCarte.add(indice);
-		listeCartesChangeRecemment[indice].add(escrimeurs[indice].getIndicesCartesModifierRecemment());
-		listeDistancesChangeRecemment[indice].add(escrimeurs[indice].getDistancesCartesModifierRecemment());
+		listeIndiceEscrimeurDefausseCarte.add(indice);
+		listeIndiceDefausseRecemment[indice].add(escrimeurs[indice].getIndicesCartesSupprimerRecemment());
+		listeDistancesDefausseRecemment[indice].add(escrimeurs[indice].getDistancesCartesSupprimerRecemment());
+		listeEtatMainDefausse[indice].add(escrimeurs[indice].popMainCourante());
 		modifieVueAnimation(Action.ANIMATION_DEFAUSSER);
 		modifieVue(Action.ACTUALISER_DECK);
 		modifieVue(indice == Escrimeur.GAUCHER ? Action.ACTUALISER_ESCRIMEUR_GAUCHER : Action.ACTUALISER_ESCRIMEUR_DROITIER);
@@ -328,7 +336,9 @@ public class Jeu extends Observable {
 				}
 				int i = 0;
 				boolean defausseOk = true;
-				escrimeur.prepareChangeCartes(); // Pour la vue
+				if (defausseOk) {
+					escrimeur.prepareSupprimeCartes(); // Pour la vue
+				}
 				while (i < c.getCartes().length && c.getCartes()[i].getDistance() == valeurAttaque && defausseOk) {
 					indiceDefausse = defausser(escrimeur, c.getCartes()[i], false);
 					if (indiceDefausse == -1) {
@@ -362,7 +372,7 @@ public class Jeu extends Observable {
 				int attaque = historique.voirDernierCoup().getCartes().length;
 				int j = 0;
 				int nbcartes = getCurrentEscrimeur().getNbCartes();
-				escrimeur.prepareChangeCartes();
+				escrimeur.prepareSupprimeCartes();
 				while (j < nbcartes && attaque > 0) {
 					if (plateau.escrimeurPeutAttaquer(getCurrentEscrimeur(), getCurrentEscrimeur().getCartes()[j].getDistance())) {
 						indiceDefausse = defausser(getCurrentEscrimeur(), getCurrentEscrimeur().getCartes()[j], false);
@@ -527,7 +537,6 @@ public class Jeu extends Observable {
 	public void demarreActionSuivante() {
 		if (!actionEnCours && !listeActions.isEmpty()) {
 			actionEnCours = true;
-			//System.out.println(Arrays.toString(listeActions.toArray()));
 			metAJour();
 		}
 	}
@@ -584,8 +593,12 @@ public class Jeu extends Observable {
 		return positionsDeparts;
 	}
 	
-	public int getIndiceEscrimeurChangeCarte() {
-		return listeIndiceEscrimeurChangeCarte.pop();
+	public int popIndiceEscrimeurPiocherCarte() {
+		return listeIndiceEscrimeurPiocheCarte.pop();
+	}
+	
+	public int popIndiceEscrimeurDefausserCarte() {
+		return listeIndiceEscrimeurDefausseCarte.pop();
 	}
 	
 	public Carte[] popShowCarte(int indice) {
@@ -608,11 +621,21 @@ public class Jeu extends Observable {
 	public void resetManche() {
 		cartesShowEscrimeurs[Escrimeur.GAUCHER].clear();
 		cartesShowEscrimeurs[Escrimeur.DROITIER].clear();
-		listeIndiceEscrimeurChangeCarte.clear();
-		this.listeCartesChangeRecemment[Escrimeur.GAUCHER].clear();
-		this.listeCartesChangeRecemment[Escrimeur.DROITIER].clear();
-		this.listeDistancesChangeRecemment[Escrimeur.GAUCHER].clear();
-		this.listeDistancesChangeRecemment[Escrimeur.DROITIER].clear();
+		listeIndiceEscrimeurDefausseCarte.clear();
+		listeIndiceEscrimeurPiocheCarte.clear();
+		this.listeDistancesDefausseRecemment[Escrimeur.GAUCHER].clear();
+		this.listeDistancesDefausseRecemment[Escrimeur.DROITIER].clear();
+		this.listeDistancesPiocheRecemment[Escrimeur.GAUCHER].clear();
+		this.listeEtatMainDefausse[Escrimeur.GAUCHER].clear();
+		this.listeEtatMainDefausse[Escrimeur.DROITIER].clear();
+		this.listeDistancesPiocheRecemment[Escrimeur.DROITIER].clear();
+		this.listeIndiceDefausseRecemment[Escrimeur.GAUCHER].clear();
+		this.listeIndiceDefausseRecemment[Escrimeur.DROITIER].clear();
+		this.listeDistancesPiocheRecemment[Escrimeur.GAUCHER].clear();
+		this.listeDistancesPiocheRecemment[Escrimeur.DROITIER].clear();
+		escrimeurs[Escrimeur.DROITIER].clear();
+		escrimeurs[Escrimeur.GAUCHER].clear();
+
 		historique.vider();
 		// Reset deck
 		while(!deckDefausse.deckVide()) {
@@ -639,14 +662,6 @@ public class Jeu extends Observable {
 		};
 	}
 
-	public LinkedList<Integer> popListeCartesChangeRecemment(int indice) {
-		return listeCartesChangeRecemment[indice].pop();
-	}
-
-	public LinkedList<Integer> popListeDistancesChangeRecemment(int indice) {
-		return listeDistancesChangeRecemment[indice].pop();
-	}
-
 	public Jeu copySimple() {
 		Jeu jeu = new Jeu();
 		jeu.escrimeurs = new Escrimeur[2];
@@ -662,6 +677,15 @@ public class Jeu extends Observable {
 
 	public void setDeckPioche(DeckPioche deckPioche) {
 		this.deckPioche = deckPioche;
+	}
+
+	public void echangeEscrimeurs() {
+		String sauvG = escrimeurs[Escrimeur.GAUCHER].getNom();
+		TypeEscrimeur sauvType = escrimeurs[Escrimeur.GAUCHER].getType();
+		escrimeurs[Escrimeur.GAUCHER].setNom(escrimeurs[Escrimeur.DROITIER].getNom());
+		escrimeurs[Escrimeur.GAUCHER].setType(escrimeurs[Escrimeur.DROITIER].getType());
+		escrimeurs[Escrimeur.DROITIER].setNom(sauvG);
+		escrimeurs[Escrimeur.DROITIER].setType(sauvType);
 	}
 	
 	public void toggleShowAllCartes() {
@@ -686,5 +710,33 @@ public class Jeu extends Observable {
 	
 	public void setShowGraphique(Boolean b) {
 		this.showGraphique = b;
+	}
+
+	public Integer popListeIndiceEscrimeurDefausseCarte() {
+		return listeIndiceEscrimeurDefausseCarte.pop();
+	}
+
+	public Integer popListeIndiceEscrimeurPiocheCarte() {
+		return listeIndiceEscrimeurPiocheCarte.pop();
+	}
+
+	public LinkedList<Integer> popListeIndiceDefausseRecemment(int indice) {
+		return listeIndiceDefausseRecemment[indice].pop();
+	}
+
+	public LinkedList<Integer> popListeDistancesDefausseRecemment(int indice) {
+		return listeDistancesDefausseRecemment[indice].pop();
+	}
+
+	public LinkedList<Integer> popListeIndicesPiocheRecemment(int indice) {
+		return listeIndicesPiocheRecemment[indice].pop();
+	}
+
+	public LinkedList<Integer> popListeDistancesPiocheRecemment(int indice) {
+		return listeDistancesPiocheRecemment[indice].pop();
+	}
+	
+	public Carte[] popEtatMainDefausse(int indice) {
+		return listeEtatMainDefausse[indice].pop();
 	}
 }
