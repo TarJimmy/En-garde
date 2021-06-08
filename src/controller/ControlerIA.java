@@ -128,11 +128,9 @@ public class ControlerIA extends ControlerJeu {
 		
 
 		public class DeckPiocheIA extends DeckPioche {
-
-			@Override
-			public Carte piocher() {
-				// redefinir
-				return super.piocher(); // carte la plus probable
+				
+			public DeckPiocheIA() {
+				super();
 			}
 			
 			@Override

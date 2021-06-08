@@ -1,11 +1,11 @@
 23
-Joueur 1
+Leo
 HUMAIN
 1
-Joueur 2
+IA_FACILE
 IA_FACILE
 23
-Basique
+Avance
 5
 5
 5

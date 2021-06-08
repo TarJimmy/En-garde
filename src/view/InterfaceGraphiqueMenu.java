@@ -76,6 +76,7 @@ public class InterfaceGraphiqueMenu implements Runnable {
 	@Override
 	public void run() {
 		fenetreMenu = new JFrame("EN GARDE ! - MENU PRINCIPAL");
+		fenetreMenu.setIconImage(Configuration.imgIcone);
 		JLabel menu_fond = null;
 		try {
 			fenetreMenu.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));

@@ -23,8 +23,8 @@ public abstract class IA {
 	 * @param valeurDefense
 	 * @return la liste des cases accessibles
 	 */
-	protected HashSet<Integer> getCasesAccessibles(int indiceEscrimeur, int typeCoup, int valeurDefense) {
-		 return jeu.getPlateau().casesJouables(jeu.getEscrimeurs()[indiceEscrimeur], typeCoup, valeurDefense);
+	protected HashSet<Integer> getCasesAccessibles() {
+		 return jeu.casesJouables();
 	}
 	
 	/**
@@ -33,13 +33,13 @@ public abstract class IA {
 	 * @param valeurDefense
 	 * @return un hashmap avec comme clé la valeur de la case accessible, et comme valeur un tableau int comme [distance, nbExemplaire]
 	 */
-	protected HashMap<Integer, int[]> getCasesByCartes(int indiceEscrimeur, int typeCoup, int valeurDefense) {
-		 HashSet<Integer> casesAccessibles = getCasesAccessibles(typeCoup, valeurDefense, valeurDefense);
+	protected HashMap<Integer, int[]> getCasesByCartes() {
+		 HashSet<Integer> casesAccessibles = getCasesAccessibles();
 		 HashMap<Integer, int[]> caseByCartes = new HashMap<>();
 		 
 		 Iterator<Integer> it = casesAccessibles.iterator();
-		 int positionEscrimeur = jeu.getPlateau().getPosition(indiceEscrimeur);
-		 Escrimeur e = jeu.getEscrimeurs()[indiceEscrimeur];
+		 int positionEscrimeur = jeu.getPlateau().getPosition(jeu.getIndiceCurrentEscrimeur());
+		 Escrimeur e = jeu.getCurrentEscrimeur();
 		 while(it.hasNext()) {
 			 int numCase = it.next();
 			 int valeurDistance = Math.abs(numCase - positionEscrimeur);

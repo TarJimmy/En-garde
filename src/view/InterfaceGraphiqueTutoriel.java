@@ -84,6 +84,7 @@ public class InterfaceGraphiqueTutoriel implements Runnable {
         frame.setBackground(Color.white);
         frame.setSize(1619,1048);
         frame.setResizable(false);
+        frame.setIconImage(Configuration.imgIcone);
         try {
 			frame.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
 		} catch (HeadlessException | IndexOutOfBoundsException | IOException e1) {

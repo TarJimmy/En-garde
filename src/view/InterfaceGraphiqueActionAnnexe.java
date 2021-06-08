@@ -9,6 +9,8 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -24,46 +26,52 @@ import javax.swing.border.EmptyBorder;
 
 import Global.Configuration;
 import Patterns.Observateur;
+import controller.ControlerJeu;
 
 public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Runnable, Observateur {
-	
+
 	private static JFrame fenetreActionAnnexe;
-	private static CollecteurEvenements controle;
+	private static ControlerJeu controle;
 	private static Boolean fenetreActive = false;
-	private InterfaceGraphiqueActionAnnexe(CollecteurEvenements controle) {
+
+	private InterfaceGraphiqueActionAnnexe(ControlerJeu controle) {
 		InterfaceGraphiqueActionAnnexe.controle = controle;
 	}
-	
+
 	/**
 	 * Ouvre la fenetre de triche
+	 * 
 	 * @param control
 	 */
-	public static void demarrer(CollecteurEvenements control) {
+	public static void demarrer(ControlerJeu control) {
 		if (!fenetreActive) {
 			fenetreActive = true;
 			SwingUtilities.invokeLater(new InterfaceGraphiqueActionAnnexe(control));
-		} 
+		} else {
+			fenetreActionAnnexe.setVisible(true);
+		}
 	}
-	
+
 	/**
 	 * Ferme la fenetre de triche
 	 */
 	public static void close() {
-		if (fenetreActionAnnexe!=null) {
+		if (fenetreActionAnnexe != null) {
 			fenetreActionAnnexe.setVisible(false);
 			fenetreActionAnnexe.dispose();
 		}
 	}
-	
+
 	/**
 	 * Cree un label JLabel
+	 * 
 	 * @param name : le nom du label
 	 * @return le label name genere
 	 */
-	private static JLabel Label (String name) {
+	private static JLabel Label(String name) {
 		JLabel label;
 		ImageIcon banner;
-		
+
 		try {
 			switch (name){
 				case "Titre":
@@ -81,21 +89,21 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 					label.setFont(new Font("Century", Font.PLAIN, 20));
 					break;
 			}
-			
+
 			label.setHorizontalTextPosition(SwingConstants.CENTER);
 			label.setHorizontalAlignment(SwingConstants.CENTER);
-			
+
 			return label;
 		} catch (IOException e) {
 			System.err.println("An error as occured");
 			return null;
 		}
 	}
-	
+
 	@Override
 	public void miseAJour() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/**
@@ -105,6 +113,35 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 	public void run() {
 		try {
 		fenetreActionAnnexe = new JFrame("EN GARDE ! - Panel de triche");
+		fenetreActionAnnexe.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				switch (e.getKeyCode()) {
+				case KeyEvent.VK_P:
+					if (InterfaceGraphiqueJeu.ajoutVitesse > -2000) {
+						InterfaceGraphiqueJeu.ajoutVitesse -= 500;
+					}
+					break;
+				case KeyEvent.VK_M:
+					if (InterfaceGraphiqueJeu.ajoutVitesse < 2000) {
+						InterfaceGraphiqueJeu.ajoutVitesse += 500;
+					}
+					break;
+				case KeyEvent.VK_A:
+					controle.commande("ChangeModeAnimation");
+				default:
+					break;
+				}
+				System.out.println(InterfaceGraphiqueJeu.ajoutVitesse);
+			}
+		});
 		JLabel contentPane = null;
 		contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("ActionAnnexe.png", Configuration.MENU))));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -158,25 +195,29 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		aide.setBounds(92, 590, 200, 50);
 		contentPane.add(aide);
 		
-		JButton activeAide = new ButtonCustom("Activer l'aide", "cadre2", new Dimension(200, 50), font);
-		activeAide.addActionListener(new AdaptateurCommande(controle, "activeAide"));
-		activeAide.setBounds(92, 650, 200, 50);
-		contentPane.add(activeAide);
-		
-		JButton desactiveAide = new ButtonCustom("Desactiver l'aide", "cadre2", new Dimension(200, 50), font);
-		desactiveAide.addActionListener(new AdaptateurCommande(controle, "desactiveAide"));
-		desactiveAide.setBounds(92, 650, 200, 50);
-		contentPane.add(desactiveAide);
+		JButton montrerAide = new ButtonCustom("Montrer meilleur coup", "cadre2", new Dimension(200, 50), font);
+		montrerAide.addActionListener(new AdaptateurCommande(controle, "montrerAide"));
+		montrerAide.setBounds(92, 650, 200, 50);
+		contentPane.add(montrerAide);
 		
 		JButton montrerCartes = new ButtonCustom("Montrer les cartes", "cadre2", new Dimension(200, 50), font);
 		montrerCartes.addActionListener(new AdaptateurCommande(controle, "montrerCartes"));
+		montrerCartes.addActionListener(new ActionListener() {
+			private boolean showCarte = false;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				showCarte = !showCarte;
+				JButton button = (JButton) e.getSource();
+				button.setText((showCarte ? "Cacher " : "Montrer ") + "les cartes");
+			}
+		});
 		montrerCartes.setBounds(92, 710, 200, 50);
 		contentPane.add(montrerCartes);
 		
-		JButton animation = new ButtonCustom("Activer les animations", "cadre2", new Dimension(200, 50), font);
-		animation.addActionListener(new AdaptateurCommande(controle, "montrerCartes"));
+		JButton animation = new ButtonCustom((controle.getJeu().getAnimationAutoriser() ? "Desactiver " : "Activer ") + " les animations", "cadre2", new Dimension(200, 50), font);
+		animation.addActionListener(new AdaptateurCommande(controle, "ChangeModeAnimation"));
 		animation.addActionListener(new ActionListener() {
-			private boolean showAnimation = false;
+			private Boolean showAnimation = controle.getJeu().getAnimationAutoriser();
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				showAnimation = !showAnimation;
@@ -189,14 +230,15 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		
 		JButton fermer = new ButtonCustom("FERMER", "cadre3", new Dimension(150, 30), font);
 		fermer.setBounds(10, 835, 150, 50);
-		fermer.addActionListener(new AdaptateurCommande(controle, "close"));
+		fermer.addActionListener(new AdaptateurCommande(controle, "closeActionAnnexe"));
 		contentPane.add(fermer);
 		
 		fenetreActionAnnexe.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		fenetreActionAnnexe.setBounds(100, 100, 400, 925);
 		fenetreActionAnnexe.setResizable(false);
 		fenetreActionAnnexe.setVisible(true);
-		
+		fenetreActionAnnexe.setFocusable(true);
+		fenetreActionAnnexe.requestFocus();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -204,9 +246,7 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		fenetreActive = false;
-		close();
+		controle.commande("closeActionAnnexe");
 	}
-	
 	
 }
