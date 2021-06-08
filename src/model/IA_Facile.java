@@ -18,9 +18,9 @@ public class IA_Facile extends IA {
 	 * @return un tableau de int comme [numero de la case, nombre de carte utilisé]
 	 */
 	@Override
-	public int[] getChoixCoup(int indiceEscrimeur, int typeCoup, int valeurDefense) {
-		Escrimeur e = getEscrimeur(indiceEscrimeur);
-		HashSet<Integer> casesAccessibles = getCasesAccessibles(indiceEscrimeur, typeCoup, valeurDefense);
+	public int[] getChoixCoup() {
+		Escrimeur e = jeu.getCurrentEscrimeur();
+		HashSet<Integer> casesAccessibles = getCasesAccessibles();
 		
 	    int indiceChoisi = new Random().nextInt(casesAccessibles.size());
 	    Iterator<Integer> it = casesAccessibles.iterator();

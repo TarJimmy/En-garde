@@ -64,6 +64,7 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 	@Override
 	public void run() {
 		fenetreChargerPartie = new JFrame("EN GARDE ! - CHARGER UNE PARTIE");
+		fenetreChargerPartie.setIconImage(Configuration.imgIcone);
 		JLabel contentPane = null;
 		String name = "Vide";
 		try {

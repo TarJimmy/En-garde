@@ -59,6 +59,7 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 	@Override
 	public void run() {
 		fenetreFin = new JFrame("EN GARDE ! - Fin de la partie");
+		fenetreFin.setIconImage(Configuration.imgIcone);
 		JLabel contentPane = new JLabel(new ImageIcon("res/Images/Menu/Fin.png"));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		fenetreFin.setContentPane(contentPane);

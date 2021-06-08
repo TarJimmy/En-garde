@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,8 +17,8 @@ public class Escrimeur {
 	public static final int GAUCHER = 0;
 	public static final int DROITIER = 1;
 	private int mancheGagner;
-	private ArrayList<Integer> indicesCartesModifierRecemment;
-	private ArrayList<Integer> distancesCartesModifierRecemment;
+	private LinkedList<Integer> indicesCartesModifierRecemment;
+	private LinkedList<Integer> distancesCartesModifierRecemment;
 	/**
 	 * Constructeur lors d'unne nouvelle partie
 	 * @param nom
@@ -31,8 +32,8 @@ public class Escrimeur {
 		this.indice = indice;
 		this.cartes = new Carte[nbCarte];
 		this.mancheGagner = 0;
-		this.indicesCartesModifierRecemment = new ArrayList<>();
-		this.distancesCartesModifierRecemment = new ArrayList<>();
+		this.indicesCartesModifierRecemment = new LinkedList<>();
+		this.distancesCartesModifierRecemment = new LinkedList<>();
 	}
 	
 	/**
@@ -100,6 +101,7 @@ public class Escrimeur {
 				}
 				indicesCartesModifierRecemment.add(i);
 				cartes[cartes.length - 1] = null;
+				System.out.println("indice carte changer recemment : " + Arrays.toString(indicesCartesModifierRecemment.toArray()));
 				return i;
 			}
 		}

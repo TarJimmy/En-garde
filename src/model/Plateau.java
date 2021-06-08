@@ -8,6 +8,7 @@ public class Plateau extends Observable {
 	// Position des case: [1, max]
 	private int positionJoueurs[]; // gaucher a l'indice 0, droitier a l'indice 1
 	private int nbCase;
+	private int caseAide;
 	
 	private Plateau() {}
 	
@@ -23,6 +24,7 @@ public class Plateau extends Observable {
 			this.nbCase = nbCase;
 			positionJoueurs[0] = positionGaucher;
 			positionJoueurs[1] = positionDroitier;
+			caseAide = -1;
 		}
 	}
 
@@ -31,9 +33,10 @@ public class Plateau extends Observable {
 		this.nbCase = nbCase;
 		positionJoueurs[0] = 1;
 		positionJoueurs[1] = nbCase;
+		caseAide = -1;
 	}
 
-	private int getValeurOrientation(Escrimeur e, int deplacement) {
+	public int getValeurOrientation(Escrimeur e, int deplacement) {
 		return e.getIndice() == 0 ? deplacement : -deplacement;
 	}
 
@@ -163,5 +166,16 @@ public class Plateau extends Observable {
 		return p;
 	}
 	
+	public int getCaseAide() {
+		return caseAide;
+	}
+	
+	public void setCaseAide(int i) {
+		caseAide = i;
+	}
+
+	public int getDistanceEntreEscrimeur() {
+		return Math.abs(positionJoueurs[0] - positionJoueurs[1]);
+	}
 	
 }

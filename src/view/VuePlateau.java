@@ -83,7 +83,6 @@ public class VuePlateau extends JPanel implements Animateur {
 	private VueMain[] vueMains;
 	
 	private int numCaseMouse;
-	private int numCaseConseil;
 	
 	private boolean showCaseClickable;
 	VuePlateau(Plateau p, CollecteurEvenements controle, VueMain mainGaucher, VueMain mainDroitier) {
@@ -110,7 +109,6 @@ public class VuePlateau extends JPanel implements Animateur {
 		vueMains[Escrimeur.DROITIER] = mainDroitier;
 		
 		numCaseMouse = -1;
-		numCaseConseil = -1;
 		
 		imgNormal = new BufferedImage[NBCases];
 		imgSelect = new BufferedImage[NBCases];
@@ -215,6 +213,7 @@ public class VuePlateau extends JPanel implements Animateur {
 		int posGaucher = p.getPosition(Escrimeur.GAUCHER);
 		int posDroitier =  p.getPosition(Escrimeur.DROITIER);
 		int indiceOtherEscrimeur = (indiceEscrimeurCourant + 1) % 2;
+		int numConseil = p.getCaseAide();
 		for (int i = 1; i <= NBCases; i++) {
 			int posX = (i - 1) * espaceCase;
 			int posXImage = posX + (espaceCase - widthDalle) / 2;
@@ -223,7 +222,7 @@ public class VuePlateau extends JPanel implements Animateur {
 				if (numCaseMouse == i) {
 					imgDalle = p.getPosition(indiceOtherEscrimeur) == i || (!animActif && p.getPosition(indiceEscrimeurCourant) == i) ? imgAttaqueDefense[i - 1] : imgOver[i - 1];
 				} else {
-					imgDalle = numCaseConseil == i ? imgConseil[i - 1] : imgSelect[i - 1];
+					imgDalle = numConseil == i ? imgConseil[i - 1] : imgSelect[i - 1];
 				}
 			} else {
 				imgDalle = imgNormal[i - 1];
@@ -447,9 +446,5 @@ public class VuePlateau extends JPanel implements Animateur {
 	
 	public boolean estCaseClickable() {
 		return showCaseClickable;
-	}
-	
-	public void setCaseConseil(int numCaseConseil) {
-		this.numCaseConseil = numCaseConseil;
 	}
 }

@@ -33,37 +33,8 @@ import model.Jeu.Action;
 
 public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	
-	private int ajoutVitesse = 0;
-	private final KeyListener keyListenerEggs = new KeyListener() {
-		
-		@Override
-		public void keyTyped(KeyEvent e) {}
-		
-		@Override
-		public void keyReleased(KeyEvent e) {
-		}
-		
-		@Override
-		public void keyPressed(KeyEvent e) {
-			switch (e.getKeyCode()) {
-			case KeyEvent.VK_P:
-				if (ajoutVitesse > -2000) {
-					ajoutVitesse -= 500;
-				}
-				break;
-			case KeyEvent.VK_M:
-				if (ajoutVitesse < 2000) {
-					ajoutVitesse += 500;
-				}
-				break;
-			case KeyEvent.VK_A:
-				controle.commande("ChangeModeAnimation");
-			default:
-				break;
-			}
-			System.out.println(ajoutVitesse);
-		}
-	};
+	public static int ajoutVitesse = 0;
+	
 	private final int hauteurFenetre = 900;
 	private final int largeurFenetre = 1600;
 	
@@ -116,7 +87,6 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	}
 	@Override
 	public void miseAJour() {
-		frame.setFocusable(true);
 		Action action = jeu.getActionCourante();
 		switch (action) {
 			case ACTUALISER_JEU:
@@ -127,20 +97,20 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 					break;
 				}
 			case ACTUALISER_DECK: // Actualise les decks
-				vueDecks.repaint();
+				vueDecks.actualise(jeu.popLastCarteDeck());
 				if (action == Action.ACTUALISER_DECK) { // Stop si ce n'est pas  un changement de tour
 					controle.commande("ActionTerminer");
 					break;
 				}
 			case ACTUALISER_ESCRIMEUR:
 			case ACTUALISER_ESCRIMEUR_DROITIER :
-				vueEscrimeurs[Escrimeur.DROITIER].actualise(jeu.popShowCarte(Escrimeur.DROITIER), jeu.getIsTourGaucher() == false, jeu.getPeutPasserTour());
+				vueEscrimeurs[Escrimeur.DROITIER].actualise(jeu.popShowCarte(Escrimeur.DROITIER), jeu.getIsTourGaucher() == false || jeu.getShowAllCartes(), jeu.getPeutPasserTour());
 				if (action == Action.ACTUALISER_ESCRIMEUR_DROITIER) { // Stop si ce n'est pas  un changement de tour ou l'actualisation des 2 mains
 					controle.commande("ActionTerminer");
 					break;
 				}
 			case ACTUALISER_ESCRIMEUR_GAUCHER:
-				vueEscrimeurs[Escrimeur.GAUCHER].actualise(jeu.popShowCarte(Escrimeur.GAUCHER), jeu.getIsTourGaucher(), jeu.getPeutPasserTour());
+				vueEscrimeurs[Escrimeur.GAUCHER].actualise(jeu.popShowCarte(Escrimeur.GAUCHER), jeu.getIsTourGaucher() || jeu.getShowAllCartes(), jeu.getPeutPasserTour());
 				controle.commande("ActionTerminer");
 				break;
 			case ANIMATION_DEPLACER_ESCRIMEUR:
@@ -150,10 +120,12 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				vuePlateau.actualise(jeu.getCurrentEscrimeur());
 				controle.commande("ActionTerminer");
 				break;
+			case ACTUALISER_PLATEAU_MEME_MODE:
+				vuePlateau.repaint();
+				controle.commande("ActionTerminer");
+				break;
 			case ANIMATION_PIOCHER:
 				int indicePiocher = jeu.getIndiceEscrimeurChangeCarte();
-				Escrimeur escrimeurPiocher = jeu.getEscrimeurs()[indicePiocher];
-				
 				ArrayList<Integer> indicesCartesADeplacerPiocher = jeu.popListeCartesChangeRecemment(indicePiocher);
 				ArrayList<Integer> distancesListPiocher = jeu.popListeDistancesChangeRecemment(indicePiocher);
 				
@@ -169,7 +141,6 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				break;
 			case ANIMATION_DEFAUSSER:
 				int indiceDefausser = jeu.getIndiceEscrimeurChangeCarte();
-				Escrimeur escrimeurDefausser = jeu.getEscrimeurs()[indiceDefausser];
 				ArrayList<Integer> indicesCartesADeplacerDefausser = jeu.popListeCartesChangeRecemment(indiceDefausser);
 				ArrayList<Integer> distancesListDefausser = jeu.popListeDistancesChangeRecemment(indiceDefausser);
 				Point[] departsDefausser = getPosCartesModifierRecemment(indiceDefausser, indicesCartesADeplacerDefausser);
@@ -197,13 +168,40 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	}
 	
 	public void run() {
-		
 		frame = new JFrame("En Garde !");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
-		frame.setFocusable(true);
-		frame.addKeyListener(keyListenerEggs);
+		frame.setIconImage(Configuration.imgIcone);
 		JLabel background = new JLabel();
+		background.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				switch (e.getKeyCode()) {
+				case KeyEvent.VK_P:
+					if (InterfaceGraphiqueJeu.ajoutVitesse > -2000) {
+						InterfaceGraphiqueJeu.ajoutVitesse -= 500;
+					}
+					break;
+				case KeyEvent.VK_M:
+					if (InterfaceGraphiqueJeu.ajoutVitesse < 2000) {
+						InterfaceGraphiqueJeu.ajoutVitesse += 500;
+					}
+					break;
+				case KeyEvent.VK_A:
+					controle.commande("ChangeModeAnimation");
+				default:
+					break;
+				}
+			}
+		});
+		
 		try {
 			background.setIcon(new ImageIcon(ImageIO.read(Configuration.charge("Background.png", Configuration.BG))));
 			background.setLayout(new GridLayout(3, 1));
@@ -248,8 +246,9 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	    glass.setVisible(true);
 	    glass.add(panelAnimation);
 		frame.pack();
+		background.setFocusable(true);
+		background.requestFocus(); 
 		frame.setVisible(true);
-		System.out.println("lancement");
 		controle.commande("PageInitialiser");
 	}
 	@SuppressWarnings("serial")

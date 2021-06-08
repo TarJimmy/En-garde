@@ -3,10 +3,13 @@ package Global;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import javax.imageio.ImageIO;
 
 public class Configuration {
 	private static Configuration instance;
@@ -20,9 +23,11 @@ public class Configuration {
 	public final static int ESCRIMEURS = 7;
 	public final static int AUTRES = 8;
 	public final static int TUTORIEL = 9;
+	public static BufferedImage imgIcone;
 	
 	private Configuration() {
 		try {
+			imgIcone = ImageIO.read(charge("icon.png", Configuration.AUTRES));
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("res/CENTURY.TTF")));
 		} catch (IOException e) {

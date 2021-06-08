@@ -90,6 +90,7 @@ public class InterfaceGraphiqueRegles implements Runnable {
         frame.setBackground(Color.white);
         frame.setSize(906, 900);
         frame.setResizable(false);
+        frame.setIconImage(Configuration.imgIcone);
         try {
 			frame.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
 		} catch (HeadlessException | IndexOutOfBoundsException | IOException e1) {

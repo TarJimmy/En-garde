@@ -13,7 +13,6 @@ import java.util.Stack;
 import javax.swing.Timer;
 
 import Patterns.Observable;
-import controller.ControlerIA.DeckPiocheIA;
 import controller.ControlerJeu;
 import model.Jeu.Action;
 
@@ -24,6 +23,7 @@ public class Jeu extends Observable {
 		ACTUALISER_DECK,
 		ACTUALISER_PLATEAU,
 		ACTUALISER_PLATEAU_SANS_CASE,
+		ACTUALISER_PLATEAU_MEME_MODE,
 		ACTUALISER_ESCRIMEUR,
 		ACTUALISER_ESCRIMEUR_DROITIER,
 		ACTUALISER_ESCRIMEUR_GAUCHER,
@@ -36,37 +36,38 @@ public class Jeu extends Observable {
 		ANIMATION_CHANGER_TOUR
 	}
 	
-	private Boolean modeSimple; 
+	protected Boolean modeSimple; 
 	public Boolean peutPasserTour;
-	private Plateau plateau;
-	private DeckPioche deckPioche;
-	private DeckDefausse deckDefausse;
-	private int indiceCurrentEscrimeur;
-	private int indicePremierJoueur;
-	private boolean animationAutoriser;
+	protected Plateau plateau;
+	protected DeckPioche deckPioche;
+	protected DeckDefausse deckDefausse;
+	protected int indiceCurrentEscrimeur;
+	protected int indicePremierJoueur;
+	protected boolean animationAutoriser;
 	
-	private Escrimeur[] escrimeurs;
-	private int winner;
-	private Historique historique;
-	private boolean dernierTour;
-	private int nbManchesPourVictoire;
+	protected Escrimeur[] escrimeurs;
+	protected int winner;
+	protected Historique historique;
+	protected boolean dernierTour;
+	protected int nbManchesPourVictoire;
 	
-	private LinkedList<Action> listeActions;
-	private LinkedList<Carte[]> cartesShowEscrimeurs[];
-	private LinkedList<Integer> listeIndiceEscrimeurChangeCarte;
-	private LinkedList<ArrayList<Integer>> listeCartesChangeRecemment[];
-	private LinkedList<ArrayList<Integer>> listeDistancesChangeRecemment[];
-	private Boolean actionEnCours;
+	protected LinkedList<Action> listeActions;
+	protected LinkedList<Carte[]> cartesShowEscrimeurs[];
+	protected LinkedList<Integer> listeIndiceEscrimeurChangeCarte;
+	protected LinkedList<Integer[]> carteShowDeck;
+	protected LinkedList<ArrayList<Integer>> listeCartesChangeRecemment[];
+	protected LinkedList<ArrayList<Integer>> listeDistancesChangeRecemment[];
+	protected Boolean actionEnCours;
 	
-	private int[] positionsDeparts;
+	protected int[] positionsDeparts;
 	
 	public static final int EGAUCHER = 0;
 	public static final int EDROITIER = 1;
 	public static final int EGALITE = 2;
 	public static final int NONE = 3;
 
-	private int lastWinner;
-	private IA_Facile IA_conseil;
+	protected int lastWinner;
+	private boolean showAllCartes;
 	
 	protected Jeu() {}
 	
@@ -93,7 +94,7 @@ public class Jeu extends Observable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void init(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, Escrimeur gaucher, Escrimeur droitier, int[] positionsDeparts, boolean animationAutoriser) {
+	protected void init(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, Escrimeur gaucher, Escrimeur droitier, int[] positionsDeparts, boolean animationAutoriser) {
 		this.modeSimple = modeSimple;
 		this.nbManchesPourVictoire = nbManchesPourVictoire;
 		this.plateau = plateau;
@@ -115,11 +116,12 @@ public class Jeu extends Observable {
 		this.cartesShowEscrimeurs = new LinkedList[2];
 		this.cartesShowEscrimeurs[Escrimeur.GAUCHER] = new LinkedList<>();
 		this.cartesShowEscrimeurs[Escrimeur.DROITIER] = new LinkedList<>();
+		this.carteShowDeck = new LinkedList<>();
 		this.lastWinner = NONE;
 		this.actionEnCours = false;
 		this.dernierTour = false;
 		this.winner = NONE;
-		//IA_conseil;
+		this.showAllCartes = false;
 	}
 	
 	public boolean isDernierTour() {
@@ -184,7 +186,6 @@ public class Jeu extends Observable {
 
 	public void piocher(Escrimeur e) {
 		e.prepareChangeCartes();
-		System.out.println("je pioche");
 		while (e.manqueCarte() && !deckPioche.deckVide()) {
 			e.ajouterCarte(deckPioche.piocher());
 		}
@@ -230,7 +231,7 @@ public class Jeu extends Observable {
 		return res;
 	}
 	
-	private void animerDefausser(int indice) {
+	protected void animerDefausser(int indice) {
 		listeIndiceEscrimeurChangeCarte.add(indice);
 		listeCartesChangeRecemment[indice].add(escrimeurs[indice].getIndicesCartesModifierRecemment());
 		listeDistancesChangeRecemment[indice].add(escrimeurs[indice].getDistancesCartesModifierRecemment());
@@ -240,6 +241,7 @@ public class Jeu extends Observable {
 	}
 
 	public boolean jouer(Coup c, boolean rejoueCoupAnnule) {
+		setCaseAide(-1);
 		// cette fonction termine automatiquement un tour
 		// appeler avec rejoueCoupAnnule a false sauf si on rejoue un coup annule
 		// ce booleen sert a ne pas clean la pile des coups annulés si le coup vient de
@@ -328,7 +330,6 @@ public class Jeu extends Observable {
 					historique.viderCoupsAnnules();
 				}
 				changerTour();
-				System.out.println("le joueur"+ escrimeur.getIndice()+1 + "a attaqué puis passé");
 				return true;
 				
 			case Coup.PARER :
@@ -449,6 +450,10 @@ public class Jeu extends Observable {
 		modifieVue(Action.ACTUALISER_JEU);
 	}
 	
+	public Integer[] popLastCarteDeck() {
+		return carteShowDeck.pop();
+	}
+	
 	public void modifieVue(Action action) {
 		switch (action) {
 			case ACTUALISER_JEU:
@@ -460,7 +465,12 @@ public class Jeu extends Observable {
 				}
 			case ACTUALISER_ESCRIMEUR_DROITIER:
 				cartesShowEscrimeurs[Escrimeur.DROITIER].add(escrimeurs[Escrimeur.DROITIER].getCartes().clone());
-				break;
+				if (action == Action.ACTUALISER_ESCRIMEUR_DROITIER) {
+					break;
+				}
+			case ACTUALISER_DECK:
+				int distanceCarteVisible = deckDefausse.deckVide() ? -1 : deckDefausse.consulterCarteVisible().getDistance();
+				carteShowDeck.add(new Integer[] {deckPioche.nbCartes(), deckDefausse.nbCartes(), distanceCarteVisible});
 			default:
 				break;
 		}
@@ -488,7 +498,7 @@ public class Jeu extends Observable {
 	public void demarreActionSuivante() {
 		if (!actionEnCours && !listeActions.isEmpty()) {
 			actionEnCours = true;
-			System.out.println(Arrays.toString(listeActions.toArray()));
+			//System.out.println(Arrays.toString(listeActions.toArray()));
 			metAJour();
 		}
 	}
@@ -620,5 +630,24 @@ public class Jeu extends Observable {
 		this.deckPioche = deckPioche;
 	}
 	
+	public void toggleShowAllCartes() {
+		showAllCartes = !showAllCartes;
+		modifieVue(Action.ACTUALISER_ESCRIMEUR);
+	}
 	
+	public boolean getShowAllCartes() {
+		return showAllCartes;
+	}
+	
+	public void setCaseAide(int numCase) {
+		System.out.println("case choisie : " + numCase);
+		if (numCase != plateau.getCaseAide()) {
+			plateau.setCaseAide(numCase);
+			modifieVue(Action.ACTUALISER_PLATEAU_MEME_MODE);
+		}
+	}
+
+	public boolean aideEstMontrer() {
+		return plateau.getCaseAide() < 1;
+	}
 }
