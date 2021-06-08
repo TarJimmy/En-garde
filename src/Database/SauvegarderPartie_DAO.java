@@ -160,7 +160,7 @@ public class SauvegarderPartie_DAO {
 	}
 
 	public void supprimerPartieSauvegardee(int id) {
-		String sql = "DELETE FROM SauvegarderPartie WHERE idMatch = "+id;
+		String sql = "DELETE FROM SauvegarderPartie WHERE idPartie = "+id;
 		try {
         	Connection conn = this.connect();
             Statement stmt  = conn.createStatement();

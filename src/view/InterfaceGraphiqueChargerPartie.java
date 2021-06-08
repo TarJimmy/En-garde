@@ -126,13 +126,43 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 		});
 		supprimerPartie.setBounds(217, 500, 300, 40);
 		
+		majParties();
+		
+		for(JButton Partie : parties) {
+			contentPane.add(Partie);
+		}
+		for(JButton Supp : supprimer) {
+			Supp.setVisible(false);
+			Supp.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						majParties();
+					}
+					
+				});
+			contentPane.add(Supp);
+		}
+		contentPane.add(annuler);
+		contentPane.add(supprimerPartie);
+
+		fenetreChargerPartie.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		fenetreChargerPartie.setBounds(100, 100, 600, 600);
+		fenetreChargerPartie.setResizable(false);
+		fenetreChargerPartie.setVisible(true);
+		
+	}
+	
+	private void majParties() {
 		try {
+			for(JButton Partie : parties) {Partie.setName("Vide");}
+			for(JButton Supp : supprimer) {Supp.setName("Vide");}
 			rs = sp_dao.getAll();
 			for(int i=0; i<6; i++) {
 				JButton buttonCharge = parties.get(i);
 				JButton buttonSupp = supprimer.get(i);
 				rs.next();
-				name = "<html><body>"
+				String name = "<html><body>"
 						+ "<section style=\"text-align: center;\">\r\n"
 						+ "    <div style=\"margin: 3px auto; font-weight: 500; font-family: serif;\">\r\n"
 						+ "    " + rs.getString("dateMatch") + "\r\n"
@@ -155,22 +185,6 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 		} catch (SQLException e) {
 			System.out.println("Pas plus de parties enregistrees");
 		}
-		
-		for(JButton Partie : parties) {
-			contentPane.add(Partie);
-		}
-		for(JButton Supp : supprimer) {
-			Supp.setVisible(false);
-			contentPane.add(Supp);
-		}
-		contentPane.add(annuler);
-		contentPane.add(supprimerPartie);
-
-		fenetreChargerPartie.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		fenetreChargerPartie.setBounds(100, 100, 600, 600);
-		fenetreChargerPartie.setResizable(false);
-		fenetreChargerPartie.setVisible(true);
-		
 	}
 
 }
