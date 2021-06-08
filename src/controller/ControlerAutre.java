@@ -16,6 +16,7 @@ import model.Jeu;
 import model.Plateau;
 import model.SauvegardeParametre;
 import model.TypeEscrimeur;
+import view.InterfaceGraphiqueActionAnnexe;
 import view.InterfaceGraphiqueChargerPartie;
 import view.InterfaceGraphiqueClassement;
 import view.InterfaceGraphiqueFin;
@@ -40,15 +41,12 @@ public class ControlerAutre extends Controler {
 	public boolean commande(String c) {
 		switch(c) {
 			case "annuler":
-				InterfaceGraphiqueChargerPartie.close();
-				InterfaceGraphiqueClassement.close();
 			case "menu":
-				InterfaceGraphiqueParametres.close();
-				InterfaceGraphiqueFin.close();
+				closeAll();
 				InterfaceGraphiqueMenu.demarrer(new ControlerAutre());
 				break;
 			case "jouerMenu":
-				InterfaceGraphiqueMenu.close();
+				closeAll();
 			case "jouer":
 				try {
 					Parametre.instance();
@@ -114,13 +112,13 @@ public class ControlerAutre extends Controler {
 				commande("jouer");
 				break;
 			case "chargePartieMenu":
-				InterfaceGraphiqueMenu.close();
+				closeAll();
 				InterfaceGraphiqueChargerPartie.demarrer(this);
 				break;
 			case "rejouer":
 				break;
 			case "parametres":
-				InterfaceGraphiqueMenu.close();
+				closeAll();
 				Parametre.instance();
 				SauvegardeParametre.chargerParametres();
 				settings = SauvegardeParametre.getSettings();
@@ -135,7 +133,7 @@ public class ControlerAutre extends Controler {
 				InterfaceGraphiqueParametres.majParametres(settings);
 				break;
 			case "classement":
-				InterfaceGraphiqueMenu.close();
+				closeAll();
 				InterfaceGraphiqueClassement.demarrer(new ControlerAutre());
 				break;
 			case "tuto":
@@ -172,6 +170,14 @@ public class ControlerAutre extends Controler {
 	public void SuiteChargerPartie(Jeu jeu) {
 		// TODO Auto-generated method stub
 		new ControlerJeu(jeu, true);
+	}
+	
+	public void closeAll() {
+		InterfaceGraphiqueMenu.close();
+		InterfaceGraphiqueChargerPartie.close();
+		InterfaceGraphiqueClassement.close();
+		InterfaceGraphiqueParametres.close();
+		InterfaceGraphiqueFin.close();
 	}
 }
 

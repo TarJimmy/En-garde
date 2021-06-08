@@ -258,9 +258,7 @@ public class ControlerJeu extends Controler {
 				jeu.changerTour();
 				return true;
 			case "Menu":
-				InterfaceGraphiqueActionAnnexe.close();
-				InterfaceGraphiqueJeu.close();
-				InterfaceGraphiqueFin.close();
+				closeAll();
 				InterfaceGraphiqueMenu.demarrer(new ControlerAutre());
 				return true;
 			case "QuitterJeu":
@@ -339,7 +337,9 @@ public class ControlerJeu extends Controler {
 	public void nouveauMatch() {
 		animations = new LinkedList<>();
 		jeu.echangeEscrimeurs();
-		nouvellePartie();
+		jeu.resetAction();
+		closeAll();
+		InterfaceGraphiqueJeu.demarrer(this);
 	}
 	
 	public void commenceMancheSuivante(int indiceWinner) {
