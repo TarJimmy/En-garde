@@ -126,6 +126,12 @@ public abstract class Controler implements CollecteurEvenements {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean supprimerPartie(int id) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 	
 }

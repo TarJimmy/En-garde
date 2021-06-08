@@ -47,9 +47,7 @@ public class InterfaceGraphiqueRegles implements Runnable {
     	if (!exists) {
     		exists = true;
     		SwingUtilities.invokeLater(new InterfaceGraphiqueRegles());
-    	} else {
-    		System.out.println("La fenetre existe déjà");
-    	}
+    	} 
     }
    
     private InterfaceGraphiqueRegles() {
@@ -175,9 +173,5 @@ public class InterfaceGraphiqueRegles implements Runnable {
                 g.dispose();
             }
         }
-    }
-	public static void main(String[] args) {
-    	System.out.println("coucou");
-        InterfaceGraphiqueRegles.demarrer();
     }
 }

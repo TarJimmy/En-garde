@@ -100,8 +100,6 @@ public class Escrimeur {
 				}
 				indicesCartesSupprimerRecemment.add(i);
 				cartes[cartes.length - 1] = null;
-				System.out.println("indice carte supprimer recemment : " + Arrays.toString(indicesCartesSupprimerRecemment.toArray()));
-				System.out.println("Main sauvegarder : " + Arrays.toString(copyMain));
 				return i;
 			}
 		}
@@ -232,7 +230,6 @@ public class Escrimeur {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("escr : " + cartes.toString());
 	}
 
 	public void setType(TypeEscrimeur sauvType) {

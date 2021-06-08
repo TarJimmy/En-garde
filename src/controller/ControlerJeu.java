@@ -1,31 +1,20 @@
 package controller;
 
-import java.io.IOException;
-
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Queue;
-
+import Database.Classement_DAO;
 import Database.SauvegarderPartie_DAO;
 import model.Carte;
 import model.Coup;
-import model.DeckDefausse;
-import model.DeckPioche;
 import model.Escrimeur;
-import model.Historique;
 import model.IA;
-import model.IA_Facile;
 import model.IA_Moyenne;
-import model.IncorrectCarteException;
 import model.Jeu;
 import model.Jeu.Action;
 import model.Plateau;
-import model.TypeEscrimeur;
 import view.Animation;
 import view.InterfaceGraphiqueActionAnnexe;
+import view.InterfaceGraphiqueChargerPartie;
 import view.InterfaceGraphiqueFin;
 import view.InterfaceGraphiqueJeu;
 import view.InterfaceGraphiqueMenu;
@@ -34,22 +23,30 @@ public class ControlerJeu extends Controler {
 	protected Jeu jeu;
 	protected LinkedList<Animation> animations;
 	protected boolean animationsActives;
-	protected final SauvegarderPartie_DAO partieSauvegardee = new SauvegarderPartie_DAO();;
+	protected final SauvegarderPartie_DAO partieSauvegardee = new SauvegarderPartie_DAO();
+	protected final Classement_DAO classDAO = new Classement_DAO();
+
 	protected boolean lancerNouvellePartie;
 	protected IA IA_conseil;
 	
 	public ControlerJeu() {}
 	
 	public ControlerJeu(Jeu jeu) {
-		this.lancerNouvellePartie = true;
-		this.jeu = jeu;
-		this.animations = new LinkedList<>();
-		animationsActives = false;
-		initIA();
-		InterfaceGraphiqueJeu.demarrer(this, jeu);
+		initControler(jeu, true, true);
 	}
 	
 	public ControlerJeu(Jeu jeu, boolean lancerNouvellePartie, boolean showGraphique) {
+		initControler(jeu, lancerNouvellePartie, showGraphique);
+	}
+	
+
+
+	public ControlerJeu(Jeu jeu, boolean lancerNouvellePartie) {
+		initControler(jeu, lancerNouvellePartie, true);
+	}
+	
+	
+	private void initControler(Jeu jeu, boolean lancerNouvellePartie, boolean showGraphique) {
 		this.lancerNouvellePartie = lancerNouvellePartie;
 		this.jeu = jeu;
 		this.animations = new LinkedList<>();
@@ -61,18 +58,15 @@ public class ControlerJeu extends Controler {
 		} else {
 			System.out.println("Interface graphique non lancé");
 		}
+		InsertJoueursBD();
+	}
+	private void InsertJoueursBD() {
+		classDAO.insertJoueur(jeu.getEscrimeurGaucher().getNom());
+		classDAO.insertJoueur(jeu.getEscrimeurDroitier().getNom());
 	}
 	
 	private void initIA() {
 		IA_conseil = new IA_Moyenne(jeu);
-	}
-
-	public ControlerJeu(Jeu jeu, boolean lancerNouvellePartie) {
-		this.lancerNouvellePartie = lancerNouvellePartie;
-		this.jeu = jeu;
-		this.animations = new LinkedList<>();
-		animationsActives = false;
-		InterfaceGraphiqueJeu.demarrer(this, jeu);
 	}
 	
 	public void piocher(Escrimeur e) {
@@ -219,6 +213,7 @@ public class ControlerJeu extends Controler {
 					if(winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
 						commenceMancheSuivante(winner.getIndice());
 					}else {
+						classDAO.insertMatch(jeu.getEscrimeurGaucher().getNom(), jeu.getEscrimeurDroitier().getNom(), jeu.getEscrimeurGaucher().getMancheGagner(),  jeu.getEscrimeurDroitier().getMancheGagner(), (winner.getIsGaucher()) ? "Gaucher" : "Droitier");
 						closeAll();
 						InterfaceGraphiqueFin.demarrer(this, winner);
 					}
@@ -292,7 +287,7 @@ public class ControlerJeu extends Controler {
 				jeu.setIdJeu(idJeu);
 				return false;
 			case "chargePartie":
-				
+				InterfaceGraphiqueChargerPartie.demarrer(this);
 				return true;
 			case "annuleCoup":
 				jeu.getHistorique().annulerCoup();
@@ -304,7 +299,6 @@ public class ControlerJeu extends Controler {
 				InterfaceGraphiqueActionAnnexe.close(); 
 				return true;
 			case "PageInitialiser":
-				System.out.println("PageInitialiser");
 				if (lancerNouvellePartie) {
 					System.out.println("nouvelle Partie");
 					lancerNouvellePartie = true;
@@ -315,7 +309,7 @@ public class ControlerJeu extends Controler {
 				}
 				return true;
 			case "ChangeModeAnimation":
-				jeu.toggleAnimationAutoriser();
+				desactiverAnimation();
 				return true;
 			case "montrerCartes":
 				jeu.toggleShowAllCartes();
@@ -331,6 +325,11 @@ public class ControlerJeu extends Controler {
 		}
 	}
 	
+	private void desactiverAnimation() {
+		animations.clear();
+		jeu.toggleAnimationAutoriser();
+	}
+
 	public boolean finirAction() {
 		HashSet<Integer> cases = jeu.casesJouables();
 		if(cases.size() == 1 && cases.contains(-1)) {
@@ -389,10 +388,11 @@ public class ControlerJeu extends Controler {
 	@Override
 	public void SuiteChargerPartie(Jeu jeu) {
 		// TODO Auto-generated method stub
-		InterfaceGraphiqueJeu.close();
+		closeAll();
 		this.jeu = jeu;
 		this.animations.clear();
 		animationsActives = false;
+		lancerNouvellePartie = false;
 		InterfaceGraphiqueJeu.demarrer(this, jeu);
 	}
 	

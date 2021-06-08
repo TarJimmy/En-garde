@@ -52,7 +52,7 @@ public class Jeu extends Observable {
 	protected Escrimeur[] escrimeurs;
 	protected int winner;
 	protected Historique historique;
-	protected boolean dernierTour;
+	protected boolean dernierTour; 
 	protected int nbManchesPourVictoire;
 	
 	protected LinkedList<Action> listeActions;
@@ -212,7 +212,6 @@ public class Jeu extends Observable {
 			e.ajouterCarte(deckPioche.piocher());
 		}
 		listeIndiceEscrimeurPiocheCarte.add(e.getIndice());
-		System.out.println("On doit animer pour l'indice : " + e.getIndice());
 		listeIndicesPiocheRecemment[e.getIndice()].add(e.getIndicesCartesAjouterRecemment());
 		listeDistancesPiocheRecemment[e.getIndice()].add(e.getDistancesCartesAjouterRecemment());
 		modifieVueAnimation(Action.ANIMATION_PIOCHER);
@@ -602,6 +601,7 @@ public class Jeu extends Observable {
 	
 	public void toggleAnimationAutoriser() {
 		animationAutoriser = !animationAutoriser;
+		clearAnimation();
 	}
 	
 	public Boolean getAnimationAutoriser() {
@@ -614,22 +614,7 @@ public class Jeu extends Observable {
 	}
 	
 	public void resetManche() {
-		cartesShowEscrimeurs[Escrimeur.GAUCHER].clear();
-		cartesShowEscrimeurs[Escrimeur.DROITIER].clear();
-		listeIndiceEscrimeurDefausseCarte.clear();
-		listeIndiceEscrimeurPiocheCarte.clear();
-		this.listeDistancesDefausseRecemment[Escrimeur.GAUCHER].clear();
-		this.listeDistancesDefausseRecemment[Escrimeur.DROITIER].clear();
-		this.listeDistancesPiocheRecemment[Escrimeur.GAUCHER].clear();
-		this.listeEtatMainDefausse[Escrimeur.GAUCHER].clear();
-		this.listeEtatMainDefausse[Escrimeur.DROITIER].clear();
-		this.listeDistancesPiocheRecemment[Escrimeur.DROITIER].clear();
-		this.listeIndiceDefausseRecemment[Escrimeur.GAUCHER].clear();
-		this.listeIndiceDefausseRecemment[Escrimeur.DROITIER].clear();
-		this.listeDistancesPiocheRecemment[Escrimeur.GAUCHER].clear();
-		this.listeDistancesPiocheRecemment[Escrimeur.DROITIER].clear();
-		escrimeurs[Escrimeur.DROITIER].clear();
-		escrimeurs[Escrimeur.GAUCHER].clear();
+		clearAnimation();
 
 		historique.vider();
 		// Reset deck
@@ -657,6 +642,22 @@ public class Jeu extends Observable {
 		};
 	}
 
+	public void clearAnimation() {
+		listeIndiceEscrimeurDefausseCarte.clear();
+		listeIndiceEscrimeurPiocheCarte.clear();
+		this.listeDistancesDefausseRecemment[Escrimeur.GAUCHER].clear();
+		this.listeDistancesDefausseRecemment[Escrimeur.DROITIER].clear();
+		this.listeDistancesPiocheRecemment[Escrimeur.GAUCHER].clear();
+		this.listeEtatMainDefausse[Escrimeur.GAUCHER].clear();
+		this.listeEtatMainDefausse[Escrimeur.DROITIER].clear();
+		this.listeDistancesPiocheRecemment[Escrimeur.DROITIER].clear();
+		this.listeIndiceDefausseRecemment[Escrimeur.GAUCHER].clear();
+		this.listeIndiceDefausseRecemment[Escrimeur.DROITIER].clear();
+		this.listeDistancesPiocheRecemment[Escrimeur.GAUCHER].clear();
+		this.listeDistancesPiocheRecemment[Escrimeur.DROITIER].clear();
+		escrimeurs[Escrimeur.DROITIER].clear();
+		escrimeurs[Escrimeur.GAUCHER].clear();
+	}
 	public Jeu copySimple() {
 		Jeu jeu = new Jeu();
 		jeu.escrimeurs = new Escrimeur[2];

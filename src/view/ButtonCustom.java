@@ -57,7 +57,6 @@ public class ButtonCustom extends JButton {
 	}
 
 	private void createImageIcon(String imageRacine, Dimension dimension) {
-		System.out.println(dimension.width + " " + dimension.height);
 		try {
 			imgIconExited = new ImageIcon(ImageIO.read(Configuration.charge(imageRacine + ".png", Configuration.MENU)).getScaledInstance(dimension.width, dimension.height, Image.SCALE_SMOOTH));
 			imgIconEnterred = new ImageIcon(ImageIO.read(Configuration.charge(imageRacine + "_actif.png", Configuration.MENU)).getScaledInstance(dimension.width, dimension.height, Image.SCALE_SMOOTH));
