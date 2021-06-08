@@ -8,10 +8,10 @@ import java.sql.Statement;
 
 public class Classement_DAO {
 	
-	private final String url = "jdbc:sqlite:src/Database/En_garde.db";
+	private final static String url = "jdbc:sqlite:src/Database/En_garde.db";
 	
 
-	private Connection connect() {  
+	private static Connection connect() {  
         // SQLite connection string  
         Connection conn = null;  
         try {  
@@ -22,30 +22,30 @@ public class Classement_DAO {
         return conn;  
     }
 	
-	public ResultSet getPodium() {
+	public static ResultSet getPodium() {
 		String sql = "WITH nbWin AS (\n"
-	            +"SELECT nom, count(*) as win\n"
-	            +"FROM Match,Joueur\n"
-	            +"Where (nom = nomJoueurG and Gagnant = 'Gaucher') or (nom = nomJoueurD and Gagnant = 'Droitier')\n"
-	            +"GROUP BY nom\n"
-	            +"), nbNull AS (\n"
-	            +"SELECT nom, count(*) as nulle\n"
-	            +"FROM Match,Joueur\n"
-	            +"Where (nom = nomJoueurG and Gagnant = 'nulle') or (nom = nomJoueurD and Gagnant = 'nulle')\n"
-	            +"GROUP BY nom\n"
-	            +"), nbDefaite AS (\n"
-	            +"SELECT nom, count(*) as defaite\n"
-	            +"FROM Match,Joueur\n"
-	            +"Where (nom = nomJoueurG and Gagnant = 'Droitier') or (nom = nomJoueurD and Gagnant = 'Gaucher')\n"
-	            +"GROUP BY nom)\n"
+                +"SELECT nom, count(*) as win\n"
+                +"FROM Match,Joueur\n"
+                +"Where (nom = nomJoueurG and Gagnant = 'Gaucher') or (nom = nomJoueurD and Gagnant = 'Droitier')\n"
+                +"GROUP BY nom\n"
+                +"), nbNull AS (\n"
+                +"SELECT nom, count(*) as nulle\n"
+                +"FROM Match,Joueur\n"
+                +"Where (nom = nomJoueurG and Gagnant = 'nulle') or (nom = nomJoueurD and Gagnant = 'nulle')\n"
+                +"GROUP BY nom\n"
+                +"), nbDefaite AS (\n"
+                +"SELECT nom, count(*) as defaite\n"
+                +"FROM Match,Joueur\n"
+                +"Where (nom = nomJoueurG and Gagnant = 'Droitier') or (nom = nomJoueurD and Gagnant = 'Gaucher')\n"
+                +"GROUP BY nom)\n"
 
-	            +"SELECT Joueur.nom, win, defaite, nulle\n"
-	            +"FROM Joueur INNER JOIN nbWin USING (nom) INNER JOIN nbNull USING (nom) INNER JOIN nbDefaite USING (nom)\n"
-	            +"GROUP BY Joueur.nom"
-	            +"ORDER BY nbWin LIMIT 10;";
+                +"SELECT Joueur.nom, win, defaite, nulle\n"
+                +"FROM Joueur INNER JOIN nbWin USING (nom) INNER JOIN nbNull USING (nom) INNER JOIN nbDefaite USING (nom)\n"
+                +"GROUP BY Joueur.nom\n"
+                +"ORDER BY win LIMIT 10;";
         
         try {
-        	Connection conn = this.connect();
+        	Connection conn = connect();
             Statement stmt  = conn.createStatement();
             ResultSet rs    = stmt.executeQuery(sql);
             // return results
@@ -80,7 +80,7 @@ public class Classement_DAO {
 	            +"GROUP BY Joueur.nom;";
         
         try {
-        	Connection conn = this.connect();
+        	Connection conn = connect();
             Statement stmt  = conn.createStatement();
             ResultSet rs    = stmt.executeQuery(sql);
             // return results

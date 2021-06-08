@@ -17,6 +17,7 @@ import model.Plateau;
 import model.SauvegardeParametre;
 import model.TypeEscrimeur;
 import view.InterfaceGraphiqueChargerPartie;
+import view.InterfaceGraphiqueClassement;
 import view.InterfaceGraphiqueFin;
 import view.InterfaceGraphiqueJeu;
 import view.InterfaceGraphiqueMenu;
@@ -40,6 +41,7 @@ public class ControlerAutre extends Controler {
 		switch(c) {
 			case "annuler":
 				InterfaceGraphiqueChargerPartie.close();
+				InterfaceGraphiqueClassement.close();
 			case "menu":
 				InterfaceGraphiqueParametres.close();
 				InterfaceGraphiqueFin.close();
@@ -131,6 +133,10 @@ public class ControlerAutre extends Controler {
 				SauvegardeParametre.chargerParametres();
 				settings = SauvegardeParametre.getSettings();
 				InterfaceGraphiqueParametres.majParametres(settings);
+				break;
+			case "classement":
+				InterfaceGraphiqueMenu.close();
+				InterfaceGraphiqueClassement.demarrer(new ControlerAutre());
 				break;
 			case "tuto":
 		        InterfaceGraphiqueTutoriel.demarrer();

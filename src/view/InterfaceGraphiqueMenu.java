@@ -86,6 +86,8 @@ public class InterfaceGraphiqueMenu implements Runnable {
 			play.addActionListener(new AdaptateurCommande(collecteurMenu, "jouerMenu"));
 			ImageIcon imgBtnBanal = new ImageIcon(ImageIO.read(Configuration.charge("cadre3.png", Configuration.MENU)).getScaledInstance(400, 50, Image.SCALE_SMOOTH));
 			JButton charge = new ButtonCustom("Charger Partie", null, imgBtnBanal, new Dimension(400, 50));
+			JButton classement = new ButtonCustom("Classement", null, imgBtnBanal, new Dimension(400, 50));
+			classement.addActionListener(new AdaptateurCommande(collecteurMenu, "classement"));
 			JButton demo = new ButtonCustom("Tutoriel", null, imgBtnBanal, new Dimension(400, 50));
 			demo.addActionListener(new AdaptateurCommande(collecteurMenu, "tuto"));
 			charge.addActionListener(new AdaptateurCommande(collecteurMenu, "chargePartieMenu"));
@@ -101,12 +103,14 @@ public class InterfaceGraphiqueMenu implements Runnable {
 			c = GridConstraints(0,1);
 			menu_fond.add(charge, c);
 			c = GridConstraints(0,2);
-			menu_fond.add(demo, c);
+			menu_fond.add(classement, c);
 			c = GridConstraints(0,3);
-			menu_fond.add(settings, c);
+			menu_fond.add(demo, c);
 			c = GridConstraints(0,4);
-			menu_fond.add(rules, c);
+			menu_fond.add(settings, c);
 			c = GridConstraints(0,5);
+			menu_fond.add(rules, c);
+			c = GridConstraints(0,6);
 			menu_fond.add(exit, c);
 			
 			fenetreMenu.add(menu_fond);

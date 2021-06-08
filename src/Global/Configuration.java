@@ -20,6 +20,7 @@ public class Configuration {
 	public final static int ESCRIMEURS = 7;
 	public final static int AUTRES = 8;
 	public final static int TUTORIEL = 9;
+	public final static int CLASSEMENT = 10;
 	
 	private Configuration() {
 		try {
@@ -71,6 +72,9 @@ public class Configuration {
 				break;
 			case TUTORIEL:
 				path += "Tutoriel";
+				break;
+			case CLASSEMENT:
+				path += "Classement";
 				break;
 			default:
 				throw new IllegalArgumentException("Unexpected value: " + type);
