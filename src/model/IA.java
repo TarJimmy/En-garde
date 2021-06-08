@@ -14,7 +14,7 @@ public abstract class IA {
 		this.jeu = jeu;
 	}
 	
-	public abstract int[] getChoixCoup(int indiceEscrimeur, int typeCoup, int valeurDefense);
+	public abstract int[] getChoixCoup();
 	
 	/**
 	 * 

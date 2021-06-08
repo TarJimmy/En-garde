@@ -13,7 +13,6 @@ import java.util.Stack;
 import javax.swing.Timer;
 
 import Patterns.Observable;
-import controller.ControlerIA.DeckPiocheIA;
 import controller.ControlerJeu;
 import model.Jeu.Action;
 
@@ -39,7 +38,7 @@ public class Jeu extends Observable {
 	private Boolean modeSimple; 
 	public Boolean peutPasserTour;
 	private Plateau plateau;
-	private DeckPioche deckPioche;
+	protected DeckPioche deckPioche;
 	private DeckDefausse deckDefausse;
 	private int indiceCurrentEscrimeur;
 	private int indicePremierJoueur;
