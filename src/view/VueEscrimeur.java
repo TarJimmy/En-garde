@@ -76,13 +76,12 @@ public class VueEscrimeur extends JPanel {
 	public void actualise(Boolean showFace, Boolean peutPasserTour) {
 		vueManche.setNbWins(e.getMancheGagner());
 		vueMain.actualise(showFace);
-		btnPasserTour.setVisible(showFace && peutPasserTour);
+		btnPasserTour.setVisible(showFace);
 	}
 	
-	public void actualise(Carte[] cartes, Boolean showFace, Boolean peutPasserTour) {
+	public void actualise(Carte[] cartes, Boolean showFace) {
 		vueManche.setNbWins(e.getMancheGagner());
 		vueMain.actualise(cartes, showFace);
-		btnPasserTour.setVisible(showFace && peutPasserTour);
 	}
 	
 	public void actualise() {
@@ -104,5 +103,9 @@ public class VueEscrimeur extends JPanel {
 	
 	public void setShowFace(boolean showFace) {
 		vueMain.actualise(showFace);
+	}
+
+	public void setBtnPasserTourVisibility(boolean showPasserTour) {
+		btnPasserTour.setVisible(showPasserTour);
 	}
 }

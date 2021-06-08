@@ -17,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
@@ -79,7 +80,6 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	
 
 	public static void demarrer(ControlerJeu controlerJeu) {
-		System.out.println("Lancement jeu : " + jeuPresent);
 		if (jeuPresent) {
 			frame.setVisible(false);
 			frame.dispose();
@@ -114,7 +114,11 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		switch (action) {
 			case ACTUALISER_JEU:
 			case ACTUALISER_PLATEAU: // Actualise les cases accessibles du plateau
-				vuePlateau.actualise(jeu.casesJouables(), jeu.getCurrentEscrimeur());
+				HashSet<Integer> casesJouables = jeu.casesJouables();
+				int indiceCurrent = jeu.getIndiceCurrentEscrimeur();
+				vueEscrimeurs[indiceCurrent].setBtnPasserTourVisibility(casesJouables.contains(-1));
+				vueEscrimeurs[(indiceCurrent + 1) % 2].setBtnPasserTourVisibility(false);
+				vuePlateau.actualise(casesJouables, jeu.getCurrentEscrimeur());
 				if (action == Action.ACTUALISER_PLATEAU) { // Stop si ce n'est pas  un changement de tour
 					controle.commande("ActionTerminer");
 					break;
@@ -127,13 +131,13 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				}
 			case ACTUALISER_ESCRIMEUR:
 			case ACTUALISER_ESCRIMEUR_DROITIER :
-				vueEscrimeurs[Escrimeur.DROITIER].actualise(jeu.popShowCarte(Escrimeur.DROITIER), jeu.getIsTourGaucher() == false || jeu.getShowAllCartes(), jeu.getPeutPasserTour());
+				vueEscrimeurs[Escrimeur.DROITIER].actualise(jeu.popShowCarte(Escrimeur.DROITIER), jeu.getIsTourGaucher() == false || jeu.getShowAllCartes());
 				if (action == Action.ACTUALISER_ESCRIMEUR_DROITIER) { // Stop si ce n'est pas  un changement de tour ou l'actualisation des 2 mains
 					controle.commande("ActionTerminer");
 					break;
 				}
 			case ACTUALISER_ESCRIMEUR_GAUCHER:
-				vueEscrimeurs[Escrimeur.GAUCHER].actualise(jeu.popShowCarte(Escrimeur.GAUCHER), jeu.getIsTourGaucher() || jeu.getShowAllCartes(), jeu.getPeutPasserTour());
+				vueEscrimeurs[Escrimeur.GAUCHER].actualise(jeu.popShowCarte(Escrimeur.GAUCHER), jeu.getIsTourGaucher() || jeu.getShowAllCartes());
 				controle.commande("ActionTerminer");
 				break;
 			case ANIMATION_DEPLACER_ESCRIMEUR:

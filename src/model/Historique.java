@@ -54,6 +54,8 @@ public class Historique {
 		}
 		if(cases.size() == 1 && cases.contains(-1)) {
 			jeu.changerTour();
+		}else {
+			jeu.modifieVue(Action.ACTUALISER_PLATEAU);
 		}
 		return true;
 	}

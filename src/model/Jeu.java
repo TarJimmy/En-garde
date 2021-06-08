@@ -39,14 +39,13 @@ public class Jeu extends Observable {
 	}
 	
 	protected Boolean modeSimple; 
-	public Boolean peutPasserTour;
 	
 	protected Plateau plateau;
 	protected DeckPioche deckPioche;
 	protected DeckDefausse deckDefausse;
 	protected int indiceCurrentEscrimeur;
 
-	protected int indicePremierJoueur;
+	protected int indicePremierJoueurManche;
 	protected Boolean animationAutoriser;
 	
 	protected Escrimeur[] escrimeurs;
@@ -66,6 +65,7 @@ public class Jeu extends Observable {
 	protected LinkedList<LinkedList<Integer>> listeIndicesPiocheRecemment[];
 	protected LinkedList<LinkedList<Integer>> listeDistancesPiocheRecemment[];
 	protected Boolean actionEnCours;
+	protected Boolean showGraphique;
 	
 	protected int[] positionsDeparts;
 	
@@ -77,22 +77,22 @@ public class Jeu extends Observable {
 	protected int lastWinner;
 	private boolean showAllCartes;
 	private int idJeu;
-	
+	protected int indicePremierJoueurPartie;
 	protected HashMap<TypeEscrimeur, IA> listIA;
 
 	protected Jeu() {}
 	
-	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, int[] positionsDeparts, boolean animationAutoriser) {
+	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, int[] positionsDeparts, boolean animationAutoriser, int indicePremierJoueurPartie) {
 		super();
-		this.indiceCurrentEscrimeur = 0;
+		this.indiceCurrentEscrimeur = indiceCurrentEscrimeur;
 		setHistorique(new Historique(this));
 		init(modeSimple, plateau, deckPioche, deckDefausse, nbManchesPourVictoire, gaucher, droitier, positionsDeparts, animationAutoriser);
-		indicePremierJoueur = indiceCurrentEscrimeur;
-		peutPasserTour = false;
+		indicePremierJoueurManche = indiceCurrentEscrimeur;
 		idJeu = -1;
+		this.indicePremierJoueurPartie = indicePremierJoueurPartie;
 	}
 
-	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, int[] positionsDeparts, int indicePremierJoueur, Historique historique, boolean animationAutoriser,int idJeu) {
+	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, int[] positionsDeparts, int indicePremierJoueurManche, Historique historique, boolean animationAutoriser,int idJeu, int indicePremierJoueurPartie) {
 		super();
 		this.indiceCurrentEscrimeur = indiceCurrentEscrimeur;
 		if(historique != null) {
@@ -101,14 +101,15 @@ public class Jeu extends Observable {
 			setHistorique(new Historique(this));
 		}
 		init(modeSimple, plateau, deckPioche, deckDefausse, nbManchesPourVictoire, gaucher, droitier, positionsDeparts, animationAutoriser);
-		this.indicePremierJoueur = indicePremierJoueur;
-		peutPasserTour = false;
+		this.indicePremierJoueurManche = indicePremierJoueurManche;
 		this.idJeu = idJeu;
+		this.indicePremierJoueurPartie = indicePremierJoueurPartie;
 	}
 	
 	@SuppressWarnings("unchecked")
 	protected void init(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, Escrimeur gaucher, Escrimeur droitier, int[] positionsDeparts, boolean animationAutoriser) {
 		this.modeSimple = modeSimple;
+		this.showGraphique = true;
 		this.nbManchesPourVictoire = nbManchesPourVictoire;
 		this.plateau = plateau;
 		this.deckPioche = deckPioche;
@@ -190,8 +191,8 @@ public class Jeu extends Observable {
 		return indiceCurrentEscrimeur;
 	}
 	
-	public int getIndicePremierJoueur() {
-		return indicePremierJoueur;
+	public int getindicePremierJoueurManche() {
+		return indicePremierJoueurManche;
 	}
 
 	public Boolean getIsTourGaucher() {
@@ -223,7 +224,6 @@ public class Jeu extends Observable {
 		piocher(getCurrentEscrimeur());
 		modifieVueAnimation(Action.ANIMATION_CHANGER_TOUR);
 		indiceCurrentEscrimeur = (indiceCurrentEscrimeur + 1) % 2;
-		peutPasserTour = false;
 		if (getCurrentEscrimeur().getType() != TypeEscrimeur.HUMAIN) {
 			System.out.println("IA doit jouer");
 			modifieVue(Action.ACTUALISER_PLATEAU_SANS_CASE);
@@ -309,9 +309,6 @@ public class Jeu extends Observable {
 						historique.ajouterCoup(c);
 						if (!rejoueCoupAnnule) {
 							historique.viderCoupsAnnules();
-						}
-						if(c.getAction() != Coup.ESQUIVER) {
-							peutPasserTour = true;
 						}
 						return true;
 					} else {
@@ -475,8 +472,8 @@ public class Jeu extends Observable {
 	
 	public void nouvelleManche() {
 		resetManche();
-		indicePremierJoueur = (indicePremierJoueur + 1) % 2;
-		indiceCurrentEscrimeur = indicePremierJoueur;
+		indicePremierJoueurManche = (indicePremierJoueurManche + 1) % 2;
+		indiceCurrentEscrimeur = indicePremierJoueurManche;
 		modifieVue(Action.ACTUALISER_JEU);
 		piocher(escrimeurs[indiceCurrentEscrimeur]);
 		piocher(escrimeurs[(indiceCurrentEscrimeur + 1) % 2]);
@@ -488,7 +485,8 @@ public class Jeu extends Observable {
 	}
 	
 	public void modifieVue(Action action) {
-		switch (action) {
+		if (showGraphique) {
+			switch (action) {
 			case ACTUALISER_JEU:
 			case ACTUALISER_ESCRIMEUR:
 			case ACTUALISER_ESCRIMEUR_GAUCHER:
@@ -509,10 +507,12 @@ public class Jeu extends Observable {
 		}
 		listeActions.add(action);
 		demarreActionSuivante();
+		}
+		
 	}
 	
 	public void modifieVueAnimation(Action action) {
-		if (animationAutoriser) {
+		if (animationAutoriser && showGraphique) {
 			Iterator<Action> it = listeActions.iterator();
 			int index = 0;
 			while (it.hasNext()) {
@@ -553,10 +553,6 @@ public class Jeu extends Observable {
 		}
 	}
 	
-	public Boolean getPeutPasserTour() {
-		return peutPasserTour;
-	}
-	
 	public Escrimeur[] getEscrimeurs() {
 		return escrimeurs;
 	}
@@ -577,9 +573,9 @@ public class Jeu extends Observable {
 		setCaseAide(-1);
 		escrimeurs[Escrimeur.GAUCHER].resetMancheGagner();
 		escrimeurs[Escrimeur.DROITIER].resetMancheGagner();
-		//Droitier car il seront inverser dans nouvelle manche
-		indicePremierJoueur = Escrimeur.DROITIER;
-		indiceCurrentEscrimeur = Escrimeur.DROITIER;
+		// Droitier car il seront inverser dans nouvelle manche
+		indicePremierJoueurManche = (indicePremierJoueurPartie + 1) % 2;
+		indiceCurrentEscrimeur = indicePremierJoueurManche;
 		nouvelleManche();
 	}
 
@@ -703,6 +699,10 @@ public class Jeu extends Observable {
 	public boolean aideEstMontrer() {
 		return plateau.getCaseAide() < 1;
 	}
+	
+	public void setShowGraphique(Boolean b) {
+		this.showGraphique = b;
+	}
 
 	public Integer popListeIndiceEscrimeurDefausseCarte() {
 		return listeIndiceEscrimeurDefausseCarte.pop();
@@ -731,4 +731,8 @@ public class Jeu extends Observable {
 	public Carte[] popEtatMainDefausse(int indice) {
 		return listeEtatMainDefausse[indice].pop();
 	}
+
+	public int getIndicePremierJoueurPartie() {
+		return indicePremierJoueurPartie;
+	}	
 }

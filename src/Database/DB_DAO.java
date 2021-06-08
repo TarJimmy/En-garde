@@ -98,6 +98,8 @@ public class DB_DAO {
 				+ " AnimationAutoriser boolean NOT NULL\n,"
 				+ " indicePremierJoueur int NOT NULL,\n"
 				+ " indiceCurrentJoueur int NOT NULL,\n"
+				+ " indicePremierJouerPartie int NOT NULL,\n"
+				
 				+ " dateMatch text NOT NULL\n"
                 
                 + ");";

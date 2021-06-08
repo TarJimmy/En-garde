@@ -97,9 +97,11 @@ public class ControlerAutre extends Controler {
 					} else {
 						animationAutoriser = false;
 					}
+					
+					int indicePremierJoueurPartie = it.next().equals("Droit") ? 1 : 0;
 					int[] positonDepart = {posJ1, posJ2};
 					Plateau plateau = new Plateau(posJ1, posJ2, nbDalles);
-					Jeu jeu = new Jeu(modeSimple, plateau, deckPioche, deckDefausse, nbManches, Escrimeur.GAUCHER, eGaucher, eDroitier, positonDepart, animationAutoriser);
+					Jeu jeu = new Jeu(modeSimple, plateau, deckPioche, deckDefausse, nbManches, Escrimeur.GAUCHER, eGaucher, eDroitier, positonDepart, animationAutoriser, indicePremierJoueurPartie);
 					
 					new ControlerJeu(jeu, true, true);
 				} catch (IncorrectPlateauException e) {

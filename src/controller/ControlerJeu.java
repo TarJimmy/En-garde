@@ -49,8 +49,8 @@ public class ControlerJeu extends Controler {
 	private void initControler(Jeu jeu, boolean lancerNouvellePartie, boolean showGraphique) {
 		this.lancerNouvellePartie = lancerNouvellePartie;
 		this.jeu = jeu;
+		this.jeu.setShowGraphique(showGraphique);
 		this.animations = new LinkedList<>();
-		this.lancerNouvellePartie = lancerNouvellePartie;
 		animationsActives = false;
 		initIA();
 		if (showGraphique) {
@@ -60,12 +60,13 @@ public class ControlerJeu extends Controler {
 		}
 		InsertJoueursBD();
 	}
+	
 	private void InsertJoueursBD() {
 		classDAO.insertJoueur(jeu.getEscrimeurGaucher().getNom());
 		classDAO.insertJoueur(jeu.getEscrimeurDroitier().getNom());
 	}
 	
-	private void initIA() {
+	protected void initIA() {
 		IA_conseil = new IA_Moyenne(jeu);
 	}
 	
@@ -218,14 +219,15 @@ public class ControlerJeu extends Controler {
 						InterfaceGraphiqueFin.demarrer(this, winner);
 					}
 				} else {
-					commenceMancheSuivante(winner.getIndice());
+					commenceMancheSuivante(Jeu.EGALITE);
 				}
 			}
 		} else {
 			winner.addMancheGagnee();
-			if(winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
+			if (winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
 				commenceMancheSuivante(winner.getIndice());
-			}else {
+			} else {
+				classDAO.insertMatch(jeu.getEscrimeurGaucher().getNom(), jeu.getEscrimeurDroitier().getNom(), jeu.getEscrimeurGaucher().getMancheGagner(),  jeu.getEscrimeurDroitier().getMancheGagner(), (winner.getIsGaucher()) ? "Gaucher" : "Droitier");
 				closeAll();
 				InterfaceGraphiqueFin.demarrer(this, winner);
 			}
@@ -267,7 +269,7 @@ public class ControlerJeu extends Controler {
 				jeu.demarreActionSuivante();
 				return true;
 			case "PasserTour":
-				jeu.changerTour();
+				clickCase(-1, 0);
 				return true;
 			case "Menu":
 				closeAll();
@@ -300,11 +302,9 @@ public class ControlerJeu extends Controler {
 				return true;
 			case "PageInitialiser":
 				if (lancerNouvellePartie) {
-					System.out.println("nouvelle Partie");
 					lancerNouvellePartie = true;
 					nouvellePartie();
 				} else {
-					System.out.println("Actualiser jeu");
 					jeu.modifieVue(Action.ACTUALISER_JEU);
 				}
 				return true;
@@ -342,7 +342,7 @@ public class ControlerJeu extends Controler {
 		} else {
 			HashSet<Integer> cj = jeu.casesJouables();
 			if ((!jeu.getDeckPioche().deckVide() && cj.isEmpty()) || (cj.isEmpty() && (jeu.getHistorique().voirDernierCoup().getAction() == Coup.ATTAQUEDIRECTE || jeu.getHistorique().voirDernierCoup().getAction() == Coup.ATTAQUEINDIRECTE))) {
-				System.out.println("aucune case jouable");
+				System.out.println("defense impossible ou aucun coup jouable");
 				finDeManche(jeu.getNotCurrentEscrimeur());
 				return true;
 			} else if (jeu.getDeckPioche().deckVide()) {
