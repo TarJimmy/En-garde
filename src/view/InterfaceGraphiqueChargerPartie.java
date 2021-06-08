@@ -32,8 +32,10 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 	private static CollecteurEvenements controle;
 	private static List<JButton> parties = new ArrayList<JButton>();
 	ResultSet rs;
+	SauvegarderPartie_DAO sp_dao;
 	private InterfaceGraphiqueChargerPartie(CollecteurEvenements controle) {
 		InterfaceGraphiqueChargerPartie.controle = controle;
+		sp_dao = new SauvegarderPartie_DAO();
 	}
 	
 	/**
@@ -64,6 +66,7 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 	@Override
 	public void run() {
 		fenetreChargerPartie = new JFrame("EN GARDE ! - CHARGER UNE PARTIE");
+		fenetreChargerPartie.setIconImage(Configuration.imgIcone);
 		JLabel contentPane = null;
 		String name = "Vide";
 		try {
@@ -92,7 +95,7 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 		annuler.setBounds(35, 500, 150, 40);
 		annuler.setForeground(Color.WHITE);
 		try {
-			rs = SauvegarderPartie_DAO.getAll();
+			rs = sp_dao.getAll();
 			for(int i=0; i<6; i++) {
 				JButton button = parties.get(i);
 				rs.next();

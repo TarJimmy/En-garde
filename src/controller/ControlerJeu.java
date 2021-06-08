@@ -4,6 +4,7 @@ import java.io.IOException;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -15,6 +16,9 @@ import model.DeckDefausse;
 import model.DeckPioche;
 import model.Escrimeur;
 import model.Historique;
+import model.IA;
+import model.IA_Facile;
+import model.IA_Moyenne;
 import model.IncorrectCarteException;
 import model.Jeu;
 import model.Jeu.Action;
@@ -30,17 +34,18 @@ public class ControlerJeu extends Controler {
 	protected Jeu jeu;
 	protected LinkedList<Animation> animations;
 	protected boolean animationsActives;
-	protected SauvegarderPartie_DAO partieSauvegardee;
+	protected final SauvegarderPartie_DAO partieSauvegardee = new SauvegarderPartie_DAO();;
 	protected boolean lancerNouvellePartie;
-	protected boolean showGraphique;
+	protected IA IA_conseil;
 	
 	public ControlerJeu() {}
+	
 	public ControlerJeu(Jeu jeu) {
+		this.lancerNouvellePartie = true;
 		this.jeu = jeu;
 		this.animations = new LinkedList<>();
 		animationsActives = false;
-		partieSauvegardee = new SauvegarderPartie_DAO();
-		lancerNouvellePartie = false;
+		initIA();
 		InterfaceGraphiqueJeu.demarrer(this, jeu);
 	}
 	
@@ -48,11 +53,19 @@ public class ControlerJeu extends Controler {
 		this.lancerNouvellePartie = lancerNouvellePartie;
 		this.jeu = jeu;
 		this.animations = new LinkedList<>();
-		animationsActives = false;
-		partieSauvegardee = new SauvegarderPartie_DAO();
-		this.showGraphique = showGraphique;
 		this.lancerNouvellePartie = lancerNouvellePartie;
-		this.showGraphique = showGraphique;
+		animationsActives = false;
+		InterfaceGraphiqueJeu.demarrer(this, jeu);
+		initIA();
+		if (showGraphique) {
+			InterfaceGraphiqueJeu.demarrer(this, jeu);
+		} else {
+			System.out.println("Interface graphique non lancé");
+		}
+	}
+	
+	private void initIA() {
+		IA_conseil = new IA_Moyenne(jeu);
 	}
 
 	public ControlerJeu(Jeu jeu, boolean lancerNouvellePartie) {
@@ -60,7 +73,7 @@ public class ControlerJeu extends Controler {
 		this.jeu = jeu;
 		this.animations = new LinkedList<>();
 		animationsActives = false;
-		partieSauvegardee = new SauvegarderPartie_DAO();
+		InterfaceGraphiqueJeu.demarrer(this, jeu);
 		InterfaceGraphiqueJeu.demarrer(this, jeu);
 	}
 	
@@ -70,7 +83,7 @@ public class ControlerJeu extends Controler {
 	
 	@Override
 	public boolean clickCase(int x, int nbCartesAUtiliser) {
-		jeu.afficherEtatJeu();
+		//jeu.afficherEtatJeu();
 		int nbCartesAttaque = nbCartesAUtiliser;
 		Coup dernierCoup = jeu.getHistorique().voirDernierCoup();
 		Escrimeur currentEscrimeur = jeu.getCurrentEscrimeur();
@@ -81,9 +94,15 @@ public class ControlerJeu extends Controler {
 		Coup coupAJouer;
 		Carte[] cartesAJouer;
 
-		if (positionCurrentEscrimeur == x) {
+		if (x == -1) {
+			if(dernierCoup.getEscrimeur() == jeu.getCurrentEscrimeur()) {
+				jeu.changerTour();
+				return finirAction();
+			}
+			coupAJouer = null;
+		}else if(positionCurrentEscrimeur == x) {
 			//il faut defendre
-			int puissanceAttaque = jeu.getHistorique().voirDernierCoup().getCartes().length;
+			int puissanceAttaque = dernierCoup.getCartes().length;
 			cartesAJouer = new Carte[puissanceAttaque];
 			int i = 0;
 			int nbCartesCurrentEscrimeur = currentEscrimeur.getNbCartes();
@@ -282,19 +301,27 @@ public class ControlerJeu extends Controler {
 			case "refaireCoup":
 				jeu.getHistorique().rejouerCoupAnnule();
 				return true;
-			case "close":
+			case "closeActionAnnexe":
 				InterfaceGraphiqueActionAnnexe.close(); 
 				return true;
 			case "PageInitialiser":
 				if (lancerNouvellePartie) {
 					lancerNouvellePartie = false;
-					jeu.modifieVue(Action.ACTUALISER_JEU);
-				} else {
 					nouvellePartie();
+				} else {
+					jeu.modifieVue(Action.ACTUALISER_JEU);
 				}
 				return true;
 			case "ChangeModeAnimation":
 				jeu.toggleAnimationAutoriser();
+				return true;
+			case "montrerCartes":
+				jeu.toggleShowAllCartes();
+				return true;
+			case "montrerAide":
+				if (jeu.aideEstMontrer()) {
+					jeu.setCaseAide(IA_conseil.getChoixCoup()[0]);
+				}
 				return true;
 			default:
 				System.out.println("Commande pas traitee : " + c);

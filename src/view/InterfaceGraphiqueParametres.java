@@ -269,7 +269,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		fenetreParametres.setContentPane(contentPane);
-
+		fenetreParametres.setIconImage(Configuration.imgIcone);
 		try {
 			fenetreParametres.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
 		} catch (HeadlessException | IndexOutOfBoundsException | IOException e1) {

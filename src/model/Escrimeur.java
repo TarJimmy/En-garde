@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,8 +17,10 @@ public class Escrimeur {
 	public static final int GAUCHER = 0;
 	public static final int DROITIER = 1;
 	private int mancheGagner;
-	private ArrayList<Integer> indicesCartesModifierRecemment;
-	private ArrayList<Integer> distancesCartesModifierRecemment;
+	private LinkedList<Integer> indicesCartesModifierRecemment;
+	private LinkedList<Integer> distancesCartesModifierRecemment;
+	public boolean isIA;
+	public IA m_IA;
 	/**
 	 * Constructeur lors d'unne nouvelle partie
 	 * @param nom
@@ -31,20 +34,8 @@ public class Escrimeur {
 		this.indice = indice;
 		this.cartes = new Carte[nbCarte];
 		this.mancheGagner = 0;
-		this.indicesCartesModifierRecemment = new ArrayList<>();
-		this.distancesCartesModifierRecemment = new ArrayList<>();
-	}
-	
-	/**
-	 * Constructeur lors du chargement d'une partie
-	 * @param nom
-	 * @param type
-	 * @param indice
-	 * @param distances
-	 * @param mancheGagner
-	 */
-	public Escrimeur(String nom, TypeEscrimeur type, int indice, int[] distances, int mancheGagner) {
-		setNom(nom);
+		this.indicesCartesModifierRecemment = new LinkedList<>();
+		this.distancesCartesModifierRecemment = new LinkedList<>();
 	}
 	
 	private Escrimeur() {}
@@ -100,6 +91,7 @@ public class Escrimeur {
 				}
 				indicesCartesModifierRecemment.add(i);
 				cartes[cartes.length - 1] = null;
+				System.out.println("indice carte changer recemment : " + Arrays.toString(indicesCartesModifierRecemment.toArray()));
 				return i;
 			}
 		}
@@ -165,11 +157,11 @@ public class Escrimeur {
 		distancesCartesModifierRecemment.clear();
 	}
 	
-	public ArrayList<Integer> getIndicesCartesModifierRecemment() {
+	public LinkedList<Integer> getIndicesCartesModifierRecemment() {
 		return indicesCartesModifierRecemment;
 	}
 	
-	public ArrayList<Integer> getDistancesCartesModifierRecemment() {
+	public LinkedList<Integer> getDistancesCartesModifierRecemment() {
 		return distancesCartesModifierRecemment;
 	}
 	
@@ -216,5 +208,51 @@ public class Escrimeur {
 
 	public void setType(TypeEscrimeur sauvType) {
 		this.type = sauvType;
+	}	
+	
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		int totalMain = 0;
+		int s = this.cartes.length;
+		for(int i = 0; i < s; i++) {
+			totalMain += (this.cartes[i] != null ? this.cartes[i].getDistance() : 0);
+		}
+		hash = 89 * hash + totalMain;
+		return hash;
+
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || this.getClass() != obj.getClass()){
+            return false;
+		}
+		Escrimeur other = (Escrimeur) obj;
+		int s = this.cartes.length;
+		if(other.cartes.length != s) {
+			return false;
+		}
+		int[] element1 = new int[5];
+		int[] element2 = new int [5];
+		
+		for(int i = 0; i < s; i++) {
+			if(this.cartes[i] != null) {
+				element1[this.cartes[i].getDistance() - 1] ++;
+			}
+			if(other.cartes[i] != null) {
+				element2[other.cartes[i].getDistance() - 1] ++;
+			}
+		}
+		boolean res = true;
+		for(int i = 0; i < 5; i++) {
+			if(element1[i] != element2[i]) {
+				res = false;
+			}
+		}
+		return res;
 	}
 }
