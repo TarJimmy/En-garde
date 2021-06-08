@@ -59,32 +59,33 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 	@Override
 	public void run() {
 		fenetreFin = new JFrame("EN GARDE ! - Fin de la partie");
-		JLabel contentPane = new JLabel(new ImageIcon("res/Images/Menu/Fin.png"));
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		fenetreFin.setContentPane(contentPane);
+		JLabel contentPane;
 		try {
+			contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("Fin.png", Configuration.MENU))));
+			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+			fenetreFin.setContentPane(contentPane);
+			contentPane.setLayout(null);
+			
+			///Boutons
+			JButton btnMenu = new ButtonCustom("MENU", "cadre2", new Dimension(200, 40), new Font("Century", Font.PLAIN, 15));
+			btnMenu.addActionListener(new AdaptateurCommande(controle, "menu"));
+			btnMenu.setBounds(50, 350, 200, 40);
+			contentPane.add(btnMenu);
+			
+			JButton btnRecommencer = new ButtonCustom("Recommencer", "cadre2", new Dimension(200, 40), new Font("Century", Font.PLAIN, 15));
+			btnRecommencer.addActionListener(new AdaptateurCommande(controle, "rejouer"));
+			btnRecommencer.setBounds(342, 350, 200, 40);
+			contentPane.add(btnRecommencer);
+			
+			JButton btnQuit = new ButtonCustom("Quitter", "cadre2", new Dimension(200, 40), new Font("Century", Font.PLAIN, 15));
+			btnQuit.addActionListener(new AdaptateurCommande(controle, "exit"));
+			btnQuit.setBounds(634, 350, 200, 40);
+			contentPane.add(btnQuit);
 			fenetreFin.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
 		} catch (HeadlessException | IndexOutOfBoundsException | IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		contentPane.setLayout(null);
-		
-		///Boutons
-		JButton btnMenu = new ButtonCustom("MENU", "cadre2", new Dimension(200, 40), new Font("Century", Font.PLAIN, 15));
-		btnMenu.addActionListener(new AdaptateurCommande(controle, "menu"));
-		btnMenu.setBounds(50, 350, 200, 40);
-		contentPane.add(btnMenu);
-		
-		JButton btnRecommencer = new ButtonCustom("Recommencer", "cadre2", new Dimension(200, 40), new Font("Century", Font.PLAIN, 15));
-		btnRecommencer.addActionListener(new AdaptateurCommande(controle, "rejouer"));
-		btnRecommencer.setBounds(342, 350, 200, 40);
-		contentPane.add(btnRecommencer);
-		
-		JButton btnQuit = new ButtonCustom("Quitter", "cadre2", new Dimension(200, 40), new Font("Century", Font.PLAIN, 15));
-		btnQuit.addActionListener(new AdaptateurCommande(controle, "exit"));
-		btnQuit.setBounds(634, 350, 200, 40);
-		contentPane.add(btnQuit);
 		
 		fenetreFin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		fenetreFin.setBounds(100, 100, 900, 450);
@@ -93,6 +94,7 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 	}
 
 	public static void main(String[] args) {
+		Configuration.instance();
 		InterfaceGraphiqueFin.demarrer(new ControlerAutre());
 	}
 }
