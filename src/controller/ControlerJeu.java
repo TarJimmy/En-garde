@@ -22,6 +22,7 @@ import model.Plateau;
 import model.TypeEscrimeur;
 import view.Animation;
 import view.InterfaceGraphiqueActionAnnexe;
+import view.InterfaceGraphiqueFin;
 import view.InterfaceGraphiqueJeu;
 import view.InterfaceGraphiqueMenu;
 
@@ -201,7 +202,9 @@ public class ControlerJeu extends Controler {
 					if(winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
 						commenceMancheSuivante(winner.getIndice());
 					}else {
-						//fin de partie, winner gagne
+						InterfaceGraphiqueActionAnnexe.close();
+						InterfaceGraphiqueJeu.close();
+						InterfaceGraphiqueFin.demarrer(new ControlerJeu(), winner);
 					}
 				} else {
 					commenceMancheSuivante(winner.getIndice());
@@ -212,7 +215,9 @@ public class ControlerJeu extends Controler {
 			if(winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
 				commenceMancheSuivante(winner.getIndice());
 			}else {
-				//fin de partie, winner gagne
+				InterfaceGraphiqueActionAnnexe.close();
+				InterfaceGraphiqueJeu.close();
+				InterfaceGraphiqueFin.demarrer(new ControlerJeu(), winner);
 			}
 		}
 	}
@@ -257,11 +262,15 @@ public class ControlerJeu extends Controler {
 			case "Menu":
 				InterfaceGraphiqueActionAnnexe.close();
 				InterfaceGraphiqueJeu.close();
+				InterfaceGraphiqueFin.close();
 				InterfaceGraphiqueMenu.demarrer(new ControlerAutre());
 				return true;
 			case "QuitterJeu":
 				System.exit(0);
 				return false;
+			case "nouveauMatch":
+				nouveauMatch();
+				return true;
 			case "nouvellePartie":
 				nouvellePartie();
 				return true;
@@ -327,6 +336,9 @@ public class ControlerJeu extends Controler {
 		}
 		animations.clear();
 		jeu.nouvellePartie();
+	}
+	
+	public void nouveauMatch() {
 	}
 	
 	public void commenceMancheSuivante(int indiceWinner) {

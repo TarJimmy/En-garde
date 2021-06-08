@@ -173,7 +173,7 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		montrerCartes.setBounds(92, 710, 200, 50);
 		contentPane.add(montrerCartes);
 		
-		JButton animation = new ButtonCustom("Activer les animations", "cadre2", new Dimension(200, 50), font);
+		JButton animation = new ButtonCustom("Activer animations", "cadre2", new Dimension(200, 50), font);
 		animation.addActionListener(new AdaptateurCommande(controle, "montrerCartes"));
 		animation.addActionListener(new ActionListener() {
 			private boolean showAnimation = false;
@@ -181,7 +181,7 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 			public void actionPerformed(ActionEvent e) {
 				showAnimation = !showAnimation;
 				JButton button = (JButton) e.getSource();
-				button.setText((showAnimation ? "Desactiver " : "Activer ") + "les animations");
+				button.setText((showAnimation ? "Desactiver " : "Activer ") + " animations");
 			}
 		});
 		animation.setBounds(92, 770, 200, 50);
