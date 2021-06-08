@@ -75,7 +75,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		}
 	}
 	
-	private Point[] getPosCartesModifierRecemment(int indice, ArrayList<Integer> indicesCartesADeplacer) {
+	private Point[] getPosCartesModifierRecemment(int indice, LinkedList<Integer> indicesCartesADeplacer) {
 		Point[] points = vueEscrimeurs[indice].extractPosCarte(indicesCartesADeplacer);
 		Point[] pointsRes = new Point[points.length];
 		int x = indice == Escrimeur.GAUCHER ? 0 : 600;
@@ -124,10 +124,14 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				vuePlateau.repaint();
 				controle.commande("ActionTerminer");
 				break;
+			case ACTUALISER_ESCRIMEUR_MEME_MODE:
+				vueEscrimeurs[Escrimeur.GAUCHER].actualise();
+				vueEscrimeurs[Escrimeur.DROITIER].actualise();
+				break;
 			case ANIMATION_PIOCHER:
 				int indicePiocher = jeu.getIndiceEscrimeurChangeCarte();
-				ArrayList<Integer> indicesCartesADeplacerPiocher = jeu.popListeCartesChangeRecemment(indicePiocher);
-				ArrayList<Integer> distancesListPiocher = jeu.popListeDistancesChangeRecemment(indicePiocher);
+				LinkedList<Integer> indicesCartesADeplacerPiocher = jeu.popListeCartesChangeRecemment(indicePiocher);
+				LinkedList<Integer> distancesListPiocher = jeu.popListeDistancesChangeRecemment(indicePiocher);
 				
 				Point[] destinationsPiocher = getPosCartesModifierRecemment(indicePiocher, indicesCartesADeplacerPiocher);
 				Point[] departsPiocher = new Point[destinationsPiocher.length];
@@ -141,8 +145,8 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				break;
 			case ANIMATION_DEFAUSSER:
 				int indiceDefausser = jeu.getIndiceEscrimeurChangeCarte();
-				ArrayList<Integer> indicesCartesADeplacerDefausser = jeu.popListeCartesChangeRecemment(indiceDefausser);
-				ArrayList<Integer> distancesListDefausser = jeu.popListeDistancesChangeRecemment(indiceDefausser);
+				LinkedList<Integer> indicesCartesADeplacerDefausser = jeu.popListeCartesChangeRecemment(indiceDefausser);
+				LinkedList<Integer> distancesListDefausser = jeu.popListeDistancesChangeRecemment(indiceDefausser);
 				Point[] departsDefausser = getPosCartesModifierRecemment(indiceDefausser, indicesCartesADeplacerDefausser);
 				Point[] destinationsDefausser = new Point[departsDefausser.length];
 				int[] distancesDefausser = new int[departsDefausser.length];
@@ -199,6 +203,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				default:
 					break;
 				}
+				System.out.println(InterfaceGraphiqueJeu.ajoutVitesse);
 			}
 		});
 		

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -43,7 +44,7 @@ public class ControlerJeu extends Controler {
 		this.jeu = jeu;
 		this.animations = new LinkedList<>();
 		animationsActives = false;
-		IA_conseil = new IA_Moyenne(jeu);
+		initIA();
 		InterfaceGraphiqueJeu.demarrer(this, jeu);
 	}
 	
@@ -54,12 +55,16 @@ public class ControlerJeu extends Controler {
 		this.lancerNouvellePartie = lancerNouvellePartie;
 		animationsActives = false;
 		InterfaceGraphiqueJeu.demarrer(this, jeu);
-		IA_conseil = new IA_Moyenne(jeu);
+		initIA();
 		if (showGraphique) {
 			InterfaceGraphiqueJeu.demarrer(this, jeu);
 		} else {
 			System.out.println("Interface graphique non lancé");
 		}
+	}
+	
+	private void initIA() {
+		IA_conseil = new IA_Moyenne(jeu);
 	}
 
 	public ControlerJeu(Jeu jeu, boolean lancerNouvellePartie) {
@@ -68,7 +73,6 @@ public class ControlerJeu extends Controler {
 		this.animations = new LinkedList<>();
 		animationsActives = false;
 		InterfaceGraphiqueJeu.demarrer(this, jeu);
-		IA_conseil = new IA_Moyenne(jeu);
 		InterfaceGraphiqueJeu.demarrer(this, jeu);
 	}
 	
@@ -286,7 +290,7 @@ public class ControlerJeu extends Controler {
 			case "refaireCoup":
 				jeu.getHistorique().rejouerCoupAnnule();
 				return true;
-			case "close":
+			case "closeActionAnnexe":
 				InterfaceGraphiqueActionAnnexe.close(); 
 				return true;
 			case "PageInitialiser":

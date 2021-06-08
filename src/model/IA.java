@@ -3,9 +3,10 @@ package model;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Stack;
 
-import controller.ControlerIA;
 import controller.ControlerJeu;
+import view.InterfaceGraphiqueRegles;
 
 public abstract class IA {
 	Jeu jeu;
@@ -46,6 +47,14 @@ public abstract class IA {
 		 }
 		 
 		 return caseByCartes;
+	}
+		
+	public int[] getCarteDansPioche(int[] totalCartes, Carte[] carteEGauche, Carte[] carteEDroitier, DeckDefausse defausse) {
+		int[] cartesRes = new int[]{totalCartes[0],totalCartes[1],totalCartes[2],totalCartes[3],totalCartes[4]};
+		for (Carte c: carteEGauche) { cartesRes[c.getDistance()-1]--; }
+		for (Carte c: carteEDroitier) { cartesRes[c.getDistance()-1]--; }
+		for (int i=0; i<defausse.cartes.size();i++) { cartesRes[defausse.cartes.elementAt(i).getDistance()-1]--; }
+		return cartesRes;
 	}
 	
 	public Escrimeur getEscrimeur(int indice) {

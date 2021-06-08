@@ -115,7 +115,8 @@ public abstract class Controler implements CollecteurEvenements {
 			
 			int[] positionDepart = {PartieSauvegarde.getInt("posDepartGauche"), PartieSauvegarde.getInt("posDepartDroit")};
 			Plateau plateau = new Plateau(posJ1, posJ2, nbDalles);
-			Jeu jeu = new Jeu(modeSimple, plateau, deckPioche, deckDefausse, nbManches, indiceCurrentEscrimeur, eGaucher, eDroitier, positionDepart,indicePremierEscrimeur,null, animationAutoriser);
+			int idPartie = PartieSauvegarde.getInt("idPartie");
+			Jeu jeu = new Jeu(modeSimple, plateau, deckPioche, deckDefausse, nbManches, indiceCurrentEscrimeur, eGaucher, eDroitier, positionDepart,indicePremierEscrimeur,null, animationAutoriser,idPartie);
 			SuiteChargerPartie(jeu);
 			
 		

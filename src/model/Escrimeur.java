@@ -19,6 +19,8 @@ public class Escrimeur {
 	private int mancheGagner;
 	private LinkedList<Integer> indicesCartesModifierRecemment;
 	private LinkedList<Integer> distancesCartesModifierRecemment;
+	public boolean isIA;
+	public IA m_IA;
 	/**
 	 * Constructeur lors d'unne nouvelle partie
 	 * @param nom
@@ -34,18 +36,6 @@ public class Escrimeur {
 		this.mancheGagner = 0;
 		this.indicesCartesModifierRecemment = new LinkedList<>();
 		this.distancesCartesModifierRecemment = new LinkedList<>();
-	}
-	
-	/**
-	 * Constructeur lors du chargement d'une partie
-	 * @param nom
-	 * @param type
-	 * @param indice
-	 * @param distances
-	 * @param mancheGagner
-	 */
-	public Escrimeur(String nom, TypeEscrimeur type, int indice, int[] distances, int mancheGagner) {
-		setNom(nom);
 	}
 	
 	private Escrimeur() {}
@@ -167,11 +157,11 @@ public class Escrimeur {
 		distancesCartesModifierRecemment.clear();
 	}
 	
-	public ArrayList<Integer> getIndicesCartesModifierRecemment() {
+	public LinkedList<Integer> getIndicesCartesModifierRecemment() {
 		return indicesCartesModifierRecemment;
 	}
 	
-	public ArrayList<Integer> getDistancesCartesModifierRecemment() {
+	public LinkedList<Integer> getDistancesCartesModifierRecemment() {
 		return distancesCartesModifierRecemment;
 	}
 	

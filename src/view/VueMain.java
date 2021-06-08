@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -130,7 +131,7 @@ public class VueMain extends JComponent {
  		actualise(showFace);
 	}
 	
-	public Point[] extractPosCarte(ArrayList<Integer> listI, int ajoutY) {
+	public Point[] extractPosCarte(LinkedList<Integer> listI, int ajoutY) {
 		Point[] points = new Point[listI.size()];
 		Iterator<Integer> it = listI.iterator();
 		int i = 0;

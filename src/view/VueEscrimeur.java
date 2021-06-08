@@ -11,6 +11,7 @@ import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -84,11 +85,16 @@ public class VueEscrimeur extends JPanel {
 		btnPasserTour.setVisible(showFace && peutPasserTour);
 	}
 	
+	public void actualise() {
+		vueManche.setNbWins(e.getMancheGagner());
+		repaint();
+	}
+	
 	public VueMain getVueMain() {
 		return vueMain;
 	}
 	
-	public Point[] extractPosCarte(ArrayList<Integer> points) {
+	public Point[] extractPosCarte(LinkedList<Integer> points) {
 		return vueMain.extractPosCarte(points, (e.getIndice() == Escrimeur.GAUCHER ? 74 : 0));
 	}
 	

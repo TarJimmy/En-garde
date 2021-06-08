@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -27,6 +28,7 @@ public class Jeu extends Observable {
 		ACTUALISER_ESCRIMEUR,
 		ACTUALISER_ESCRIMEUR_DROITIER,
 		ACTUALISER_ESCRIMEUR_GAUCHER,
+		ACTUALISER_ESCRIMEUR_MEME_MODE,
 		ANIMATION_PIOCHER,
 		ANIMATION_DEFAUSSER,
 		ANIMATION_DEBUT_MANCHE,
@@ -43,7 +45,7 @@ public class Jeu extends Observable {
 	protected DeckDefausse deckDefausse;
 	protected int indiceCurrentEscrimeur;
 	protected int indicePremierJoueur;
-	protected boolean animationAutoriser;
+	protected Boolean animationAutoriser;
 	
 	protected Escrimeur[] escrimeurs;
 	protected int winner;
@@ -55,8 +57,8 @@ public class Jeu extends Observable {
 	protected LinkedList<Carte[]> cartesShowEscrimeurs[];
 	protected LinkedList<Integer> listeIndiceEscrimeurChangeCarte;
 	protected LinkedList<Integer[]> carteShowDeck;
-	protected LinkedList<ArrayList<Integer>> listeCartesChangeRecemment[];
-	protected LinkedList<ArrayList<Integer>> listeDistancesChangeRecemment[];
+	protected LinkedList<LinkedList<Integer>> listeCartesChangeRecemment[];
+	protected LinkedList<LinkedList<Integer>> listeDistancesChangeRecemment[];
 	protected Boolean actionEnCours;
 	
 	protected int[] positionsDeparts;
@@ -68,7 +70,10 @@ public class Jeu extends Observable {
 
 	protected int lastWinner;
 	private boolean showAllCartes;
+	private int idJeu;
 	
+	protected HashMap<TypeEscrimeur, IA> listIA;
+
 	protected Jeu() {}
 	
 	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, int[] positionsDeparts, boolean animationAutoriser) {
@@ -78,9 +83,10 @@ public class Jeu extends Observable {
 		init(modeSimple, plateau, deckPioche, deckDefausse, nbManchesPourVictoire, gaucher, droitier, positionsDeparts, animationAutoriser);
 		indicePremierJoueur = indiceCurrentEscrimeur;
 		peutPasserTour = false;
+		idJeu = -1;
 	}
 
-	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, int[] positionsDeparts, int indicePremierJoueur, Historique historique, boolean animationAutoriser) {
+	public Jeu(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier, int[] positionsDeparts, int indicePremierJoueur, Historique historique, boolean animationAutoriser,int idJeu) {
 		super();
 		this.indiceCurrentEscrimeur = indiceCurrentEscrimeur;
 		if(historique != null) {
@@ -91,6 +97,7 @@ public class Jeu extends Observable {
 		init(modeSimple, plateau, deckPioche, deckDefausse, nbManchesPourVictoire, gaucher, droitier, positionsDeparts, animationAutoriser);
 		this.indicePremierJoueur = indicePremierJoueur;
 		peutPasserTour = false;
+		this.idJeu = idJeu;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -122,6 +129,9 @@ public class Jeu extends Observable {
 		this.dernierTour = false;
 		this.winner = NONE;
 		this.showAllCartes = false;
+		listIA = new HashMap<TypeEscrimeur, IA>();
+		listIA.put(TypeEscrimeur.IA_FACILE, new IA_Facile(this));
+		listIA.put(TypeEscrimeur.IA_MOYENNE, new IA_Moyenne(this));
 	}
 	
 	public boolean isDernierTour() {
@@ -163,6 +173,10 @@ public class Jeu extends Observable {
 	public DeckDefausse getDeckDefausse() {
 		return deckDefausse;
 	}
+	
+	public int getIdJeu() {
+		return idJeu;
+	}
 
 	public int getIndiceCurrentEscrimeur() {
 		return indiceCurrentEscrimeur;
@@ -202,7 +216,15 @@ public class Jeu extends Observable {
 		modifieVueAnimation(Action.ANIMATION_CHANGER_TOUR);
 		indiceCurrentEscrimeur = (indiceCurrentEscrimeur + 1) % 2;
 		peutPasserTour = false;
-		modifieVue(Action.ACTUALISER_JEU);
+		if (getCurrentEscrimeur().getType() != TypeEscrimeur.HUMAIN) {
+			System.out.println("IA doit jouer");
+			modifieVue(Action.ACTUALISER_PLATEAU_SANS_CASE);
+			modifieVue(Action.ACTUALISER_DECK);
+			modifieVue(Action.ACTUALISER_ESCRIMEUR_MEME_MODE);
+		} else {
+			System.out.println("Humain doit jouer");
+			modifieVue(Action.ACTUALISER_JEU);
+		}
 		return 1;
 	} 
 
@@ -542,6 +564,7 @@ public class Jeu extends Observable {
 	}
 	
 	public void nouvellePartie() {
+		setCaseAide(-1);
 		escrimeurs[Escrimeur.GAUCHER].resetMancheGagner();
 		escrimeurs[Escrimeur.DROITIER].resetMancheGagner();
 		//Droitier car il seront inverser dans nouvelle manche
@@ -564,6 +587,10 @@ public class Jeu extends Observable {
 	
 	public void toggleAnimationAutoriser() {
 		animationAutoriser = !animationAutoriser;
+	}
+	
+	public Boolean getAnimationAutoriser() {
+		return animationAutoriser;
 	}
 	
 	public void resetAction() {
@@ -605,11 +632,11 @@ public class Jeu extends Observable {
 		};
 	}
 
-	public ArrayList<Integer> popListeCartesChangeRecemment(int indice) {
+	public LinkedList<Integer> popListeCartesChangeRecemment(int indice) {
 		return listeCartesChangeRecemment[indice].pop();
 	}
 
-	public ArrayList<Integer> popListeDistancesChangeRecemment(int indice) {
+	public LinkedList<Integer> popListeDistancesChangeRecemment(int indice) {
 		return listeDistancesChangeRecemment[indice].pop();
 	}
 
@@ -640,7 +667,6 @@ public class Jeu extends Observable {
 	}
 	
 	public void setCaseAide(int numCase) {
-		System.out.println("case choisie : " + numCase);
 		if (numCase != plateau.getCaseAide()) {
 			plateau.setCaseAide(numCase);
 			modifieVue(Action.ACTUALISER_PLATEAU_MEME_MODE);

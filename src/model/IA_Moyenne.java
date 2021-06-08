@@ -7,7 +7,6 @@ public class IA_Moyenne extends IA {
 
 	public IA_Moyenne(Jeu jeu) {
 		super(jeu);
-		System.out.println("IA Moyenne créer");
 	}
 
 	/*
@@ -23,7 +22,6 @@ public class IA_Moyenne extends IA {
 	 */
 	@Override
 	public int[] getChoixCoup() {
-		System.out.println("Lancement choix meilleur coup");
 		Plateau p = getPlateau();
 		Escrimeur eCurrent = jeu.getCurrentEscrimeur();
 		int indiceCurrent = eCurrent.getIndice();
@@ -33,7 +31,6 @@ public class IA_Moyenne extends IA {
 		int posCurrent = p.getPosition(indiceCurrent);
 		Carte[] cartes = eCurrent.getCartes();
 		HashSet<Integer> casesPossibles = getCasesAccessibles();
-		System.out.println("Case possible :" + Arrays.toString(casesPossibles.toArray()));
 		int[] choixCaseAttaqueIndirect = null;
 		int[] choixCaseAvancerMax = new int[] {(indiceCurrent == Escrimeur.GAUCHER ? -1 : p.getNbCase() + 1), 1};
 		int[] choixCaseReculerMax = new int[] {(indiceCurrent == Escrimeur.GAUCHER ? p.getNbCase() + 1 : -1), 1};
@@ -53,7 +50,6 @@ public class IA_Moyenne extends IA {
 						return new int[] {numCaseAvance, eCurrent.getNbCartes(distanceCurrent)};
 					}
 					// On prépare pour avancer le plus loin possible en 1 fois
-					System.out.println((indiceCurrent == Escrimeur.GAUCHER && choixCaseAvancerMax[0] < numCaseAvance) + " " + (indiceCurrent == Escrimeur.DROITIER && choixCaseAvancerMax[0] > numCaseAvance) + " " + choixCaseAvancerMax[0] + " " + numCaseAvance);
 					if ((indiceCurrent == Escrimeur.GAUCHER && choixCaseAvancerMax[0] < numCaseAvance) || (indiceCurrent == Escrimeur.DROITIER && choixCaseAvancerMax[0] > numCaseAvance)) {
 						choixCaseAvancerMax[0] = numCaseAvance;
 					}

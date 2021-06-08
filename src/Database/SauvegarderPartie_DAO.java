@@ -17,7 +17,7 @@ public class SauvegarderPartie_DAO {
 	
 	private final static String url = "jdbc:sqlite:src/Database/En_garde.db";
 
-	private static Connection connect() {  
+	private Connection connect() {  
         // SQLite connection string  
         Connection conn = null;  
         try {  
@@ -28,12 +28,42 @@ public class SauvegarderPartie_DAO {
         return conn;  
     }
 	
-	public void sauvegardeJeu(Jeu jeu) {  
-        String sql = "INSERT OR REPLACE INTO SauvegarderPartie(nomJoueurG,nomJoueurD,mancheGagnerGauche,mancheGagnerDroit,posJoueurG,posJoueurD,nbCasesJeu,nbManchesWin,mainGaucherJSON,mainDroitierJSON,DefausseJSON,PiocheJSON,posDepartGauche,posDepartDroit,modeSimple,TypeEscrimeurG,TypeEscrimeurD,CartesMaxJoueur,AnimationAutoriser,indicePremierJoueur,indiceCurrentJoueur) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";  
+	public int sauvegardeJeu(Jeu jeu) {  
+		String sql;
+		int idJeu = jeu.getIdJeu();
+		System.out.println(idJeu);
+		if (idJeu != -1) {
+	        sql = "UPDATE SauvegarderPartie SET nomJoueurG = ?,"
+	        		+ "nomJoueurD = ?,"
+	        		+ "mancheGagnerGauche = ?"
+	        		+ ",mancheGagnerDroit = ?,"
+	        		+ "posJoueurG = ?,"
+	        		+ "posJoueurD = ?,"
+	        		+ "nbCasesJeu = ?,"
+	        		+ "nbManchesWin = ?,"
+	        		+ "mainGaucherJSON = ?,"
+	        		+ "mainDroitierJSON = ?,"
+	        		+ "DefausseJSON = ?,"
+	        		+ "PiocheJSON = ?,"
+	        		+ "posDepartGauche = ?,"
+	        		+ "posDepartDroit = ?,"
+	        		+ "modeSimple = ?,"
+	        		+ "TypeEscrimeurG = ?,"
+	        		+ "TypeEscrimeurD = ?,"
+	        		+ "CartesMaxJoueur = ?,"
+	        		+ "AnimationAutoriser = ?,"
+	        		+ "indicePremierJoueur = ?,"
+	        		+ "indiceCurrentJoueur = ?"
+	                + "WHERE idPartie = ?";
+		
+		} else {
+			sql = "INSERT OR REPLACE INTO SauvegarderPartie(nomJoueurG,nomJoueurD,mancheGagnerGauche,mancheGagnerDroit,posJoueurG,posJoueurD,nbCasesJeu,nbManchesWin,mainGaucherJSON,mainDroitierJSON,DefausseJSON,PiocheJSON,posDepartGauche,posDepartDroit,modeSimple,TypeEscrimeurG,TypeEscrimeurD,CartesMaxJoueur,AnimationAutoriser,indicePremierJoueur,indiceCurrentJoueur) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";  
+		}
    
         try{  
             Connection conn = this.connect();  
             PreparedStatement pstmt = conn.prepareStatement(sql);  
+            
             pstmt.setString(1, jeu.getEscrimeurGaucher().getNom());  
             pstmt.setString(2, jeu.getEscrimeurDroitier().getNom());
             pstmt.setInt(3, jeu.getEscrimeurGaucher().getMancheGagner()); 
@@ -61,26 +91,40 @@ public class SauvegarderPartie_DAO {
             pstmt.setInt(14, jeu.getPositionsDepart()[1]);  
             
             pstmt.setBoolean(15, jeu.getModeSimple()); 
-            System.out.println(jeu.getEscrimeurGaucher().getType());
             pstmt.setString(16,jeu.getEscrimeurGaucher().getType().name());
             pstmt.setString(17,jeu.getEscrimeurDroitier().getType().toString());
             pstmt.setInt(18, jeu.getEscrimeurDroitier().getNbCartes());  
             pstmt.setInt(19, jeu.getPositionsDepart()[1]);  
             pstmt.setInt(20, jeu.getIndicePremierJoueur());  
             pstmt.setInt(21, jeu.getIndiceCurrentEscrimeur());  
-            
+            if (idJeu != -1) {
+            	pstmt.setInt(22, idJeu);  
+            }
             pstmt.executeUpdate();  
             System.out.println("Partie sauvegard�\n");
+
+            
+            if (idJeu != -1) {
+            	return idJeu;
+            } else {
+            	sql = "SELECT * FROM SauvegarderPartie BY idPartie DESC LIMIT 1";
+                
+                Statement stmt  = conn.createStatement();
+                ResultSet rs    = stmt.executeQuery(sql);
+                return rs.getInt("idPartie");
+            }
+            
         } catch (SQLException e) {  
             System.out.println(e.getMessage());  
         }  
+        return -1;
     }
 	
-	public static ResultSet getAll() {
+	public ResultSet getAll() {
 		String sql = "SELECT * FROM SauvegarderPartie";
         
         try {
-        	Connection conn = connect();
+        	Connection conn = this.connect();
             Statement stmt  = conn.createStatement();
             ResultSet rs    = stmt.executeQuery(sql);
             // return results

@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import Global.Configuration;
+import controller.ControlerJeu;
 
 public class VueInfoJeu extends JPanel {
 	
@@ -57,7 +58,7 @@ public class VueInfoJeu extends JPanel {
 		btnOpenPanelAnnexe.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InterfaceGraphiqueActionAnnexe.demarrer(controle);
+				InterfaceGraphiqueActionAnnexe.demarrer((ControlerJeu)controle);
 			}
 		});
 		
