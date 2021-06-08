@@ -56,7 +56,9 @@ public class VueDeck extends JComponent {
 		drawable.drawImage(imgFond, posx, posy, largeurDeck, hauteurDeck, null);
 		if (nbCarte > 0) {
 			if (nbCarte > 1) {
-				Image img = ImageIO.read(Configuration.charge("DP" + (nbCarte > 4 ? 4 : nbCarte - 1) + ".png", Configuration.CARTES));
+				String d;
+				if (isDefausse) {d = "DD";} else {d = "DP";}
+				Image img = ImageIO.read(Configuration.charge(d + (nbCarte > 4 ? 4 : nbCarte - 1) + ".png", Configuration.CARTES));
 				drawable.drawImage(img, posx + (isDefausse ? 12 : 17), posy + (isDefausse ? 50 : 42), 120, 170, null);
 			}
 			if (isDefausse) {
