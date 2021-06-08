@@ -153,6 +153,17 @@ public class SauvegarderPartie_DAO {
         }
         return null;
 	}
+
+	public void supprimerPartieSauvegardee(int id) {
+		String sql = "DELETE FROM SauvegarderPartie WHERE idMatch = "+id;
+		try {
+        	Connection conn = this.connect();
+            Statement stmt  = conn.createStatement();
+            stmt.executeQuery(sql);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+	}
 	 
 	
 }

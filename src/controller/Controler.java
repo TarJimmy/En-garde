@@ -127,5 +127,12 @@ public abstract class Controler implements CollecteurEvenements {
 		return false;
 	}
 	
+	@Override
+	public boolean supprimerPartie(int id) {
+		SauvegarderPartie_DAO SPartie_DAO = new SauvegarderPartie_DAO();
+		SPartie_DAO.supprimerPartieSauvegardee(id);
+		return false;
+	}
+	
 	
 }
