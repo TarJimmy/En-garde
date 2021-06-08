@@ -466,7 +466,7 @@ public class IA_Difficile extends IA{
 		}
 		return res;
 	}
-
+	
 	/**
 	 *
 	 * @param copie est la config qu'on veut tester

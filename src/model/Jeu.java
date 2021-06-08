@@ -619,6 +619,7 @@ public class Jeu extends Observable {
 	}
 	
 	public void resetManche() {
+		setDernierTour(false);
 		cartesShowEscrimeurs[Escrimeur.GAUCHER].clear();
 		cartesShowEscrimeurs[Escrimeur.DROITIER].clear();
 		listeIndiceEscrimeurDefausseCarte.clear();

@@ -22,7 +22,7 @@ public class ControlerIA extends ControlerJeu {
 	int eWinner;
 
 	public ControlerIA(Jeu jeu) {
-		super(jeu, true, false);
+		super(jeu, true, true);
 		eWinner = Jeu.NONE;
 	}
 	

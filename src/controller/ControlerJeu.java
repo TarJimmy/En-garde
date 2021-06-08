@@ -65,7 +65,7 @@ public class ControlerJeu extends Controler {
 	}
 	
 	protected void initIA() {
-		IA_conseil = new IA_Difficile(this);
+		IA_conseil = new IA_Moyenne(jeu);
 	}
 
 	public ControlerJeu(Jeu jeu, boolean lancerNouvellePartie) {
@@ -224,7 +224,7 @@ public class ControlerJeu extends Controler {
 						InterfaceGraphiqueFin.demarrer(this, winner);
 					}
 				} else {
-					commenceMancheSuivante(winner.getIndice());
+					commenceMancheSuivante(Jeu.EGALITE);
 				}
 			}
 		} else {
@@ -344,7 +344,7 @@ public class ControlerJeu extends Controler {
 		} else {
 			HashSet<Integer> cj = jeu.casesJouables();
 			if ((!jeu.getDeckPioche().deckVide() && cj.isEmpty()) || (cj.isEmpty() && (jeu.getHistorique().voirDernierCoup().getAction() == Coup.ATTAQUEDIRECTE || jeu.getHistorique().voirDernierCoup().getAction() == Coup.ATTAQUEINDIRECTE))) {
-				System.out.println("aucune case jouable");
+				System.out.println("defense impossible");
 				finDeManche(jeu.getNotCurrentEscrimeur());
 				return true;
 			} else if (jeu.getDeckPioche().deckVide()) {
