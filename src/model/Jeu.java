@@ -62,6 +62,7 @@ public class Jeu extends Observable {
 	protected LinkedList<LinkedList<Integer>> listeCartesChangeRecemment[];
 	protected LinkedList<LinkedList<Integer>> listeDistancesChangeRecemment[];
 	protected Boolean actionEnCours;
+	protected Boolean showGraphique;
 	
 	protected int[] positionsDeparts;
 	
@@ -105,6 +106,7 @@ public class Jeu extends Observable {
 	@SuppressWarnings("unchecked")
 	protected void init(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse, int nbManchesPourVictoire, Escrimeur gaucher, Escrimeur droitier, int[] positionsDeparts, boolean animationAutoriser) {
 		this.modeSimple = modeSimple;
+		this.showGraphique = true;
 		this.nbManchesPourVictoire = nbManchesPourVictoire;
 		this.plateau = plateau;
 		this.deckPioche = deckPioche;
@@ -479,7 +481,8 @@ public class Jeu extends Observable {
 	}
 	
 	public void modifieVue(Action action) {
-		switch (action) {
+		if (showGraphique) {
+			switch (action) {
 			case ACTUALISER_JEU:
 			case ACTUALISER_ESCRIMEUR:
 			case ACTUALISER_ESCRIMEUR_GAUCHER:
@@ -500,10 +503,12 @@ public class Jeu extends Observable {
 		}
 		listeActions.add(action);
 		demarreActionSuivante();
+		}
+		
 	}
 	
 	public void modifieVueAnimation(Action action) {
-		if (animationAutoriser) {
+		if (animationAutoriser && showGraphique) {
 			Iterator<Action> it = listeActions.iterator();
 			int index = 0;
 			while (it.hasNext()) {
@@ -677,5 +682,9 @@ public class Jeu extends Observable {
 
 	public boolean aideEstMontrer() {
 		return plateau.getCaseAide() < 1;
+	}
+	
+	public void setShowGraphique(Boolean b) {
+		this.showGraphique = b;
 	}
 }

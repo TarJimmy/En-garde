@@ -17,6 +17,7 @@ import model.DeckPioche;
 import model.Escrimeur;
 import model.Historique;
 import model.IA;
+import model.IA_Difficile;
 import model.IA_Facile;
 import model.IA_Moyenne;
 import model.IncorrectCarteException;
@@ -51,10 +52,9 @@ public class ControlerJeu extends Controler {
 	public ControlerJeu(Jeu jeu, boolean lancerNouvellePartie, boolean showGraphique) {
 		this.lancerNouvellePartie = lancerNouvellePartie;
 		this.jeu = jeu;
+		this.jeu.setShowGraphique(showGraphique);
 		this.animations = new LinkedList<>();
-		this.lancerNouvellePartie = lancerNouvellePartie;
 		animationsActives = false;
-		InterfaceGraphiqueJeu.demarrer(this, jeu);
 		initIA();
 		if (showGraphique) {
 			InterfaceGraphiqueJeu.demarrer(this, jeu);
@@ -63,8 +63,8 @@ public class ControlerJeu extends Controler {
 		}
 	}
 	
-	private void initIA() {
-		IA_conseil = new IA_Moyenne(jeu);
+	protected void initIA() {
+		IA_conseil = new IA_Difficile(this);
 	}
 
 	public ControlerJeu(Jeu jeu, boolean lancerNouvellePartie) {

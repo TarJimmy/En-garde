@@ -25,7 +25,17 @@ public class DeckDefausse extends Deck {
 	}
 	
 	public DeckDefausse copySimple() {
-		return new DeckDefausse((Carte[])cartes.clone());
+		int s = cartes.size();
+		Carte[] newCartes = new Carte[s];
+		for(int i = 0; i < s; i++) {
+			try {
+				newCartes[i] = new Carte(cartes.elementAt(i).getDistance());
+			} catch (IncorrectCarteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return new DeckDefausse(newCartes);
 	}
 	
 	@Override

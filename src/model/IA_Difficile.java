@@ -7,6 +7,7 @@ import java.util.Random;
 
 import controller.ControlerIA;
 import controller.ControlerIA.JeuIA;
+import controller.ControlerJeu;
 
 public class IA_Difficile extends IA{
 	
@@ -19,9 +20,9 @@ public class IA_Difficile extends IA{
 	
 	public static final int PROFONDEURMAX = 5;
 	
-	public IA_Difficile(ControlerIA controlerIA){
-		super((JeuIA)controlerIA.getJeu());
-		this.controlerIA = controlerIA;
+	public IA_Difficile(ControlerJeu controler){
+		super(controler.getJeu());
+		this.controlerIA = new ControlerIA(controler.getJeu());
 		memoisation = new HashMap<>();
 	}
 	
@@ -429,7 +430,7 @@ public class IA_Difficile extends IA{
 		float scoreMax = 0;
 		while (it.hasNext()){
 			int[] currentCoup = it.next();
-			ControlerIA copie = new ControlerIA(controlerIA.generateNewJeuIA((JeuIA)controlerIA.getJeu()));
+			ControlerIA copie = new ControlerIA(controlerIA.generateNewJeuIA(controlerIA.getJeu()));
 			copie.clickCase(currentCoup[0],currentCoup[1]);
 			float scoreCoup = scoreConfig(copie, 0);
 			if (scoreCoup > scoreMax){
@@ -448,14 +449,16 @@ public class IA_Difficile extends IA{
 		ArrayList<int[]> res = new ArrayList<>();
 		Iterator<Integer> itCases = config.getJeu().casesJouables().iterator();
 		while (itCases.hasNext()) {
-			int distance = itCases.next();
+			int caseCliquee = itCases.next();
 			int[] monCoup = new int[2];
-			if (distance == -1) {
-				monCoup[0] = distance;
+			if (caseCliquee == -1) {
+				monCoup[0] = caseCliquee;
 				monCoup[1] = 0;
+				res.add(monCoup);
 			}else {
+				int distance = (Math.abs(caseCliquee - config.getJeu().getPlateau().getPosition(config.getJeu().getIndiceCurrentEscrimeur())));
 				for(int i = 1; i <= config.getJeu().getCurrentEscrimeur().getNbCartes(distance); i++) {
-					monCoup[0] = distance;
+					monCoup[0] = caseCliquee;
 					monCoup[1] = i;
 					res.add(monCoup);
 				}
