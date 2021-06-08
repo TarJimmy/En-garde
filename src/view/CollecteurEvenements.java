@@ -7,4 +7,5 @@ public interface CollecteurEvenements {
 	boolean clickCase(int x, int nbCarte);
 	boolean animation(String typeAnimation, Animation anim);
 	boolean chargerPartie(int id);
+	boolean supprimerPartie(int id);
 }
