@@ -30,12 +30,10 @@ public class InterfaceGraphiqueFin implements Runnable, Observateur {
 	private static CollecteurEvenements controle;
 	private Escrimeur escrimeur;
 	private String imageFin;
-	private Jeu jeu;
 	
 	private InterfaceGraphiqueFin(CollecteurEvenements controle, Escrimeur escrimeur) {
 		InterfaceGraphiqueFin.controle = controle;
 		this.escrimeur = escrimeur;
-		this.jeu = jeu;
 	}
 	
 	/**
