@@ -48,7 +48,7 @@ public class DB_DAO {
 
         // SQL statement for creating a new table
         String sqlJoueur = "CREATE TABLE IF NOT EXISTS Joueur (\n"
-                + " nom text NOT NULL PRIMARY KEY,\n"
+                + " nom text NOT NULL PRIMARY KEY\n"
                 + ");";
 
         String sqlJoueurCarte = "CREATE TABLE IF NOT EXISTS CarteJoueur (\n"
