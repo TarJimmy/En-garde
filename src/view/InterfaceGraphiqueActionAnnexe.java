@@ -214,7 +214,7 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		montrerCartes.setBounds(92, 710, 200, 50);
 		contentPane.add(montrerCartes);
 		
-		JButton animation = new ButtonCustom((controle.getJeu().getAnimationAutoriser() ? "Desactiver " : "Activer ") + " les animations", "cadre2", new Dimension(200, 50), font);
+		JButton animation = new ButtonCustom((controle.getJeu().getAnimationAutoriser() ? "Desactiver " : "Activer ") + " animations", "cadre2", new Dimension(200, 50), font);
 		animation.addActionListener(new AdaptateurCommande(controle, "ChangeModeAnimation"));
 		animation.addActionListener(new ActionListener() {
 			private Boolean showAnimation = controle.getJeu().getAnimationAutoriser();
@@ -222,19 +222,35 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 			public void actionPerformed(ActionEvent e) {
 				showAnimation = !showAnimation;
 				JButton button = (JButton) e.getSource();
-				button.setText((showAnimation ? "Desactiver " : "Activer ") + "les animations");
+				button.setText((showAnimation ? "Desactiver " : "Activer ") + " animations");
 			}
 		});
 		animation.setBounds(92, 770, 200, 50);
 		contentPane.add(animation);
 		
+		JButton changementTour = new ButtonCustom("Accelerer changement tour", "cadre2", new Dimension(200, 50), new Font("Century", Font.PLAIN, 13));
+		changementTour.addActionListener(new AdaptateurCommande(controle, "ChangeModeAnimation"));
+		changementTour.addActionListener(new ActionListener() {
+			private Boolean changeTour = false;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (changeTour) {InterfaceGraphiqueJeu.ajoutVitesse -= 1500;}else{InterfaceGraphiqueJeu.ajoutVitesse += 1500;}
+				changeTour = !changeTour;
+				JButton button = (JButton) e.getSource();
+				button.setText((changeTour ? "Retablir " : "Accelerer ") + "changement tour");
+				System.out.println(changeTour + " : "+InterfaceGraphiqueJeu.ajoutVitesse);
+			}
+		});
+		changementTour.setBounds(92, 830, 200, 50);
+		contentPane.add(changementTour);
+		
 		JButton fermer = new ButtonCustom("FERMER", "cadre3", new Dimension(150, 30), font);
-		fermer.setBounds(10, 835, 150, 50);
+		fermer.setBounds(10, 895, 150, 50);
 		fermer.addActionListener(new AdaptateurCommande(controle, "closeActionAnnexe"));
 		contentPane.add(fermer);
 		
 		fenetreActionAnnexe.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		fenetreActionAnnexe.setBounds(100, 100, 400, 925);
+		fenetreActionAnnexe.setBounds(100, 100, 400, 1000);
 		fenetreActionAnnexe.setResizable(false);
 		fenetreActionAnnexe.setVisible(true);
 		fenetreActionAnnexe.setFocusable(true);

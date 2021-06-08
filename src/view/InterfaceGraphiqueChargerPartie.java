@@ -112,8 +112,8 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 						+ "    </div>\r\n"
 						+ "</section>"
 						+ "</body></html>";
-						
 				button.setText(name);
+				button.setHorizontalAlignment(SwingConstants.CENTER);
 				button.addActionListener(new AdaptateurChargerPartie(controle,rs.getInt("idPartie")));
 			}
 		} catch (SQLException e) {

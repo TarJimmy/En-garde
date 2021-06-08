@@ -29,6 +29,7 @@ import javax.swing.SwingUtilities;
 import Global.Configuration;
 import Patterns.Observateur;
 import model.Carte;
+import controller.ControlerJeu;
 import model.Escrimeur;
 import model.Jeu;
 import model.Jeu.Action;
@@ -67,6 +68,12 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	public static void demarrer(CollecteurEvenements control, Jeu jeu) {
 		SwingUtilities.invokeLater(new InterfaceGraphiqueJeu(control, jeu));
 	}
+	
+
+	public static void demarrer(ControlerJeu controlerJeu) {
+		SwingUtilities.invokeLater(new InterfaceGraphiqueJeu(controlerJeu, controlerJeu.getJeu()));
+	}
+	
 	/**
 	 * Ferme la fenetre de jeu
 	 */

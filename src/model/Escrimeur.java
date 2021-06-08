@@ -58,7 +58,7 @@ public class Escrimeur {
 		return i < cartes.length;
 	}
 	
-	private void setNom(String nom) {
+	public void setNom(String nom) {
 		if (nom == null || nom.equals("")) {
 			this.nom = "null";
 		} else {
@@ -234,7 +234,10 @@ public class Escrimeur {
 		}
 		System.out.println("escr : " + cartes.toString());
 	}
-	
+
+	public void setType(TypeEscrimeur sauvType) {
+		this.type = sauvType;
+	}	
 	
 	@Override
 	public int hashCode() {

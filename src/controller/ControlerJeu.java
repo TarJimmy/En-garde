@@ -26,6 +26,7 @@ import model.Plateau;
 import model.TypeEscrimeur;
 import view.Animation;
 import view.InterfaceGraphiqueActionAnnexe;
+import view.InterfaceGraphiqueFin;
 import view.InterfaceGraphiqueJeu;
 import view.InterfaceGraphiqueMenu;
 
@@ -218,7 +219,8 @@ public class ControlerJeu extends Controler {
 					if(winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
 						commenceMancheSuivante(winner.getIndice());
 					}else {
-						//fin de partie, winner gagne
+						closeAll();
+						InterfaceGraphiqueFin.demarrer(this, winner);
 					}
 				} else {
 					commenceMancheSuivante(winner.getIndice());
@@ -229,7 +231,8 @@ public class ControlerJeu extends Controler {
 			if(winner.getMancheGagner() != jeu.getNbManchesPourVictoire()) {
 				commenceMancheSuivante(winner.getIndice());
 			}else {
-				//fin de partie, winner gagne
+				closeAll();
+				InterfaceGraphiqueFin.demarrer(this, winner);
 			}
 		}
 	}
@@ -272,13 +275,15 @@ public class ControlerJeu extends Controler {
 				jeu.changerTour();
 				return true;
 			case "Menu":
-				InterfaceGraphiqueActionAnnexe.close();
-				InterfaceGraphiqueJeu.close();
+				closeAll();
 				InterfaceGraphiqueMenu.demarrer(new ControlerAutre());
 				return true;
 			case "QuitterJeu":
 				System.exit(0);
 				return false;
+			case "nouveauMatch":
+				nouveauMatch();
+				return true;
 			case "nouvellePartie":
 				nouvellePartie();
 				return true;
@@ -359,6 +364,14 @@ public class ControlerJeu extends Controler {
 		jeu.nouvellePartie();
 	}
 	
+	public void nouveauMatch() {
+		animations = new LinkedList<>();
+		jeu.echangeEscrimeurs();
+		jeu.resetAction();
+		closeAll();
+		InterfaceGraphiqueJeu.demarrer(this);
+	}
+	
 	public void commenceMancheSuivante(int indiceWinner) {
 		animationsActives = false;
 		if (animations.size() > 0) {
@@ -389,5 +402,11 @@ public class ControlerJeu extends Controler {
 	
 	public Jeu getJeu() {
 		return jeu;
+	}
+	
+	public void closeAll() {
+		InterfaceGraphiqueActionAnnexe.close();
+		InterfaceGraphiqueFin.close();
+		InterfaceGraphiqueJeu.close();
 	}
 }

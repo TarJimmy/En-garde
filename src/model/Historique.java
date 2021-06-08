@@ -80,6 +80,8 @@ public class Historique {
 			System.err.println("impossible d'annuler un coup, l'historique est vide");
 			return false;
 		}
+		System.out.println("annuler coup :");
+		dernierCoup.printCoup();
 		Escrimeur escrimeurCoup = dernierCoup.getEscrimeur();
 		if(escrimeurCoup != jeu.getCurrentEscrimeur()) {
 			//compter les CartesPioch�es
@@ -124,7 +126,7 @@ public class Historique {
 			default :
 				break;
 		}
-		
+		dernierCoup.viderCartesJouees();
 		ajouterCoupAnnule(dernierCoup);
 		if (jeu.isDernierTour()) {
 			jeu.setDernierTour(false);
