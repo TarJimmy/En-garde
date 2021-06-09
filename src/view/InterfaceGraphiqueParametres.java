@@ -7,6 +7,8 @@ import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.List;
 
@@ -38,6 +40,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	////joueur 1
 	private JLabel labelJ1;
 	private static JTextField txtJoueur1;
+	private static String saveHumainJ1;
 	private static ButtonGroup buttonGroup_TypeJ1;
 	private static JRadioButton btnRadioJ1_Humain;
 	private static JRadioButton btnRadioJ1_Facile;
@@ -48,6 +51,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	////joueur 2
 	private JLabel labelJ2;
 	private static JTextField txtJoueur2;
+	private static String saveHumainJ2;
 	private static ButtonGroup buttonGroup_TypeJ2;
 	private static JRadioButton btnRadioJ2_Humain;
 	private static JRadioButton btnRadioJ2_Facile;
@@ -217,7 +221,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	 * @param txtJoueur : zone de texte e verifier
 	 * @param warning : le text e afficher
 	 */
-	private void warningField(String j,JTextField txtJoueur, JLabel warning) {
+	private void warningField(String j,JTextField txtJoueur, JLabel warning, ButtonGroup buttonGroup) {
 		txtJoueur.getDocument().addDocumentListener(new DocumentListener() {
 
 			@Override
@@ -247,6 +251,10 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 					warnEnregistrement.setVisible(false);
 					btnSaveSettings.setVisible(true);
 				}
+				if (buttonGroup.getSelection().getActionCommand().equals("HUMAIN") ) {
+					if (j == "j1"){saveHumainJ1 = txtJoueur.getText();}
+					else if (j == "j2"){saveHumainJ2 = txtJoueur.getText();}
+				}
 			}
 			
 		});
@@ -273,8 +281,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		fenetreParametres.setContentPane(contentPane);
 		fenetreParametres.setIconImage(Configuration.imgIcone);
-		
-			fenetreParametres.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
+		fenetreParametres.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
 		} catch (HeadlessException | IndexOutOfBoundsException | IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -312,37 +319,86 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		txtJoueur1.setBounds(175, 140, 130, 20);
 		txtJoueur1.setBorder(null);
 		txtJoueur1.setOpaque(false);
+		txtJoueur1.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (buttonGroup_TypeJ1.getSelection().getActionCommand().equals("HUMAIN") ) {
+					saveHumainJ1 = txtJoueur1.getText();
+				}
+			}
+			
+		});
 		contentPane.add(txtJoueur1);
 		txtJoueur1.setColumns(10);
 		warning_J1 = new JLabel("ATTENTION : le nom du joueur ne peut pas \u00EAtre vide");
-		warning_J1.setFont(new Font("Century", Font.BOLD, 14));
-		warning_J1.setForeground(new Color(128, 0, 0));
+		warning_J1.setFont(new Font("Tohama", Font.BOLD, 14));
+		warning_J1.setForeground(new Color(102, 34, 0));
 		warning_J1.setBounds(330, 140, 400, 20);
 		warning_J1.setVisible(false);
 		contentPane.add(warning_J1);
 		
 		/////type du joueur 1
+		saveHumainJ1 = nomJoueur1;
 		buttonGroup_TypeJ1 = new ButtonGroup();
 		btnRadioJ1_Humain = new JRadioButton("Humain");
 		btnRadioJ1_Humain.setActionCommand("HUMAIN");
+		btnRadioJ1_Humain.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				txtJoueur1.setText(saveHumainJ1);
+				txtJoueur1.setEditable(true);
+			}
+			
+		});
 		setRadioTransparent(btnRadioJ1_Humain);
 		buttonGroup_TypeJ1.add(btnRadioJ1_Humain);
 		btnRadioJ1_Humain.setBounds(175, 170, 100, 25);
 		contentPane.add(btnRadioJ1_Humain);
 		btnRadioJ1_Facile = new JRadioButton("IA Facile");
 		btnRadioJ1_Facile.setActionCommand("IA_FACILE");
+		btnRadioJ1_Facile.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JRadioButton facile = (JRadioButton) e.getSource();
+				txtJoueur1.setText(facile.getActionCommand());
+				if (btnRadioJ2_Facile.isSelected()) {txtJoueur2.setText(txtJoueur1.getText()+"_2");}
+				else if (!btnRadioJ2_Humain.isSelected()){txtJoueur2.setText(buttonGroup_TypeJ2.getSelection().getActionCommand());}
+				txtJoueur1.setEditable(false);
+			}
+		});
 		setRadioTransparent(btnRadioJ1_Facile);
 		buttonGroup_TypeJ1.add(btnRadioJ1_Facile);
 		btnRadioJ1_Facile.setBounds(275, 170, 100, 25);
 		contentPane.add(btnRadioJ1_Facile);
 		btnRadioJ1_Moyenne = new JRadioButton("IA Moyenne");
 		btnRadioJ1_Moyenne.setActionCommand("IA_MOYENNE");
+		btnRadioJ1_Moyenne.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JRadioButton moyenne = (JRadioButton) e.getSource();
+				txtJoueur1.setText(moyenne.getActionCommand());
+				if (btnRadioJ2_Moyenne.isSelected()) {txtJoueur2.setText(txtJoueur1.getText()+"_2");}
+				else if (!btnRadioJ2_Humain.isSelected()){txtJoueur2.setText(buttonGroup_TypeJ2.getSelection().getActionCommand());}
+				txtJoueur1.setEditable(false);
+			}
+		});
 		setRadioTransparent(btnRadioJ1_Moyenne);
 		buttonGroup_TypeJ1.add(btnRadioJ1_Moyenne);
 		btnRadioJ1_Moyenne.setBounds(375, 170, 100, 25);
 		contentPane.add(btnRadioJ1_Moyenne);
 		btnRadioJ1_Difficile = new JRadioButton("IA Difficile");
 		btnRadioJ1_Difficile.setActionCommand("IA_DIFFICILE");
+		btnRadioJ1_Difficile.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JRadioButton difficile = (JRadioButton) e.getSource();
+				txtJoueur1.setText(difficile.getActionCommand());
+				if (btnRadioJ2_Difficile.isSelected()) {txtJoueur2.setText(txtJoueur1.getText()+"_2");}
+				else if (!btnRadioJ2_Humain.isSelected()){txtJoueur2.setText(buttonGroup_TypeJ2.getSelection().getActionCommand());}
+				txtJoueur1.setEditable(false);
+			}
+		});
 		setRadioTransparent(btnRadioJ1_Difficile);
 		buttonGroup_TypeJ1.add(btnRadioJ1_Difficile);
 		btnRadioJ1_Difficile.setBounds(475, 170, 100, 25);
@@ -366,6 +422,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		contentPane.add(labelJ2);
 		
 		/////nom du joueur 2
+		saveHumainJ2 = nomJoueur2;
 		txtJoueur2 = new JTextField();
 		txtJoueur2.setDocument(new JTextFieldLimit(15));
 		txtJoueur2.setText(nomJoueur2);
@@ -376,8 +433,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		txtJoueur2.setBounds(175, 204, 130, 20);
 		contentPane.add(txtJoueur2);
 		warning_J2 = new JLabel("ATTENTION : le nom du joueur ne peut pas \u00EAtre vide");
-		warning_J2.setFont(new Font("Century", Font.BOLD, 14));
-		warning_J2.setForeground(new Color(128, 0, 0));
+		warning_J2.setFont(new Font("Tohama", Font.BOLD, 14));
+		warning_J2.setForeground(new Color(102, 34, 0));
 		warning_J2.setBounds(330, 204, 400, 14);
 		warning_J2.setVisible(false);
 		contentPane.add(warning_J2);
@@ -386,24 +443,59 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		buttonGroup_TypeJ2 = new ButtonGroup();
 		btnRadioJ2_Humain = new JRadioButton("Humain");
 		btnRadioJ2_Humain.setActionCommand("HUMAIN");
+		btnRadioJ2_Humain.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				txtJoueur2.setText(saveHumainJ2);
+				txtJoueur2.setEditable(true);
+			}
+			
+		});
 		setRadioTransparent(btnRadioJ2_Humain);
 		buttonGroup_TypeJ2.add(btnRadioJ2_Humain);
 		btnRadioJ2_Humain.setBounds(175, 237, 100, 25);
 		contentPane.add(btnRadioJ2_Humain);
 		btnRadioJ2_Facile = new JRadioButton("IA Facile");
 		btnRadioJ2_Facile.setActionCommand("IA_FACILE");
+		btnRadioJ2_Facile.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JRadioButton facile = (JRadioButton) e.getSource();
+				txtJoueur2.setText(facile.getActionCommand());
+				if (btnRadioJ1_Facile.isSelected()) {txtJoueur2.setText(txtJoueur2.getText()+"_2");}
+				txtJoueur2.setEditable(false);
+			}
+		});
 		setRadioTransparent(btnRadioJ2_Facile);
 		buttonGroup_TypeJ2.add(btnRadioJ2_Facile);
 		btnRadioJ2_Facile.setBounds(275, 237, 100, 25);
 		contentPane.add(btnRadioJ2_Facile);
 		btnRadioJ2_Moyenne = new JRadioButton("IA Moyenne");
 		btnRadioJ2_Moyenne.setActionCommand("IA_MOYENNE");
+		btnRadioJ2_Moyenne.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JRadioButton moyenne = (JRadioButton) e.getSource();
+				txtJoueur2.setText(moyenne.getActionCommand());
+				if (btnRadioJ1_Moyenne.isSelected()) {txtJoueur2.setText(txtJoueur2.getText()+"_2");}
+				txtJoueur2.setEditable(false);
+			}
+		});
 		setRadioTransparent(btnRadioJ2_Moyenne);
 		buttonGroup_TypeJ2.add(btnRadioJ2_Moyenne);
 		btnRadioJ2_Moyenne.setBounds(375, 237, 100, 25);
 		contentPane.add(btnRadioJ2_Moyenne);
 		btnRadioJ2_Difficile = new JRadioButton("IA Difficile");
 		btnRadioJ2_Difficile.setActionCommand("IA_DIFFICILE");
+		btnRadioJ2_Difficile.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JRadioButton difficile = (JRadioButton) e.getSource();
+				txtJoueur2.setText(difficile.getActionCommand());
+				if (btnRadioJ1_Difficile.isSelected()) {txtJoueur2.setText(txtJoueur2.getText()+"_2");}
+				txtJoueur2.setEditable(false);
+			}
+		});
 		setRadioTransparent(btnRadioJ2_Difficile);
 		buttonGroup_TypeJ2.add(btnRadioJ2_Difficile);
 		btnRadioJ2_Difficile.setBounds(475, 237, 100, 25);
@@ -504,63 +596,63 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		/////cartes de valeur 1
 		labelCartes1 = new JLabel("Cartes 1  :");
 		labelCartes1.setFont(font);
-		labelCartes1.setBounds(55, 538, 80, 20);
+		labelCartes1.setBounds(55, 540, 80, 20);
 		contentPane.add(labelCartes1);
 		spinner_cartes1 = new JSpinner();
 		spinner_cartes1.setModel(new SpinnerNumberModel(cartes1, 0, 10, 1));
-		spinner_cartes1.setBounds(120, 538, 40, 20);
+		spinner_cartes1.setBounds(120, 540, 40, 20);
 		setSpinnerTransparent(spinner_cartes1);
 		contentPane.add(spinner_cartes1);
 		
 		/////cartes de valeur 2
 		labelCartes2 = new JLabel("Cartes 2  :");
 		labelCartes2.setFont(font);
-		labelCartes2.setBounds(220, 538, 80, 20);
+		labelCartes2.setBounds(220, 540, 80, 20);
 		contentPane.add(labelCartes2);
 		spinner_cartes2 = new JSpinner();
 		spinner_cartes2.setModel(new SpinnerNumberModel(cartes2, 0, 10, 1));
-		spinner_cartes2.setBounds(285, 538, 40, 20);
+		spinner_cartes2.setBounds(285, 540, 40, 20);
 		setSpinnerTransparent(spinner_cartes2);
 		contentPane.add(spinner_cartes2);
 		
 		/////cartes de valeur 3
 		labelCartes3 = new JLabel("Cartes 3  :");
 		labelCartes3.setFont(font);
-		labelCartes3.setBounds(385, 538, 80, 20);
+		labelCartes3.setBounds(385, 540, 80, 20);
 		contentPane.add(labelCartes3);
 		spinner_cartes3 = new JSpinner();
 		spinner_cartes3.setModel(new SpinnerNumberModel(cartes3, 0, 10, 1));
-		spinner_cartes3.setBounds(450, 538, 40, 20);
+		spinner_cartes3.setBounds(450, 540, 40, 20);
 		setSpinnerTransparent(spinner_cartes3);
 		contentPane.add(spinner_cartes3);
 		
 		/////cartes de valeur 4
 		labelCartes4 = new JLabel("Cartes 4  :");
 		labelCartes4.setFont(font);
-		labelCartes4.setBounds(550, 538, 80, 20);
+		labelCartes4.setBounds(550, 540, 80, 20);
 		contentPane.add(labelCartes4);
 		spinner_cartes4 = new JSpinner();
 		spinner_cartes4.setModel(new SpinnerNumberModel(cartes4, 0, 10, 1));
-		spinner_cartes4.setBounds(615, 538, 40, 20);
+		spinner_cartes4.setBounds(615, 540, 40, 20);
 		setSpinnerTransparent(spinner_cartes4);
 		contentPane.add(spinner_cartes4);
 		
 		/////cartes de valeur 5
 		labelCartes5 = new JLabel("Cartes 5 :");
 		labelCartes5.setFont(font);
-		labelCartes5.setBounds(725, 538, 80, 20);
+		labelCartes5.setBounds(725, 540, 80, 20);
 		contentPane.add(labelCartes5);
 		spinner_cartes5 = new JSpinner();
 		spinner_cartes5.setModel(new SpinnerNumberModel(cartes5, 0, 10, 1));
-		spinner_cartes5.setBounds(790, 538, 40, 20);
+		spinner_cartes5.setBounds(790, 540, 40, 20);
 		setSpinnerTransparent(spinner_cartes5);
 		contentPane.add(spinner_cartes5);
 		
 		///Boutons
-		warnEnregistrement = new JLabel("Enregistrement des parametres impossible");
-		warnEnregistrement.setFont(new Font("Century", Font.BOLD, 14));
-		warnEnregistrement.setForeground(new Color(128, 0, 0));
-		warnEnregistrement.setBounds(50, 600, 400, 40);
+		warnEnregistrement = new JLabel("Enregistrement impossible");
+		warnEnregistrement.setFont(new Font("Tohama", Font.BOLD, 14));
+		warnEnregistrement.setForeground(new Color(102, 34, 0));
+		warnEnregistrement.setBounds(100, 600, 266, 37);
 		warnEnregistrement.setVisible(false);
 		contentPane.add(warnEnregistrement);
 		btnSaveSettings = new ButtonCustom("Enregistrer les parametres", "cadre3", new Dimension(266, 37), new Font("Century", Font.PLAIN, 14));
@@ -583,9 +675,8 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		setRadioButtons(typeJ1,typeJ2,modeAttaque,animation,joueurDebut);
 		
 		//warningField
-		warningField("j1",txtJoueur1, warning_J1);
-		warningField("j2",txtJoueur2, warning_J2);
-		
+		warningField("j1",txtJoueur1, warning_J1, buttonGroup_TypeJ1);
+		warningField("j2",txtJoueur2, warning_J2, buttonGroup_TypeJ2);
 		//bornesSpinnersTerrain
 		spinner_map.addChangeListener(new ChangeListener() {
 			@Override
@@ -617,31 +708,6 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 				setSpinnerTransparent(spinner_positionJ2);
 			}
 		});
-		
-		buttonGroup_TypeJ1.getSelection().addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                if (!buttonGroup_TypeJ1.getSelection().getActionCommand().equals("HUMAIN") ){
-                    txtJoueur1.setText(buttonGroup_TypeJ1.getSelection().getActionCommand());
-                    if (buttonGroup_TypeJ1.getSelection().getActionCommand().equals(buttonGroup_TypeJ2.getSelection().getActionCommand())){
-                    	txtJoueur2.setText(txtJoueur1.getText()+"_2");
-                    }
-                    txtJoueur1.setEditable(false);
-                } else {txtJoueur1.setEditable(true);}
-            }
-        });
-		buttonGroup_TypeJ2.getSelection().addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-            	if (!buttonGroup_TypeJ2.getSelection().getActionCommand().equals("HUMAIN") ){
-                    txtJoueur2.setText(buttonGroup_TypeJ2.getSelection().getActionCommand());
-                    if (buttonGroup_TypeJ2.getSelection().getActionCommand().equals(buttonGroup_TypeJ1.getSelection().getActionCommand())){
-                    	txtJoueur2.setText(txtJoueur2.getText()+"_2");
-                    }
-                    txtJoueur2.setEditable(false);
-                } else {txtJoueur2.setEditable(true);}
-            }
-        });
 		
 		//fenetreParametres.add(para_fond);
 		fenetreParametres.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
