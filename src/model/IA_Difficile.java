@@ -24,26 +24,6 @@ public class IA_Difficile extends IA{
 		memoisation = new HashMap<>();
 	}
 	
-//	public IA_Difficile(Coup c, Plateau p, Deck d, Coup a) {
-//		coup = c;
-//		plateau = p;
-//		deck = d;
-//		coupAdverse =a ;
-//	}
-	
-	/**???? Utile ????
-	 * choixCarteIA : permet a l'IA de choisir une carte parmis sa main.
-	 * Parametre : (Coup)coup.
-	 * Retour : (int)valeurCarte. (un int representant la valeur de la carte choisie.) 
-	 */
-	public int choixCarteIA(Coup coup) {
-		int valeurCarte = 0;
-
-		// A completer ...
-		
-		return valeurCarte;
-	}
-	
 	/**NON
 	 * rangerCartes :l'indice du premier tableau correspond a la valeur (+1), a  cette indice ce trouve dans un tableau les indice des cartes de cette valeur.
 	 * exemple :  [ 1:[4,3] , 2:[5] , 3:[], 4:[1,2] ]
@@ -439,12 +419,12 @@ public class IA_Difficile extends IA{
 		int[] meilleurCoup = new int[2];
 		float scoreMax = 0;
 		ControlerIA copie = new ControlerIA(controlerIA.generateNewJeuIA(controlerIA.getJeu(), jeu.getIndiceCurrentEscrimeur()));
-		while (it.hasNext()){
+		while (it.hasNext()) {
 			int[] currentCoup = it.next();
 			System.out.println("doit etre 0 : " + copie.getJeu().getHistorique().getHistorique().size());
 			copie.clickCase(currentCoup[0],currentCoup[1]);
 			System.out.println("doit etre 1 : " + copie.getJeu().getHistorique().getHistorique().size());
-			System.out.println("clickCase :" + currentCoup[0] +" "+ currentCoup[1]);
+			System.out.println("clickCase : " + currentCoup[0] + " "+ currentCoup[1]);
 			float scoreCoup = scoreConfig(copie, 0);
 			if (scoreCoup > scoreMax){
 				scoreMax = scoreCoup;
@@ -477,7 +457,7 @@ public class IA_Difficile extends IA{
 						monCoup[1] = i;
 						res.add(monCoup);
 					}
-				}else {
+				} else {
 					int[] monCoup = new int[2];
 					monCoup[0] = caseCliquee;
 					monCoup[1] = 1;
@@ -527,6 +507,7 @@ public class IA_Difficile extends IA{
 				while (it.hasNext()){
 					int[] currentCoup = it.next();
 					ControlerIA copie2 = new ControlerIA(copie.generateNewJeuIA(copie.getJeu()));
+					System.out.println("------------------------------------"+copie.getJeu().getHistorique().equals(copie2.getJeu().getHistorique()));
 					copie2.clickCase(currentCoup[0],currentCoup[1]);
 					float score;
 					if(copie2.getJeu().getIndiceCurrentEscrimeur() == copie2.getJeu().getIndiceCurrentEscrimeur()) {
@@ -596,12 +577,10 @@ public class IA_Difficile extends IA{
 		try {
 			Escrimeur eG = new Escrimeur("Gaucher", TypeEscrimeur.HUMAIN, 0, 5);
 			eG.setCartes(cartesGaucher);
-			Escrimeur eD = new Escrimeur("Droitier", TypeEscrimeur.HUMAIN, 1, 5);
+			Escrimeur eD = new Escrimeur("Droitier", TypeEscrimeur.HUMAIN, 0, 5);
 			eD.setCartes(cartesDroitier);
 			jeu = new Jeu(false, new Plateau(nbCase), new DeckPioche(cartesPioche), new DeckDefausse(cartesDefausse), nbCarteParJoueur, indiceCurrentEscrimeur, eG, eD, positionsDepart, false, 0);
-			jeu.nouvellePartie();
-			IA Ia = new IA_Difficile(jeu);
-			jeu.afficherEtatJeu();
+			IA_Difficile Ia = new IA_Difficile(jeu);
 			int [] coup = Ia.getChoixCoup();
 			System.out.println("Case de l'IA : " + coup[0]);
 			System.out.println("Nombre de carte à utiliser : " + coup[1]);

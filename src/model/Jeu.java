@@ -4,10 +4,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -29,13 +31,15 @@ public class Jeu extends Observable {
 		ACTUALISER_ESCRIMEUR_DROITIER,
 		ACTUALISER_ESCRIMEUR_GAUCHER,
 		ACTUALISER_ESCRIMEUR_MEME_MODE,
+		ACTUALISER_ESCRIMEUR_SANS_BUTTON,
 		ANIMATION_PIOCHER,
 		ANIMATION_DEFAUSSER,
 		ANIMATION_DEBUT_MANCHE,
 		ANIMATION_FIN_MANCHE,
 		ANIMATION_LANCER,
 		ANIMATION_DEPLACER_ESCRIMEUR,
-		ANIMATION_CHANGER_TOUR
+		ANIMATION_CHANGER_TOUR,
+		IA_JOUE
 	}
 	
 	protected Boolean modeSimple; 
@@ -78,7 +82,7 @@ public class Jeu extends Observable {
 	private boolean showAllCartes;
 	private int idJeu;
 	protected int indicePremierJoueurPartie;
-	protected HashMap<TypeEscrimeur, IA> listIA;
+	protected Map<TypeEscrimeur, IA> listIA;
 
 	protected Jeu() {}
 	
@@ -134,9 +138,11 @@ public class Jeu extends Observable {
 		this.dernierTour = false;
 		this.winner = NONE;
 		this.showAllCartes = false;
-		listIA = new HashMap<TypeEscrimeur, IA>();
-		listIA.put(TypeEscrimeur.IA_FACILE, new IA_Facile(this));
-		listIA.put(TypeEscrimeur.IA_MOYENNE, new IA_Moyenne(this));
+		HashMap<TypeEscrimeur, IA> hashIA = new HashMap<>();
+		hashIA.put(TypeEscrimeur.IA_FACILE, new IA_Facile(this));
+		hashIA.put(TypeEscrimeur.IA_MOYENNE, new IA_Moyenne(this));
+		
+		listIA = Collections.unmodifiableMap(hashIA);
 	}
 	
 	public boolean isDernierTour() {
@@ -228,15 +234,20 @@ public class Jeu extends Observable {
 		indiceCurrentEscrimeur = (indiceCurrentEscrimeur + 1) % 2;
 		if (getCurrentEscrimeur().getType() != TypeEscrimeur.HUMAIN) {
 			System.out.println("IA doit jouer");
-			modifieVue(Action.ACTUALISER_PLATEAU_SANS_CASE);
-			modifieVue(Action.ACTUALISER_DECK);
-			modifieVue(Action.ACTUALISER_ESCRIMEUR_MEME_MODE);
+			IADoitJouer();
 		} else {
 			System.out.println("Humain doit jouer");
 			modifieVue(Action.ACTUALISER_JEU);
 		}
 		return 1;
 	} 
+	
+	public void IADoitJouer() {
+		modifieVue(Action.ACTUALISER_PLATEAU_SANS_CASE);
+		modifieVue(Action.ACTUALISER_DECK);
+		modifieVue(Action.ACTUALISER_ESCRIMEUR_SANS_BUTTON);
+		modifieVue(Action.IA_JOUE);
+	}
 
 	/**
 	 * retire une carte de la main de l'escrimeur, l'ajoute à la défausse et serre
@@ -478,10 +489,13 @@ public class Jeu extends Observable {
 		resetManche();
 		indicePremierJoueurManche = (indicePremierJoueurManche + 1) % 2;
 		indiceCurrentEscrimeur = indicePremierJoueurManche;
-		modifieVue(Action.ACTUALISER_JEU);
 		piocher(escrimeurs[indiceCurrentEscrimeur]);
+		
 		piocher(escrimeurs[(indiceCurrentEscrimeur + 1) % 2]);
 		modifieVue(Action.ACTUALISER_JEU);
+		if (getCurrentEscrimeur().getType() != TypeEscrimeur.HUMAIN) {
+			modifieVue(Action.IA_JOUE);
+		}
 	}
 	
 	public Integer[] popLastCarteDeck() {
@@ -491,28 +505,26 @@ public class Jeu extends Observable {
 	public void modifieVue(Action action) {
 		if (showGraphique) {
 			switch (action) {
-			case ACTUALISER_JEU:
-			case ACTUALISER_ESCRIMEUR:
-			case ACTUALISER_ESCRIMEUR_GAUCHER:
-				cartesShowEscrimeurs[Escrimeur.GAUCHER].add(escrimeurs[Escrimeur.GAUCHER].getCartes().clone());
-				if (action == Action.ACTUALISER_ESCRIMEUR_GAUCHER) {
+				case ACTUALISER_JEU:
+				case ACTUALISER_ESCRIMEUR:
+				case ACTUALISER_ESCRIMEUR_GAUCHER:
+					cartesShowEscrimeurs[Escrimeur.GAUCHER].add(escrimeurs[Escrimeur.GAUCHER].getCartes().clone());
+					if (action == Action.ACTUALISER_ESCRIMEUR_GAUCHER) {
+						break;
+					}
+				case ACTUALISER_ESCRIMEUR_DROITIER:
+					cartesShowEscrimeurs[Escrimeur.DROITIER].add(escrimeurs[Escrimeur.DROITIER].getCartes().clone());
+					if (action == Action.ACTUALISER_ESCRIMEUR_DROITIER) {
+						break;
+					}
+				case ACTUALISER_DECK:
+					int distanceCarteVisible = deckDefausse.deckVide() ? -1 : deckDefausse.consulterCarteVisible().getDistance();
+					carteShowDeck.add(new Integer[] {deckPioche.nbCartes(), deckDefausse.nbCartes(), distanceCarteVisible});
+				default:
 					break;
-				}
-			case ACTUALISER_ESCRIMEUR_DROITIER:
-				cartesShowEscrimeurs[Escrimeur.DROITIER].add(escrimeurs[Escrimeur.DROITIER].getCartes().clone());
-				if (action == Action.ACTUALISER_ESCRIMEUR_DROITIER) {
-					break;
-				}
-			case ACTUALISER_DECK:
-				int distanceCarteVisible = deckDefausse.deckVide() ? -1 : deckDefausse.consulterCarteVisible().getDistance();
-				carteShowDeck.add(new Integer[] {deckPioche.nbCartes(), deckDefausse.nbCartes(), distanceCarteVisible});
-			default:
-				break;
-		}
-	
-		System.out.println("Dans modifieVue : " + action.toString());
-		listeActions.add(action);
-		demarreActionSuivante();
+			}
+			listeActions.add(action);
+			demarreActionSuivante();
 		}
 		
 	}
@@ -745,5 +757,17 @@ public class Jeu extends Observable {
 
 	public int getIndicePremierJoueurPartie() {
 		return indicePremierJoueurPartie;
-	}	
+	}
+	
+	public IA getIACurrent() {
+		return listIA.get(escrimeurs[indiceCurrentEscrimeur].getType());
+	}
+	
+	public boolean isIA(int indice) {
+		return escrimeurs[indice].isIA;
+	}
+	
+	public boolean isIACurrent() {
+		return escrimeurs[indiceCurrentEscrimeur].isIA;
+	}
 }

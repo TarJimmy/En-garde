@@ -3,6 +3,7 @@ package model;
 import java.util.HashSet;
 import java.util.Stack;
 
+import controller.ControlerIA.JeuIA;
 import model.Jeu.Action;
 
 public class Historique {
@@ -22,6 +23,7 @@ public class Historique {
 		for (Coup c: h.getHistorique()) {
 			this.historique.add(new Coup(c, jeu.getEscrimeurs()));
 		}
+		this.coupsAnnules = new Stack<>();
 	}
 	
 	public Stack<Coup> getHistorique(){
@@ -151,5 +153,31 @@ public class Historique {
         jeu.modifieVue(Action.ACTUALISER_PLATEAU);
 		
 		return false;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || this.getClass() != obj.getClass()){
+            return false;
+		}
+		
+		Historique other = (Historique) obj;
+		if((this.getHistorique() != null && other.getHistorique() == null) || (other.getHistorique() != null && this.getHistorique() == null)) {
+			return false;
+		}
+		if (this.getHistorique() == null && other.getHistorique() == null) {
+			return true;
+		}
+		if((!this.getHistorique().empty() && other.getHistorique().empty()) || (!other.getHistorique().empty() && this.getHistorique().empty())) {
+			System.out.println("probleme");
+			return false;
+		}
+		if (this.getHistorique().empty() && other.getHistorique().empty()) {
+			return true;
+		}
+		return this.getHistorique().peek().equals(other.getHistorique().peek());
 	}
 }

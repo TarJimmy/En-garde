@@ -13,6 +13,7 @@ import model.IA_Moyenne;
 import model.Jeu;
 import model.Jeu.Action;
 import model.Plateau;
+import model.TypeEscrimeur;
 import view.Animation;
 import view.InterfaceGraphiqueActionAnnexe;
 import view.InterfaceGraphiqueChargerPartie;
@@ -78,7 +79,9 @@ public class ControlerJeu extends Controler {
 	@Override
 	public boolean clickCase(int x, int nbCartesAUtiliser) {
 		//jeu.afficherEtatJeu();
+		jeu.modifieVue(Action.ACTUALISER_ESCRIMEUR_SANS_BUTTON);
 		int nbCartesAttaque = nbCartesAUtiliser;
+		
 		Coup dernierCoup = jeu.getHistorique().voirDernierCoup();
 		Escrimeur currentEscrimeur = jeu.getCurrentEscrimeur();
 		int indiceCurrentEscrimeur = jeu.getIndiceCurrentEscrimeur();
@@ -89,11 +92,12 @@ public class ControlerJeu extends Controler {
 		Carte[] cartesAJouer;
 
 		if (x == -1) {
-			if(dernierCoup == null || dernierCoup.getEscrimeur() == jeu.getCurrentEscrimeur()) {
+			if (dernierCoup == null || dernierCoup.getEscrimeur() == jeu.getCurrentEscrimeur()) {
 				jeu.changerTour();
 				return finirAction();
-			}else {
+			} else {
 				coupAJouer = null;
+				System.err.println("Coup théoriquement inateniable");
 				return false;
 			}
 		} else if(positionCurrentEscrimeur == x) {
@@ -338,7 +342,11 @@ public class ControlerJeu extends Controler {
 		if(cases.size() == 1 && cases.contains(-1)) {
 			jeu.changerTour();
 		} else {
-			jeu.modifieVue(Action.ACTUALISER_PLATEAU);
+			if (jeu.getCurrentEscrimeur().getType() == TypeEscrimeur.HUMAIN) {
+				jeu.modifieVue(Action.ACTUALISER_PLATEAU);
+			} else {
+				jeu.IADoitJouer();
+			}
 		}
 		if (jeu.isDernierTour()) {
 			finDeManche(null);

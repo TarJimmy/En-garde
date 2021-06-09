@@ -27,7 +27,7 @@ public class Coup implements Cloneable {
 		this.action = c.action;
 		this.escrimeur = escrimeurs[c.getEscrimeur().getIndice()];
 		this.cartes = new Carte[c.cartes.length];
-		for (int i = 0; i < c.cartes.length; i++) {
+		for (int i = 0; i < c.getCartes().length; i++) {
 			this.cartes[i] = c.cartes[i].copySimple();
 		}
 		this.indicesCartesJouees = new ArrayList<>();
@@ -97,6 +97,21 @@ public class Coup implements Cloneable {
 	
 	public String toString() {
 		return "{" +escrimeur.getNom() + ", " + Arrays.toString(cartes) + ", " + action + ", " + Arrays.toString(indicesCartesJouees.toArray()) + "}";
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || this.getClass() != obj.getClass()){
+            return false;
+		}
+		Coup other = (Coup) obj;
+		//true si 2 attaques du meme type et de la meme longueur ou si aucune attaque
+		return (this.getAction() == Coup.ATTAQUEDIRECTE && other.getAction() == Coup.ATTAQUEDIRECTE && this.getCartes().length == other.getCartes().length)
+				|| (this.getAction() == Coup.ATTAQUEINDIRECTE && other.getAction() == Coup.ATTAQUEINDIRECTE && this.getCartes().length == other.getCartes().length)
+				|| (this.getAction() != Coup.ATTAQUEDIRECTE && this.getAction() != Coup.ATTAQUEINDIRECTE && other.getAction() != Coup.ATTAQUEDIRECTE && other.getAction() != Coup.ATTAQUEINDIRECTE);
 	}
 
 }

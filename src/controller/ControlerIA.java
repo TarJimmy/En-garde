@@ -1,6 +1,7 @@
 package controller;
 
 import java.util.Arrays;
+
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Stack;
@@ -32,7 +33,9 @@ public class ControlerIA extends ControlerJeu {
 	
 	
 	public JeuIA generateNewJeuIA(Jeu jeu) {
-		return new JeuIA(jeu);
+		JeuIA j = new JeuIA(jeu);
+		System.out.println("tcsicndiv"+ jeu.getHistorique().equals(j.getHistorique()));
+		return j;
 	}
 	
 	public JeuIA generateNewJeuIA(Jeu jeu, int indiceEscrimeurCartesConnues) {
@@ -104,12 +107,16 @@ public class ControlerIA extends ControlerJeu {
 		public JeuIA(Jeu jeu, int indiceEscrimeurCartesConnues) {
 			init(jeu);
 			Escrimeur e = this.escrimeurs[(indiceEscrimeurCartesConnues + 1) %2] ;
+			System.out.println(Arrays.toString(jeu.getEscrimeurs()[(indiceEscrimeurCartesConnues + 1) %2].getCartes()));
+			System.out.println("taille pioche : "+ deckPioche.nbCartes());
 			for (int i = 0; i < e.getNbCartes(); i++) {
 				if(e.getCarte(i) != null) {
+					System.out.println("on est la");
 					deckPioche.reposerCarte(e.getCarte(i));
 					e.supprimerCarte(e.getCarte(i));
 				}
 			}
+			System.out.println("taille pioche : "+ deckPioche.nbCartes());
 			for (int i = 0; i < e.getNbCartes(); i++) {
 				e.ajouterCarte(deckPioche.piocher());
 			}
@@ -124,7 +131,6 @@ public class ControlerIA extends ControlerJeu {
 			this.deckPioche = new DeckPiocheIA(jeu.getDeckPioche().copySimple());
 			this.indiceCurrentEscrimeur = jeu.getIndiceCurrentEscrimeur();
 			this.historique = new Historique(jeu.getHistorique(), jeu);
-			System.out.println(Arrays.toString(this.historique.getHistorique().toArray()));
 			System.out.println(Arrays.toString(jeu.getHistorique().getHistorique().toArray()));
 			this.positionsDeparts = jeu.getPositionsDepart().clone();
 			this.modeSimple = jeu.getModeSimple();
@@ -170,7 +176,8 @@ public class ControlerIA extends ControlerJeu {
 					&& this.getIndiceCurrentEscrimeur() == other.getIndiceCurrentEscrimeur()
 					&& this.getEscrimeurGaucher().equals(other.getEscrimeurGaucher())
 					&& this.getEscrimeurDroitier().equals(other.getEscrimeurDroitier())
-					&& this.getPlateau().equals(other.getPlateau());
+					&& this.getPlateau().equals(other.getPlateau())
+					&& this.getHistorique().equals(other.getHistorique());
 		}
 		
 
