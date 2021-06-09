@@ -266,7 +266,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		J1 = true;
 		J2 = true;
 		fenetreParametres = new JFrame("EN GARDE ! - PARAMETRES");
-		Font font = new Font("Century", Font.BOLD, 12);
+		Font font = new Font("Tohama", Font.BOLD, 12);
 		JLabel contentPane = null;
 		try {
 		contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("parametres.png", Configuration.MENU))));
@@ -308,7 +308,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		txtJoueur1 = new JTextField();
 		txtJoueur1.setDocument(new JTextFieldLimit(15));
 		txtJoueur1.setText(nomJoueur1);
-		txtJoueur1.setFont(new Font("Century", Font.BOLD, 14));
+		txtJoueur1.setFont(font);
 		txtJoueur1.setBounds(175, 140, 130, 20);
 		txtJoueur1.setBorder(null);
 		txtJoueur1.setOpaque(false);
@@ -331,20 +331,20 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		contentPane.add(btnRadioJ1_Humain);
 		btnRadioJ1_Facile = new JRadioButton("IA Facile");
 		btnRadioJ1_Facile.setActionCommand("IA_FACILE");
-		buttonGroup_TypeJ1.add(btnRadioJ1_Facile);
 		setRadioTransparent(btnRadioJ1_Facile);
+		buttonGroup_TypeJ1.add(btnRadioJ1_Facile);
 		btnRadioJ1_Facile.setBounds(275, 170, 100, 25);
 		contentPane.add(btnRadioJ1_Facile);
 		btnRadioJ1_Moyenne = new JRadioButton("IA Moyenne");
 		btnRadioJ1_Moyenne.setActionCommand("IA_MOYENNE");
-		buttonGroup_TypeJ1.add(btnRadioJ1_Moyenne);
 		setRadioTransparent(btnRadioJ1_Moyenne);
+		buttonGroup_TypeJ1.add(btnRadioJ1_Moyenne);
 		btnRadioJ1_Moyenne.setBounds(375, 170, 100, 25);
 		contentPane.add(btnRadioJ1_Moyenne);
 		btnRadioJ1_Difficile = new JRadioButton("IA Difficile");
 		btnRadioJ1_Difficile.setActionCommand("IA_DIFFICILE");
-		buttonGroup_TypeJ1.add(btnRadioJ1_Difficile);
 		setRadioTransparent(btnRadioJ1_Difficile);
+		buttonGroup_TypeJ1.add(btnRadioJ1_Difficile);
 		btnRadioJ1_Difficile.setBounds(475, 170, 100, 25);
 		contentPane.add(btnRadioJ1_Difficile);
 		
@@ -386,26 +386,26 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		buttonGroup_TypeJ2 = new ButtonGroup();
 		btnRadioJ2_Humain = new JRadioButton("Humain");
 		btnRadioJ2_Humain.setActionCommand("HUMAIN");
-		buttonGroup_TypeJ2.add(btnRadioJ2_Humain);
 		setRadioTransparent(btnRadioJ2_Humain);
+		buttonGroup_TypeJ2.add(btnRadioJ2_Humain);
 		btnRadioJ2_Humain.setBounds(175, 237, 100, 25);
 		contentPane.add(btnRadioJ2_Humain);
 		btnRadioJ2_Facile = new JRadioButton("IA Facile");
 		btnRadioJ2_Facile.setActionCommand("IA_FACILE");
-		buttonGroup_TypeJ2.add(btnRadioJ2_Facile);
 		setRadioTransparent(btnRadioJ2_Facile);
+		buttonGroup_TypeJ2.add(btnRadioJ2_Facile);
 		btnRadioJ2_Facile.setBounds(275, 237, 100, 25);
 		contentPane.add(btnRadioJ2_Facile);
 		btnRadioJ2_Moyenne = new JRadioButton("IA Moyenne");
 		btnRadioJ2_Moyenne.setActionCommand("IA_MOYENNE");
-		buttonGroup_TypeJ2.add(btnRadioJ2_Moyenne);
 		setRadioTransparent(btnRadioJ2_Moyenne);
+		buttonGroup_TypeJ2.add(btnRadioJ2_Moyenne);
 		btnRadioJ2_Moyenne.setBounds(375, 237, 100, 25);
 		contentPane.add(btnRadioJ2_Moyenne);
 		btnRadioJ2_Difficile = new JRadioButton("IA Difficile");
 		btnRadioJ2_Difficile.setActionCommand("IA_DIFFICILE");
-		buttonGroup_TypeJ2.add(btnRadioJ2_Difficile);
 		setRadioTransparent(btnRadioJ2_Difficile);
+		buttonGroup_TypeJ2.add(btnRadioJ2_Difficile);
 		btnRadioJ2_Difficile.setBounds(475, 237, 100, 25);
 		contentPane.add(btnRadioJ2_Difficile);
 		
@@ -618,6 +618,31 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 			}
 		});
 		
+		buttonGroup_TypeJ1.getSelection().addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (!buttonGroup_TypeJ1.getSelection().getActionCommand().equals("HUMAIN") ){
+                    txtJoueur1.setText(buttonGroup_TypeJ1.getSelection().getActionCommand());
+                    if (buttonGroup_TypeJ1.getSelection().getActionCommand().equals(buttonGroup_TypeJ2.getSelection().getActionCommand())){
+                    	txtJoueur2.setText(txtJoueur1.getText()+"_2");
+                    }
+                    txtJoueur1.setEditable(false);
+                } else {txtJoueur1.setEditable(true);}
+            }
+        });
+		buttonGroup_TypeJ2.getSelection().addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+            	if (!buttonGroup_TypeJ2.getSelection().getActionCommand().equals("HUMAIN") ){
+                    txtJoueur2.setText(buttonGroup_TypeJ2.getSelection().getActionCommand());
+                    if (buttonGroup_TypeJ2.getSelection().getActionCommand().equals(buttonGroup_TypeJ1.getSelection().getActionCommand())){
+                    	txtJoueur2.setText(txtJoueur2.getText()+"_2");
+                    }
+                    txtJoueur2.setEditable(false);
+                } else {txtJoueur2.setEditable(true);}
+            }
+        });
+		
 		//fenetreParametres.add(para_fond);
 		fenetreParametres.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		fenetreParametres.setBounds(100, 100, 900, 700);
@@ -628,7 +653,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	private void setRadioTransparent(JRadioButton btn) {
 		btn.setOpaque(false);
 		btn.setFocusPainted(false);
-		btn.setFont(new Font("Century", Font.BOLD, 12));
+		btn.setFont(new Font("Tohama", Font.BOLD, 12));
 		
 	}
 
