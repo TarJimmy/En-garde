@@ -134,7 +134,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				}
 			case ACTUALISER_ESCRIMEUR:
 			case ACTUALISER_ESCRIMEUR_DROITIER :
-				vueEscrimeurs[Escrimeur.DROITIER].actualise(jeu.popShowCarte(Escrimeur.DROITIER), (jeu.isIA(Escrimeur.DROITIER) && jeu.getIsTourGaucher() == false || jeu.getShowAllCartes());
+				vueEscrimeurs[Escrimeur.DROITIER].actualise(jeu.popShowCarte(Escrimeur.DROITIER), (jeu.isIA(Escrimeur.DROITIER) && jeu.getIsTourGaucher() == false || jeu.getShowAllCartes()));
 				if (action == Action.ACTUALISER_ESCRIMEUR_DROITIER) { // Stop si ce n'est pas  un changement de tour ou l'actualisation des 2 mains
 					controle.commande("ActionTerminer");
 					break;
