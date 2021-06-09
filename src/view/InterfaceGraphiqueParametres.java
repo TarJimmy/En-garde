@@ -266,7 +266,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		J1 = true;
 		J2 = true;
 		fenetreParametres = new JFrame("EN GARDE ! - PARAMETRES");
-		Font font = new Font("Century", Font.BOLD, 12);
+		Font font = new Font("Century", Font.BOLD, 13);
 		JLabel contentPane = null;
 		try {
 		contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("parametres.png", Configuration.MENU))));
