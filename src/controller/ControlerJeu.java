@@ -59,7 +59,6 @@ public class ControlerJeu extends Controler {
 			InterfaceGraphiqueJeu.demarrer(this, jeu);
 		} else {
 			System.out.println("Interface graphique non lancé");
-			jeu.nouvellePartie();
 		}
 		InsertJoueursBD();
 	}
@@ -80,7 +79,9 @@ public class ControlerJeu extends Controler {
 	@Override
 	public boolean clickCase(int x, int nbCartesAUtiliser) {
 		//jeu.afficherEtatJeu();
+		jeu.modifieVue(Action.ACTUALISER_ESCRIMEUR_SANS_BUTTON);
 		int nbCartesAttaque = nbCartesAUtiliser;
+		
 		Coup dernierCoup = jeu.getHistorique().voirDernierCoup();
 		Escrimeur currentEscrimeur = jeu.getCurrentEscrimeur();
 		int indiceCurrentEscrimeur = jeu.getIndiceCurrentEscrimeur();
@@ -91,11 +92,14 @@ public class ControlerJeu extends Controler {
 		Carte[] cartesAJouer;
 
 		if (x == -1) {
-			if(dernierCoup.getEscrimeur() == jeu.getCurrentEscrimeur()) {
+			if (dernierCoup == null || dernierCoup.getEscrimeur() == jeu.getCurrentEscrimeur()) {
 				jeu.changerTour();
 				return finirAction();
+			} else {
+				coupAJouer = null;
+				System.err.println("Coup théoriquement inateniable");
+				return false;
 			}
-			coupAJouer = null;
 		} else if(positionCurrentEscrimeur == x) {
 			//il faut defendre
 			int puissanceAttaque = dernierCoup.getCartes().length;
@@ -371,10 +375,20 @@ public class ControlerJeu extends Controler {
 	}
 	
 	public void nouveauMatch() {
-		animations = new LinkedList<>();
-		jeu.echangeEscrimeurs();
 		jeu.resetAction();
-		closeAll();
+		this.animations = new LinkedList<>();
+		jeu.echangeEscrimeurs();
+		nouvellePartie();
+		
+		
+		
+//		this.animations = new LinkedList<>();
+//		jeu.echangeEscrimeurs();
+//		jeu.resetAction();
+//		closeAll();
+//		this.animations.clear();
+//		jeu.setIdJeu(-1);
+//		jeu.nouvellePartie();
 		InterfaceGraphiqueJeu.demarrer(this);
 	}
 	

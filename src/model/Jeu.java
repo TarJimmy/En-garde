@@ -489,10 +489,13 @@ public class Jeu extends Observable {
 		resetManche();
 		indicePremierJoueurManche = (indicePremierJoueurManche + 1) % 2;
 		indiceCurrentEscrimeur = indicePremierJoueurManche;
-		modifieVue(Action.ACTUALISER_JEU);
 		piocher(escrimeurs[indiceCurrentEscrimeur]);
+		
 		piocher(escrimeurs[(indiceCurrentEscrimeur + 1) % 2]);
 		modifieVue(Action.ACTUALISER_JEU);
+		if (getCurrentEscrimeur().getType() != TypeEscrimeur.HUMAIN) {
+			modifieVue(Action.IA_JOUE);
+		}
 	}
 	
 	public Integer[] popLastCarteDeck() {
@@ -546,6 +549,8 @@ public class Jeu extends Observable {
 	public void demarreActionSuivante() {
 		if (!actionEnCours && !listeActions.isEmpty()) {
 			actionEnCours = true;
+			System.out.println("2");
+			System.out.println(Arrays.toString(listeActions.toArray()));
 			metAJour();
 		}
 	}
@@ -585,6 +590,7 @@ public class Jeu extends Observable {
 	}
 	
 	public void nouvellePartie() {
+		clearAnimation();
 		setCaseAide(-1);
 		escrimeurs[Escrimeur.GAUCHER].resetMancheGagner();
 		escrimeurs[Escrimeur.DROITIER].resetMancheGagner();
@@ -680,7 +686,7 @@ public class Jeu extends Observable {
 		jeu.deckDefausse = deckDefausse.copySimple();
 		jeu.deckPioche = deckPioche.copySimple();
 		jeu.indiceCurrentEscrimeur = indiceCurrentEscrimeur;
-		jeu.historique = historique.copySimple(jeu);
+		jeu.historique = new Historique(historique,jeu);
 		return jeu;
 	}
 
@@ -751,9 +757,17 @@ public class Jeu extends Observable {
 
 	public int getIndicePremierJoueurPartie() {
 		return indicePremierJoueurPartie;
-	}	
+	}
 	
 	public IA getIACurrent() {
 		return listIA.get(escrimeurs[indiceCurrentEscrimeur].getType());
+	}
+	
+	public boolean isIA(int indice) {
+		return escrimeurs[indice].isIA;
+	}
+	
+	public boolean isIACurrent() {
+		return escrimeurs[indiceCurrentEscrimeur].isIA;
 	}
 }

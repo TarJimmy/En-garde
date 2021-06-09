@@ -112,12 +112,14 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	@Override
 	public void miseAJour() {
 		Action action = jeu.getActionCourante();
+			
+		System.out.println(action);
 		switch (action) {
 			case ACTUALISER_JEU:
 			case ACTUALISER_PLATEAU: // Actualise les cases accessibles du plateau
 				HashSet<Integer> casesJouables = jeu.casesJouables();
 				int indiceCurrent = jeu.getIndiceCurrentEscrimeur();
-				vueEscrimeurs[indiceCurrent].setBtnPasserTourVisibility(casesJouables.contains(-1));
+				vueEscrimeurs[indiceCurrent].setBtnPasserTourVisibility(jeu.isIACurrent() && casesJouables.contains(-1));
 				vueEscrimeurs[(indiceCurrent + 1) % 2].setBtnPasserTourVisibility(false);
 				vuePlateau.actualise(casesJouables, jeu.getCurrentEscrimeur());
 				if (action == Action.ACTUALISER_PLATEAU) { // Stop si ce n'est pas  un changement de tour
@@ -132,13 +134,13 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				}
 			case ACTUALISER_ESCRIMEUR:
 			case ACTUALISER_ESCRIMEUR_DROITIER :
-				vueEscrimeurs[Escrimeur.DROITIER].actualise(jeu.popShowCarte(Escrimeur.DROITIER), jeu.getIsTourGaucher() == false || jeu.getShowAllCartes());
+				vueEscrimeurs[Escrimeur.DROITIER].actualise(jeu.popShowCarte(Escrimeur.DROITIER), (jeu.isIA(Escrimeur.DROITIER) && jeu.getIsTourGaucher() == false || jeu.getShowAllCartes());
 				if (action == Action.ACTUALISER_ESCRIMEUR_DROITIER) { // Stop si ce n'est pas  un changement de tour ou l'actualisation des 2 mains
 					controle.commande("ActionTerminer");
 					break;
 				}
 			case ACTUALISER_ESCRIMEUR_GAUCHER:
-				vueEscrimeurs[Escrimeur.GAUCHER].actualise(jeu.popShowCarte(Escrimeur.GAUCHER), jeu.getIsTourGaucher() || jeu.getShowAllCartes());
+				vueEscrimeurs[Escrimeur.GAUCHER].actualise(jeu.popShowCarte(Escrimeur.GAUCHER), (jeu.isIA(Escrimeur.GAUCHER) && jeu.getIsTourGaucher()) || jeu.getShowAllCartes());
 				controle.commande("ActionTerminer");
 				break;
 			case ACTUALISER_ESCRIMEUR_SANS_BUTTON:

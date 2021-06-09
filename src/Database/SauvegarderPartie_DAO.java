@@ -53,7 +53,7 @@ public class SauvegarderPartie_DAO {
 	        		+ "AnimationAutoriser = ?,"
 	        		+ "indicePremierJoueur = ?,"
 	        		+ "indiceCurrentJoueur = ?,"
-	        		+ "indicePremierJouerPartie = ?"
+	        		+ "indicePremierJouerPartie = ?,"
 	        		+ "dateMatch = DATE('now','localtime') "
 	                + "WHERE idPartie = ?";
 		

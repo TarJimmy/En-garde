@@ -17,7 +17,13 @@ public class AdaptateurSauvPartie implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(choix.equals("Charger")) {control.chargerPartie(id);}
-		else if (choix.equals("Supprimer")) {control.supprimerPartie(id);}
+		if(choix.equals("Charger")) {
+			control.chargerPartie(id);
+			InterfaceGraphiqueChargerPartie.close();
+
+		}
+		else if (choix.equals("Supprimer")) {
+			control.supprimerPartie(id);
+		}
 	}
 }

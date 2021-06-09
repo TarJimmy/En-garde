@@ -3,6 +3,7 @@ package model;
 import java.util.HashSet;
 import java.util.Stack;
 
+import controller.ControlerIA.JeuIA;
 import model.Jeu.Action;
 
 public class Historique {
@@ -14,6 +15,19 @@ public class Historique {
 		this.jeu = jeu;
 		historique = new Stack<>();
 		coupsAnnules = new Stack <>();
+	}
+	
+	public Historique(Historique h, Jeu j) {
+		this.jeu = j;
+		this.historique = new Stack<>();
+		for (Coup c: h.getHistorique()) {
+			this.historique.add(new Coup(c, jeu.getEscrimeurs()));
+		}
+		this.coupsAnnules = new Stack<>();
+	}
+	
+	public Stack<Coup> getHistorique(){
+		return this.historique;
 	}
 	
 	public void ajouterCoup(Coup c) {
@@ -140,13 +154,30 @@ public class Historique {
 		
 		return false;
 	}
-
-	public Historique copySimple(Jeu jeu) {
-		Historique newHistorique = new Historique(jeu);
-		newHistorique.historique = new Stack<>();
-		for (Coup c: historique) {
-			newHistorique.historique.add(c.copySimple(jeu.getEscrimeurs()));
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
 		}
-		return newHistorique;
+		if (obj == null || this.getClass() != obj.getClass()){
+            return false;
+		}
+		
+		Historique other = (Historique) obj;
+		if((this.getHistorique() != null && other.getHistorique() == null) || (other.getHistorique() != null && this.getHistorique() == null)) {
+			return false;
+		}
+		if (this.getHistorique() == null && other.getHistorique() == null) {
+			return true;
+		}
+		if((!this.getHistorique().empty() && other.getHistorique().empty()) || (!other.getHistorique().empty() && this.getHistorique().empty())) {
+			System.out.println("probleme");
+			return false;
+		}
+		if (this.getHistorique().empty() && other.getHistorique().empty()) {
+			return true;
+		}
+		return this.getHistorique().peek().equals(other.getHistorique().peek());
 	}
 }
