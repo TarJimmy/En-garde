@@ -266,7 +266,7 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		J1 = true;
 		J2 = true;
 		fenetreParametres = new JFrame("EN GARDE ! - PARAMETRES");
-		Font font = new Font("Century", Font.BOLD, 13);
+		Font font = new Font("Century", Font.BOLD, 12);
 		JLabel contentPane = null;
 		try {
 		contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("parametres.png", Configuration.MENU))));
@@ -504,55 +504,55 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 		/////cartes de valeur 1
 		labelCartes1 = new JLabel("Cartes 1  :");
 		labelCartes1.setFont(font);
-		labelCartes1.setBounds(55, 540, 80, 20);
+		labelCartes1.setBounds(55, 538, 80, 20);
 		contentPane.add(labelCartes1);
 		spinner_cartes1 = new JSpinner();
 		spinner_cartes1.setModel(new SpinnerNumberModel(cartes1, 0, 10, 1));
-		spinner_cartes1.setBounds(120, 540, 40, 20);
+		spinner_cartes1.setBounds(120, 538, 40, 20);
 		setSpinnerTransparent(spinner_cartes1);
 		contentPane.add(spinner_cartes1);
 		
 		/////cartes de valeur 2
 		labelCartes2 = new JLabel("Cartes 2  :");
 		labelCartes2.setFont(font);
-		labelCartes2.setBounds(220, 540, 80, 20);
+		labelCartes2.setBounds(220, 538, 80, 20);
 		contentPane.add(labelCartes2);
 		spinner_cartes2 = new JSpinner();
 		spinner_cartes2.setModel(new SpinnerNumberModel(cartes2, 0, 10, 1));
-		spinner_cartes2.setBounds(285, 540, 40, 20);
+		spinner_cartes2.setBounds(285, 538, 40, 20);
 		setSpinnerTransparent(spinner_cartes2);
 		contentPane.add(spinner_cartes2);
 		
 		/////cartes de valeur 3
 		labelCartes3 = new JLabel("Cartes 3  :");
 		labelCartes3.setFont(font);
-		labelCartes3.setBounds(385, 540, 80, 20);
+		labelCartes3.setBounds(385, 538, 80, 20);
 		contentPane.add(labelCartes3);
 		spinner_cartes3 = new JSpinner();
 		spinner_cartes3.setModel(new SpinnerNumberModel(cartes3, 0, 10, 1));
-		spinner_cartes3.setBounds(450, 540, 40, 20);
+		spinner_cartes3.setBounds(450, 538, 40, 20);
 		setSpinnerTransparent(spinner_cartes3);
 		contentPane.add(spinner_cartes3);
 		
 		/////cartes de valeur 4
 		labelCartes4 = new JLabel("Cartes 4  :");
 		labelCartes4.setFont(font);
-		labelCartes4.setBounds(550, 540, 80, 20);
+		labelCartes4.setBounds(550, 538, 80, 20);
 		contentPane.add(labelCartes4);
 		spinner_cartes4 = new JSpinner();
 		spinner_cartes4.setModel(new SpinnerNumberModel(cartes4, 0, 10, 1));
-		spinner_cartes4.setBounds(615, 540, 40, 20);
+		spinner_cartes4.setBounds(615, 538, 40, 20);
 		setSpinnerTransparent(spinner_cartes4);
 		contentPane.add(spinner_cartes4);
 		
 		/////cartes de valeur 5
 		labelCartes5 = new JLabel("Cartes 5 :");
 		labelCartes5.setFont(font);
-		labelCartes5.setBounds(725, 540, 80, 20);
+		labelCartes5.setBounds(725, 538, 80, 20);
 		contentPane.add(labelCartes5);
 		spinner_cartes5 = new JSpinner();
 		spinner_cartes5.setModel(new SpinnerNumberModel(cartes5, 0, 10, 1));
-		spinner_cartes5.setBounds(790, 540, 40, 20);
+		spinner_cartes5.setBounds(790, 538, 40, 20);
 		setSpinnerTransparent(spinner_cartes5);
 		contentPane.add(spinner_cartes5);
 		
