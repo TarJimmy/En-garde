@@ -81,9 +81,9 @@ public class VueMain extends JComponent {
 		this.posSocles = new Point[cartes.length];
 		for (int i = 0; i < cartes.length; i++) {
 			this.cartes[i] = -1;
-			int posXSocle = 15 + i * espaceCarte + (espaceCarte - espaceCarte) / 2;
+			int posXSocle = i * espaceCarte + (espaceCarte - largeurCarte) / 2;
 			this.posSocles[i] = new Point(posXSocle, posYSocle);
-			this.posCartes[i] = new Point(posXSocle + ((espaceCarte - largeurCarte) / 2), posYSocle + ((hauteurSocle - hauteurCarte) / 2));
+			this.posCartes[i] = new Point(posXSocle + ((largeurSocle - largeurCarte) / 2), posYSocle + ((hauteurSocle - hauteurCarte) / 2));
 		}
 	}
 
@@ -91,10 +91,9 @@ public class VueMain extends JComponent {
 	protected void paintComponent(Graphics g) {
 	    drawable = (Graphics2D)g;
 	    for (int i = 0; i < this.cartes.length; i++) {
-			int posXSocle = 15 + i * espaceCarte + (espaceCarte - espaceCarte) / 2;
 			//int posYSocle = (hauteurPanel - hauteurSocle) / 2;
 			// Dessine Socle
-			drawable.drawImage(imgSocle, posSocles[i].x, posSocles[i].y, espaceCarte, hauteurSocle, null);
+			drawable.drawImage(imgSocle, posSocles[i].x, posSocles[i].y, largeurSocle, hauteurSocle, null);
 			if (this.cartes[i] > 0) {
 				int distance = this.cartes[i];
 				Image img;

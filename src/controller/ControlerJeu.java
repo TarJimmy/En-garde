@@ -8,10 +8,12 @@ import model.Carte;
 import model.Coup;
 import model.Escrimeur;
 import model.IA;
+import model.IA_Difficile;
 import model.IA_Moyenne;
 import model.Jeu;
 import model.Jeu.Action;
 import model.Plateau;
+import model.TypeEscrimeur;
 import view.Animation;
 import view.InterfaceGraphiqueActionAnnexe;
 import view.InterfaceGraphiqueChargerPartie;
@@ -57,6 +59,7 @@ public class ControlerJeu extends Controler {
 			InterfaceGraphiqueJeu.demarrer(this, jeu);
 		} else {
 			System.out.println("Interface graphique non lancé");
+			jeu.nouvellePartie();
 		}
 		InsertJoueursBD();
 	}
@@ -67,7 +70,7 @@ public class ControlerJeu extends Controler {
 	}
 	
 	protected void initIA() {
-		IA_conseil = new IA_Moyenne(jeu);
+		IA_conseil = new IA_Difficile(jeu);
 	}
 	
 	public void piocher(Escrimeur e) {
@@ -93,7 +96,7 @@ public class ControlerJeu extends Controler {
 				return finirAction();
 			}
 			coupAJouer = null;
-		}else if(positionCurrentEscrimeur == x) {
+		} else if(positionCurrentEscrimeur == x) {
 			//il faut defendre
 			int puissanceAttaque = dernierCoup.getCartes().length;
 			cartesAJouer = new Carte[puissanceAttaque];
@@ -335,7 +338,11 @@ public class ControlerJeu extends Controler {
 		if(cases.size() == 1 && cases.contains(-1)) {
 			jeu.changerTour();
 		} else {
-			jeu.modifieVue(Action.ACTUALISER_PLATEAU);
+			if (jeu.getCurrentEscrimeur().getType() == TypeEscrimeur.HUMAIN) {
+				jeu.modifieVue(Action.ACTUALISER_PLATEAU);
+			} else {
+				jeu.IADoitJouer();
+			}
 		}
 		if (jeu.isDernierTour()) {
 			finDeManche(null);
