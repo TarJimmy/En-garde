@@ -77,7 +77,7 @@ public class SauvegardeParametre {
 			
 			fWriter.close();
 		} catch (IOException e) {
-			System.out.println("An error occurred.");
+			System.err.println("An error occurred.");
 			e.printStackTrace();
 		}
  
@@ -119,7 +119,7 @@ public class SauvegardeParametre {
 			fReader.close();
 			
 		} catch (IOException e) {
-	      System.out.println("An error occurred.");
+	      System.err.println("An error occurred.");
 	      e.printStackTrace();
 	    }
 	}

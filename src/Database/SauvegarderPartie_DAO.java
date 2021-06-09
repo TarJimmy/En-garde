@@ -31,7 +31,6 @@ public class SauvegarderPartie_DAO {
 	public int sauvegardeJeu(Jeu jeu) {  
 		String sql;
 		int idJeu = jeu.getIdJeu();
-		System.out.println(idJeu);
 		if (idJeu != -1) {
 	        sql = "UPDATE SauvegarderPartie SET nomJoueurG = ?,"
 	        		+ "nomJoueurD = ?,"
@@ -54,6 +53,7 @@ public class SauvegarderPartie_DAO {
 	        		+ "AnimationAutoriser = ?,"
 	        		+ "indicePremierJoueur = ?,"
 	        		+ "indiceCurrentJoueur = ?,"
+	        		+ "indicePremierJouerPartie = ?,"
 	        		+ "dateMatch = DATE('now','localtime') "
 	                + "WHERE idPartie = ?";
 		
@@ -61,16 +61,16 @@ public class SauvegarderPartie_DAO {
 			sql = "INSERT OR REPLACE INTO SauvegarderPartie(nomJoueurG,nomJoueurD,mancheGagnerGauche,mancheGagnerDroit"
 					+ ",posJoueurG,posJoueurD,nbCasesJeu,nbManchesWin,mainGaucherJSON,mainDroitierJSON,DefausseJSON,"
 					+ "PiocheJSON,posDepartGauche,posDepartDroit,modeSimple,TypeEscrimeurG,TypeEscrimeurD,CartesMaxJoueur,"
-					+ "AnimationAutoriser,indicePremierJoueur,indiceCurrentJoueur,dateMatch) "
-					+ "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,DATE('now','localtime'))";  
+					+ "AnimationAutoriser,indicePremierJoueur,indiceCurrentJoueur,indicePremierJouerPartie,dateMatch) "
+					+ "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,DATE('now','localtime'))";  
 		}
    
         try{  
             Connection conn = this.connect();  
             PreparedStatement pstmt = conn.prepareStatement(sql);  
             
-            pstmt.setString(1, jeu.getEscrimeurGaucher().getNom());  
-            pstmt.setString(2, jeu.getEscrimeurDroitier().getNom());
+            pstmt.setString(1, jeu.getEscrimeurGaucher().getNom().toLowerCase());  
+            pstmt.setString(2, jeu.getEscrimeurDroitier().getNom().toLowerCase());
             pstmt.setInt(3, jeu.getEscrimeurGaucher().getMancheGagner()); 
             pstmt.setInt(4, jeu.getEscrimeurDroitier().getMancheGagner());
             pstmt.setInt(5, jeu.getPlateau().getPosition(0));  
@@ -100,13 +100,14 @@ public class SauvegarderPartie_DAO {
             pstmt.setString(17,jeu.getEscrimeurDroitier().getType().toString());
             pstmt.setInt(18, jeu.getEscrimeurDroitier().getNbCartes());  
             pstmt.setInt(19, jeu.getPositionsDepart()[1]);  
-            pstmt.setInt(20, jeu.getIndicePremierJoueur());  
+            pstmt.setInt(20, jeu.getindicePremierJoueurManche());  
             pstmt.setInt(21, jeu.getIndiceCurrentEscrimeur());  
+            pstmt.setInt(22, jeu.getIndicePremierJoueurPartie());  
             if (idJeu != -1) {
-            	pstmt.setInt(22, idJeu);  
+            	pstmt.setInt(23, idJeu);  
             }
             pstmt.executeUpdate();  
-            System.out.println("Partie sauvegard�\n");
+            System.out.println("Partie sauvegardé\n");
 
             
             if (idJeu != -1) {

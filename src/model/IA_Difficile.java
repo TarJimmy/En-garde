@@ -11,27 +11,25 @@ import controller.ControlerJeu;
 
 public class IA_Difficile extends IA{
 	
-	ControlerIA controlerIA;
 	Coup coup;
 	Coup coupAdverse;
 	Plateau plateau;
 	Deck deck;
 	HashMap<JeuIA, Float> memoisation;
 	
-	public static final int PROFONDEURMAX = 5;
+	public static final int PROFONDEURMAX = 2;
 	
-	public IA_Difficile(ControlerJeu controler){
-		super(controler.getJeu());
-		this.controlerIA = new ControlerIA(controler.getJeu());
+	public IA_Difficile(Jeu jeu){
+		super(jeu);
 		memoisation = new HashMap<>();
 	}
 	
-	public IA_Difficile(Coup c, Plateau p, Deck d, Coup a) {
-		coup = c;
-		plateau = p;
-		deck = d;
-		coupAdverse =a ;
-	}
+//	public IA_Difficile(Coup c, Plateau p, Deck d, Coup a) {
+//		coup = c;
+//		plateau = p;
+//		deck = d;
+//		coupAdverse =a ;
+//	}
 	
 	/**???? Utile ????
 	 * choixCarteIA : permet a l'IA de choisir une carte parmis sa main.
@@ -423,15 +421,30 @@ public class IA_Difficile extends IA{
 
 	@Override
 	public int[] getChoixCoup() {
-		// TODO Auto-generated method stub
+		System.out.println("etape1:");
+		jeu.afficherEtatJeu();
+		ControlerIA controlerIA = new ControlerIA(jeu);
+		System.out.println("etape2:");
+		jeu.afficherEtatJeu();
+		System.out.println("etape3:");
+		controlerIA.getJeu().afficherEtatJeu();
 		ArrayList<int[]> coups = getCoupsPossibles(controlerIA);
+		System.out.println("nombre de coups possibles :" + coups.size());
+		System.out.print("coupsPossibles : ");
+		for (int i = 0; i < coups.size(); i++) {
+			System.out.print(coups.get(i)[0] +"_"+ coups.get(i)[1] +", ");
+		}
+		System.out.println("");
 		Iterator<int[]> it = coups.iterator();
 		int[] meilleurCoup = new int[2];
 		float scoreMax = 0;
+		ControlerIA copie = new ControlerIA(controlerIA.generateNewJeuIA(controlerIA.getJeu(), jeu.getIndiceCurrentEscrimeur()));
 		while (it.hasNext()){
 			int[] currentCoup = it.next();
-			ControlerIA copie = new ControlerIA(controlerIA.generateNewJeuIA(controlerIA.getJeu()));
+			System.out.println("doit etre 0 : " + copie.getJeu().getHistorique().getHistorique().size());
 			copie.clickCase(currentCoup[0],currentCoup[1]);
+			System.out.println("doit etre 1 : " + copie.getJeu().getHistorique().getHistorique().size());
+			System.out.println("clickCase :" + currentCoup[0] +" "+ currentCoup[1]);
 			float scoreCoup = scoreConfig(copie, 0);
 			if (scoreCoup > scoreMax){
 				scoreMax = scoreCoup;
@@ -450,16 +463,24 @@ public class IA_Difficile extends IA{
 		Iterator<Integer> itCases = config.getJeu().casesJouables().iterator();
 		while (itCases.hasNext()) {
 			int caseCliquee = itCases.next();
-			int[] monCoup = new int[2];
 			if (caseCliquee == -1) {
+				int[] monCoup = new int[2];
 				monCoup[0] = caseCliquee;
 				monCoup[1] = 0;
 				res.add(monCoup);
 			}else {
 				int distance = (Math.abs(caseCliquee - config.getJeu().getPlateau().getPosition(config.getJeu().getIndiceCurrentEscrimeur())));
-				for(int i = 1; i <= config.getJeu().getCurrentEscrimeur().getNbCartes(distance); i++) {
+				if(caseCliquee == config.getJeu().getPlateau().getPosition(config.getJeu().getNotCurrentEscrimeur().getIndice())) {
+					for(int i = 1; i <= config.getJeu().getCurrentEscrimeur().getNbCartes(distance); i++) {
+						int[] monCoup = new int[2];
+						monCoup[0] = caseCliquee;
+						monCoup[1] = i;
+						res.add(monCoup);
+					}
+				}else {
+					int[] monCoup = new int[2];
 					monCoup[0] = caseCliquee;
-					monCoup[1] = i;
+					monCoup[1] = 1;
 					res.add(monCoup);
 				}
 			}
@@ -483,12 +504,15 @@ public class IA_Difficile extends IA{
 			if (copie.getEWinner() != Jeu.NONE) {
 				//je sais pas trop comment tester ça mais peut etre avec jeu.getWinnerManche par exemple
 				if(copie.getEWinner() == copie.getJeu().getIndiceCurrentEscrimeur()) {
+					System.out.println("fin de manche");
 					memoisation.put((JeuIA)copie.getJeu(),(float)1);
 					return memoisation.get((JeuIA)copie.getJeu());
 				}else if(copie.getEWinner() == Jeu.EGALITE){
+					System.out.println("fin de manche");
 					memoisation.put((JeuIA)copie.getJeu(),(float)0.1);
 					return memoisation.get((JeuIA)copie.getJeu());
 				}else {
+					System.out.println("fin de manche");
 					memoisation.put((JeuIA)copie.getJeu(),(float)0);
 					return memoisation.get((JeuIA)copie.getJeu());
 				}
@@ -502,7 +526,7 @@ public class IA_Difficile extends IA{
 				float scoreMax = 0;
 				while (it.hasNext()){
 					int[] currentCoup = it.next();
-					ControlerIA copie2 = new ControlerIA(copie.generateNewJeuIA((JeuIA)copie.getJeu()));
+					ControlerIA copie2 = new ControlerIA(copie.generateNewJeuIA(copie.getJeu()));
 					copie2.clickCase(currentCoup[0],currentCoup[1]);
 					float score;
 					if(copie2.getJeu().getIndiceCurrentEscrimeur() == copie2.getJeu().getIndiceCurrentEscrimeur()) {
@@ -528,6 +552,62 @@ public class IA_Difficile extends IA{
 	 */
 	public float approximationScore(Jeu j) {
 		System.out.println("estimation coup ia");
-		return (float)1;
+		return (float)0.2;
+	}
+	
+	public static void main(String[]args) {
+		int nbCase = 23;
+		int nbCarteParJoueur = 5;
+		int indiceCurrentEscrimeur = Escrimeur.GAUCHER;
+		
+		int[] carteDefausse = new int[] {2, 2, 2, 5, 5, 5, 5, 4, 4, 4, 4};
+		
+		int[] cartePioche = new int[] {1, 5, 4, 2};
+		
+		int[] carteGaucher = new int[] {3, 3, 3, 3, 3};
+		
+		int[] carteDroitier = new int[] {2, 1, 1, 1, 1};
+		
+		int[] positionsDepart = new int[] {11, 14};
+		
+		System.out.println("Total cartes : " + (carteDefausse.length + cartePioche.length + carteGaucher.length + carteDroitier.length));
+		Carte[] cartesDefausse = new Carte[carteDefausse.length];
+		Carte[] cartesPioche = new Carte[cartePioche.length];
+		Carte[] cartesGaucher = new Carte[carteGaucher.length];
+		Carte[] cartesDroitier = new Carte[carteDroitier.length];
+		try {
+			for (int i = 0; i < cartesDefausse.length; i++) {
+				cartesDefausse[i] = new Carte(carteDefausse[i]);
+			}
+			for (int i = 0; i < cartePioche.length; i++) {
+				cartesPioche[i] = new Carte(cartePioche[i]);
+			}
+			for (int i = 0; i < cartesGaucher.length; i++) {
+				cartesGaucher[i] = new Carte(carteGaucher[i]);
+			}
+			for (int i = 0; i < cartesDroitier.length; i++) {
+				cartesDroitier[i] = new Carte(carteDroitier[i]);
+			}
+		} catch (IncorrectCarteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Jeu jeu;
+		try {
+			Escrimeur eG = new Escrimeur("Gaucher", TypeEscrimeur.HUMAIN, 0, 5);
+			eG.setCartes(cartesGaucher);
+			Escrimeur eD = new Escrimeur("Droitier", TypeEscrimeur.HUMAIN, 1, 5);
+			eD.setCartes(cartesDroitier);
+			jeu = new Jeu(false, new Plateau(nbCase), new DeckPioche(cartesPioche), new DeckDefausse(cartesDefausse), nbCarteParJoueur, indiceCurrentEscrimeur, eG, eD, positionsDepart, false, 0);
+			jeu.nouvellePartie();
+			IA Ia = new IA_Difficile(jeu);
+			jeu.afficherEtatJeu();
+			int [] coup = Ia.getChoixCoup();
+			System.out.println("Case de l'IA : " + coup[0]);
+			System.out.println("Nombre de carte à utiliser : " + coup[1]);
+		} catch (IncorrectPlateauException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

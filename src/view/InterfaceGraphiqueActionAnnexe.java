@@ -13,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -28,7 +29,7 @@ import Global.Configuration;
 import Patterns.Observateur;
 import controller.ControlerJeu;
 
-public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Runnable, Observateur {
+public class InterfaceGraphiqueActionAnnexe implements Runnable {
 
 	private static JFrame fenetreActionAnnexe;
 	private static ControlerJeu controle;
@@ -47,8 +48,6 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		if (!fenetreActive) {
 			fenetreActive = true;
 			SwingUtilities.invokeLater(new InterfaceGraphiqueActionAnnexe(control));
-		} else {
-			fenetreActionAnnexe.setVisible(true);
 		}
 	}
 
@@ -59,6 +58,7 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		if (fenetreActionAnnexe != null) {
 			fenetreActionAnnexe.setVisible(false);
 			fenetreActionAnnexe.dispose();
+			fenetreActive = false;
 		}
 	}
 
@@ -100,12 +100,6 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		}
 	}
 
-	@Override
-	public void miseAJour() {
-		// TODO Auto-generated method stub
-
-	}
-
 	/**
 	 * Ecriture du contenu de la fenetre Menu
 	 */
@@ -113,35 +107,6 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 	public void run() {
 		try {
 		fenetreActionAnnexe = new JFrame("EN GARDE ! - Panel de triche");
-		fenetreActionAnnexe.addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped(KeyEvent e) {}
-			
-			@Override
-			public void keyReleased(KeyEvent e) {
-			}
-			
-			@Override
-			public void keyPressed(KeyEvent e) {
-				switch (e.getKeyCode()) {
-				case KeyEvent.VK_P:
-					if (InterfaceGraphiqueJeu.ajoutVitesse > -2000) {
-						InterfaceGraphiqueJeu.ajoutVitesse -= 500;
-					}
-					break;
-				case KeyEvent.VK_M:
-					if (InterfaceGraphiqueJeu.ajoutVitesse < 2000) {
-						InterfaceGraphiqueJeu.ajoutVitesse += 500;
-					}
-					break;
-				case KeyEvent.VK_A:
-					controle.commande("ChangeModeAnimation");
-				default:
-					break;
-				}
-				System.out.println(InterfaceGraphiqueJeu.ajoutVitesse);
-			}
-		});
 		JLabel contentPane = null;
 		contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("ActionAnnexe.png", Configuration.MENU))));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -229,15 +194,14 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		contentPane.add(animation);
 		
 		JButton changementTour = new ButtonCustom("Accelerer changement tour", "cadre2", new Dimension(200, 50), new Font("Century", Font.PLAIN, 13));
-		changementTour.addActionListener(new AdaptateurCommande(controle, "ChangeModeAnimation"));
 		changementTour.addActionListener(new ActionListener() {
-			private Boolean changeTour = false;
+			private Boolean changeTour = true;
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (changeTour) {InterfaceGraphiqueJeu.ajoutVitesse -= 1500;}else{InterfaceGraphiqueJeu.ajoutVitesse += 1500;}
+				if (changeTour) {InterfaceGraphiqueJeu.ajoutVitesse -= 1500;} else { InterfaceGraphiqueJeu.ajoutVitesse += 1500;}
 				changeTour = !changeTour;
 				JButton button = (JButton) e.getSource();
-				button.setText((changeTour ? "Retablir " : "Accelerer ") + "changement tour");
+				button.setText((changeTour ? "Accelerer " : "Retablir ") + "changement tour");
 			}
 		});
 		changementTour.setBounds(92, 830, 200, 50);
@@ -254,14 +218,34 @@ public class InterfaceGraphiqueActionAnnexe extends WindowAdapter implements Run
 		fenetreActionAnnexe.setVisible(true);
 		fenetreActionAnnexe.setFocusable(true);
 		fenetreActionAnnexe.requestFocus();
+		fenetreActionAnnexe.addWindowListener(new WindowListener() {
+			
+			@Override
+			public void windowOpened(WindowEvent e) {}
+			
+			@Override
+			public void windowIconified(WindowEvent e) {}
+			
+			@Override
+			public void windowDeiconified(WindowEvent e) {}
+			
+			@Override
+			public void windowDeactivated(WindowEvent e) {}
+			
+			@Override
+			public void windowClosing(WindowEvent e) {
+				fenetreActive = false;
+			}
+			
+			@Override
+			public void windowClosed(WindowEvent e) {}
+			
+			@Override
+			public void windowActivated(WindowEvent e) {}
+		});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void windowClosing(WindowEvent e) {
-		controle.commande("closeActionAnnexe");
 	}
 	
 }

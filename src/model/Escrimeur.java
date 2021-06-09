@@ -49,6 +49,7 @@ public class Escrimeur {
 		this.distancesCartesAjouterRecemment = new LinkedList<>();
 		this.indicesCartesSupprimerRecemment = new LinkedList<>();
 		this.distancesCartesSupprimerRecemment = new LinkedList<>();
+		this.etatCarteDefausser = new LinkedList<>();
 	}
 	
 	public int getNbCartes() {
@@ -105,8 +106,6 @@ public class Escrimeur {
 				}
 				indicesCartesSupprimerRecemment.add(i);
 				cartes[cartes.length - 1] = null;
-				System.out.println("indice carte supprimer recemment : " + Arrays.toString(indicesCartesSupprimerRecemment.toArray()));
-				System.out.println("Main sauvegarder : " + Arrays.toString(copyMain));
 				return i;
 			}
 		}
@@ -237,7 +236,17 @@ public class Escrimeur {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("escr : " + cartes.toString());
+	}
+	
+	public void setCartes(Carte[] cartes) {
+		if (cartes.length == this.cartes.length) {
+			this.cartes = cartes;
+		} else {
+			int sizeMin = Math.min(cartes.length, this.cartes.length);
+			for (int i = 0; i < sizeMin; i++) {
+				this.cartes[i] = cartes[i];
+			}
+		}
 	}
 
 	public void setType(TypeEscrimeur sauvType) {

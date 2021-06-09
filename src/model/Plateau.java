@@ -78,7 +78,6 @@ public class Plateau extends Observable {
 			System.err.println("dans plateau.deplacerEscrimeur : deplacementImpossible");
 			return false;
 		}
-
 	}
 
 	public Boolean escrimeurPeutAttaquer(Escrimeur e, int distance) {

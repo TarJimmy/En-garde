@@ -3,6 +3,7 @@ package controller;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Stack;
 
 import model.Carte;
 import model.Coup;
@@ -22,7 +23,7 @@ public class ControlerIA extends ControlerJeu {
 	int eWinner;
 
 	public ControlerIA(Jeu jeu) {
-		super(jeu, true, true);
+		super(jeu, false, false);
 		eWinner = Jeu.NONE;
 	}
 	
@@ -32,6 +33,10 @@ public class ControlerIA extends ControlerJeu {
 	
 	public JeuIA generateNewJeuIA(Jeu jeu) {
 		return new JeuIA(jeu);
+	}
+	
+	public JeuIA generateNewJeuIA(Jeu jeu, int indiceEscrimeurCartesConnues) {
+		return new JeuIA(jeu, indiceEscrimeurCartesConnues);
 	}
 	
 	@Override
@@ -91,29 +96,48 @@ public class ControlerIA extends ControlerJeu {
 	}
 	
 	public class JeuIA extends Jeu {
-		public JeuIA() {
-			super();
-			deckPioche = (DeckPiocheIA)deckPioche; // => permet a la pioche de se comporter avec les probas
-		}
 		
 		public JeuIA(Jeu jeu) {
-			// TODO Auto-generated constructor stub
+			init(jeu);
+		}
+		
+		public JeuIA(Jeu jeu, int indiceEscrimeurCartesConnues) {
+			init(jeu);
+			Escrimeur e = this.escrimeurs[(indiceEscrimeurCartesConnues + 1) %2] ;
+			for (int i = 0; i < e.getNbCartes(); i++) {
+				if(e.getCarte(i) != null) {
+					deckPioche.reposerCarte(e.getCarte(i));
+					e.supprimerCarte(e.getCarte(i));
+				}
+			}
+			for (int i = 0; i < e.getNbCartes(); i++) {
+				e.ajouterCarte(deckPioche.piocher());
+			}
+		}
+		
+		public void init(Jeu jeu) {
 			this.escrimeurs = new Escrimeur[2];
 			this.escrimeurs[Escrimeur.GAUCHER] = jeu.getEscrimeurGaucher().copySimple();
 			this.escrimeurs[Escrimeur.DROITIER] = jeu.getEscrimeurDroitier().copySimple();
 			this.plateau = jeu.getPlateau().copySimple();
 			this.deckDefausse = jeu.getDeckDefausse().copySimple();
-			this.deckPioche = jeu.getDeckPioche().copySimple();
+			this.deckPioche = new DeckPiocheIA(jeu.getDeckPioche().copySimple());
 			this.indiceCurrentEscrimeur = jeu.getIndiceCurrentEscrimeur();
-			this.historique = jeu.getHistorique().copySimple(jeu);
+			this.historique = new Historique(jeu.getHistorique(), jeu);
+			System.out.println(Arrays.toString(this.historique.getHistorique().toArray()));
+			System.out.println(Arrays.toString(jeu.getHistorique().getHistorique().toArray()));
+			this.positionsDeparts = jeu.getPositionsDepart().clone();
+			this.modeSimple = jeu.getModeSimple();
 		}
+		
 
 		@Override
 		public void modifieVue(Action action) {}
 		
 		@Override
 		public DeckPiocheIA getDeckPioche() {
-			return (DeckPiocheIA)super.getDeckPioche();
+
+			return (DeckPiocheIA) deckPioche;
 		}
 		
 		@Override
@@ -152,8 +176,18 @@ public class ControlerIA extends ControlerJeu {
 
 		public class DeckPiocheIA extends DeckPioche {
 				
-			public DeckPiocheIA() {
+			public DeckPiocheIA(DeckPioche deck) {
 				super();
+				cartes = new Stack<>();
+				Stack<Carte> carteDeckOriginel = deck.getCartes();
+				try {
+					for (Carte c : carteDeckOriginel) {
+						cartes.push(new Carte(c.getDistance()));
+					}
+				} catch (IncorrectCarteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			
 			@Override
@@ -181,84 +215,6 @@ public class ControlerIA extends ControlerJeu {
 				System.out.println("Piocher Deck-IA");
 				return super.piocher();
 			}
-		}
-	}
-	
-	
-	public class JeuConsole extends Jeu {
-
-		@SuppressWarnings("unused")
-		public JeuConsole() {
-			super();
-			// TODO Auto-generated constructor stub
-		}
-
-		@SuppressWarnings("unused")
-		public JeuConsole(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse,
-				int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier,
-				int[] positionsDeparts, boolean animationAutoriser) {
-			super(modeSimple, plateau, deckPioche, deckDefausse, nbManchesPourVictoire, indiceCurrentEscrimeur, gaucher, droitier,
-					positionsDeparts, animationAutoriser);
-			// TODO Auto-generated constructor stub
-		}
-
-		@SuppressWarnings("unused")
-		public JeuConsole(Boolean modeSimple, Plateau plateau, DeckPioche deckPioche, DeckDefausse deckDefausse,
-				int nbManchesPourVictoire, int indiceCurrentEscrimeur, Escrimeur gaucher, Escrimeur droitier,
-				int[] positionsDeparts, int indicePremierJoueur, Historique historique, boolean animationAutoriser,
-				int idJeu) {
-			super(modeSimple, plateau, deckPioche, deckDefausse, nbManchesPourVictoire, indiceCurrentEscrimeur, gaucher, droitier,
-					positionsDeparts, indicePremierJoueur, historique, animationAutoriser, idJeu);
-			// TODO Auto-generated constructor stub
-		}
-		
-		////////////////////////////////////A SUPPRIMER
-		@Override
-		public int changerTour() {
-			piocher(getCurrentEscrimeur());
-			indiceCurrentEscrimeur = (indiceCurrentEscrimeur + 1) % 2;
-			peutPasserTour = false;
-			Scanner scan = new Scanner(System.in);
-			HashSet<Integer> caseJouables = casesJouables();
-			int numCase;
-			int nbCarte = 1;
-			do {
-				System.out.println("Case Accessibles : " + Arrays.toString(caseJouables.toArray()));
-				System.out.print("Choix de la case : ");
-				numCase = scan.nextInt();
-			} while(caseJouables.contains(numCase));
-			if (numCase == plateau.getPosition((indiceCurrentEscrimeur + 1 ) % 2)) {
-				Escrimeur e = getCurrentEscrimeur();
-				int nbCarteMax = e.getNbCartes(Math.abs(numCase - plateau.getPosition(e.getIndice())));
-				do {
-					System.out.println("Nombre de carte attaque (max => " + nbCarteMax + " ) :");
-					nbCarte = scan.nextInt(nbCarte);
-				} while(nbCarte > 0 && nbCarte <= nbCarteMax);
-			}
-			clickCase(numCase, nbCarte);
-			scan.close();
-			return 1;
-		} 
-	}
-	public static void main(String[]args) {
-		Carte[] cartes = new Carte[25];
-		
-		for (int i = 0; i < cartes.length; i++) {
-				try {
-					cartes[i] = new Carte(i % 5);
-				} catch (IncorrectCarteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		}
-		Jeu jeu;
-		try {
-			jeu = new JeuConsole(false, new Plateau(23), new DeckPioche(cartes), new DeckDefausse(), 5, 0, new Escrimeur("Gaucher", TypeEscrimeur.HUMAIN, 0, 5), new Escrimeur("Droitier", TypeEscrimeur.HUMAIN, 1, 5), new int[] {1, 23}, false);
-			new ControlerIA((Jeu)jeu);
-			jeu.nouvellePartie();
-		} catch (IncorrectPlateauException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 }

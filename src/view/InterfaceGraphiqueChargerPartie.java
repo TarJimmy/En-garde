@@ -53,7 +53,7 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 	 * Ferme la fenetre ChargerPartie
 	 */
 	public static void close() {
-		if(fenetreChargerPartie!=null) {
+		if(fenetreChargerPartie != null) {
 			fenetreChargerPartie.setVisible(false);
 			fenetreChargerPartie.dispose();
 		}
@@ -153,7 +153,6 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 				buttonSupp.addActionListener(new AdaptateurSauvPartie(controle,rs.getInt("idPartie"), "Supprimer"));
 			}
 		} catch (SQLException e) {
-			System.out.println("Pas plus de parties enregistrees");
 		}
 		
 		for(JButton Partie : parties) {

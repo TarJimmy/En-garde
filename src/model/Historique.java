@@ -16,6 +16,18 @@ public class Historique {
 		coupsAnnules = new Stack <>();
 	}
 	
+	public Historique(Historique h, Jeu j) {
+		this.jeu = j;
+		this.historique = new Stack<>();
+		for (Coup c: h.getHistorique()) {
+			this.historique.add(new Coup(c, jeu.getEscrimeurs()));
+		}
+	}
+	
+	public Stack<Coup> getHistorique(){
+		return this.historique;
+	}
+	
 	public void ajouterCoup(Coup c) {
 		historique.push(c);
 	}
@@ -35,10 +47,10 @@ public class Historique {
 	
 	public boolean rejouerCoupAnnule() {
 		if(coupsAnnules.empty()) {
-			System.err.println("aucun coup annul�");
+			System.err.println("aucun coup annulé");
 			return false;
 		}else {
-			System.out.println("coup rejou� :");
+			System.out.println("coup rejoué :");
 		}
 		Coup c = coupsAnnules.pop();
 		
@@ -139,14 +151,5 @@ public class Historique {
         jeu.modifieVue(Action.ACTUALISER_PLATEAU);
 		
 		return false;
-	}
-
-	public Historique copySimple(Jeu jeu) {
-		Historique newHistorique = new Historique(jeu);
-		newHistorique.historique = new Stack<>();
-		for (Coup c: historique) {
-			newHistorique.historique.add(c.copySimple(jeu.getEscrimeurs()));
-		}
-		return newHistorique;
 	}
 }
