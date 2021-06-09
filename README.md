@@ -1,3 +1,7 @@
+# En Garde
+
+Version java du jeu de société En Garde
+
 ## Prérequis
 
 [Sqlite](https://www.sqlite.org/download.html) installé sur votre machine sinon vous ne pourrez pas utiliser les fonctionnalités suivantes :
