@@ -4,10 +4,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -29,13 +31,15 @@ public class Jeu extends Observable {
 		ACTUALISER_ESCRIMEUR_DROITIER,
 		ACTUALISER_ESCRIMEUR_GAUCHER,
 		ACTUALISER_ESCRIMEUR_MEME_MODE,
+		ACTUALISER_ESCRIMEUR_SANS_BUTTON,
 		ANIMATION_PIOCHER,
 		ANIMATION_DEFAUSSER,
 		ANIMATION_DEBUT_MANCHE,
 		ANIMATION_FIN_MANCHE,
 		ANIMATION_LANCER,
 		ANIMATION_DEPLACER_ESCRIMEUR,
-		ANIMATION_CHANGER_TOUR
+		ANIMATION_CHANGER_TOUR,
+		IA_JOUE
 	}
 	
 	protected Boolean modeSimple; 
@@ -78,7 +82,7 @@ public class Jeu extends Observable {
 	private boolean showAllCartes;
 	private int idJeu;
 	protected int indicePremierJoueurPartie;
-	protected HashMap<TypeEscrimeur, IA> listIA;
+	protected Map<TypeEscrimeur, IA> listIA;
 
 	protected Jeu() {}
 	
@@ -134,9 +138,11 @@ public class Jeu extends Observable {
 		this.dernierTour = false;
 		this.winner = NONE;
 		this.showAllCartes = false;
-		listIA = new HashMap<TypeEscrimeur, IA>();
-		listIA.put(TypeEscrimeur.IA_FACILE, new IA_Facile(this));
-		listIA.put(TypeEscrimeur.IA_MOYENNE, new IA_Moyenne(this));
+		HashMap<TypeEscrimeur, IA> hashIA = new HashMap<>();
+		hashIA.put(TypeEscrimeur.IA_FACILE, new IA_Facile(this));
+		hashIA.put(TypeEscrimeur.IA_MOYENNE, new IA_Moyenne(this));
+		
+		listIA = Collections.unmodifiableMap(hashIA);
 	}
 	
 	public boolean isDernierTour() {
@@ -212,9 +218,11 @@ public class Jeu extends Observable {
 		while (e.manqueCarte() && !deckPioche.deckVide()) {
 			e.ajouterCarte(deckPioche.piocher());
 		}
-		listeIndiceEscrimeurPiocheCarte.add(e.getIndice());
-		listeIndicesPiocheRecemment[e.getIndice()].add(e.getIndicesCartesAjouterRecemment());
-		listeDistancesPiocheRecemment[e.getIndice()].add(e.getDistancesCartesAjouterRecemment());
+		if (showGraphique) {
+			listeIndiceEscrimeurPiocheCarte.add(e.getIndice());
+			listeIndicesPiocheRecemment[e.getIndice()].add(e.getIndicesCartesAjouterRecemment());
+			listeDistancesPiocheRecemment[e.getIndice()].add(e.getDistancesCartesAjouterRecemment());
+		}
 		modifieVueAnimation(Action.ANIMATION_PIOCHER);
 		modifieVue(e.getIndice() == Escrimeur.GAUCHER ? Action.ACTUALISER_ESCRIMEUR_GAUCHER : Action.ACTUALISER_ESCRIMEUR_DROITIER);
 		modifieVue(Action.ACTUALISER_DECK);
@@ -226,15 +234,20 @@ public class Jeu extends Observable {
 		indiceCurrentEscrimeur = (indiceCurrentEscrimeur + 1) % 2;
 		if (getCurrentEscrimeur().getType() != TypeEscrimeur.HUMAIN) {
 			System.out.println("IA doit jouer");
-			modifieVue(Action.ACTUALISER_PLATEAU_SANS_CASE);
-			modifieVue(Action.ACTUALISER_DECK);
-			modifieVue(Action.ACTUALISER_ESCRIMEUR_MEME_MODE);
+			IADoitJouer();
 		} else {
 			System.out.println("Humain doit jouer");
 			modifieVue(Action.ACTUALISER_JEU);
 		}
 		return 1;
 	} 
+	
+	public void IADoitJouer() {
+		modifieVue(Action.ACTUALISER_PLATEAU_SANS_CASE);
+		modifieVue(Action.ACTUALISER_DECK);
+		modifieVue(Action.ACTUALISER_ESCRIMEUR_SANS_BUTTON);
+		modifieVue(Action.IA_JOUE);
+	}
 
 	/**
 	 * retire une carte de la main de l'escrimeur, l'ajoute à la défausse et serre
@@ -262,13 +275,15 @@ public class Jeu extends Observable {
 	}
 	
 	protected void animerDefausser(int indice) {
-		listeIndiceEscrimeurDefausseCarte.add(indice);
-		listeIndiceDefausseRecemment[indice].add(escrimeurs[indice].getIndicesCartesSupprimerRecemment());
-		listeDistancesDefausseRecemment[indice].add(escrimeurs[indice].getDistancesCartesSupprimerRecemment());
-		listeEtatMainDefausse[indice].add(escrimeurs[indice].popMainCourante());
-		modifieVueAnimation(Action.ANIMATION_DEFAUSSER);
-		modifieVue(Action.ACTUALISER_DECK);
-		modifieVue(indice == Escrimeur.GAUCHER ? Action.ACTUALISER_ESCRIMEUR_GAUCHER : Action.ACTUALISER_ESCRIMEUR_DROITIER);
+		if (showGraphique) {
+			listeIndiceEscrimeurDefausseCarte.add(indice);
+			listeIndiceDefausseRecemment[indice].add(escrimeurs[indice].getIndicesCartesSupprimerRecemment());
+			listeDistancesDefausseRecemment[indice].add(escrimeurs[indice].getDistancesCartesSupprimerRecemment());
+			listeEtatMainDefausse[indice].add(escrimeurs[indice].popMainCourante());
+			modifieVueAnimation(Action.ANIMATION_DEFAUSSER);
+			modifieVue(Action.ACTUALISER_DECK);
+			modifieVue(indice == Escrimeur.GAUCHER ? Action.ACTUALISER_ESCRIMEUR_GAUCHER : Action.ACTUALISER_ESCRIMEUR_DROITIER);
+		}
 	}
 
 	public boolean jouer(Coup c, boolean rejoueCoupAnnule) {
@@ -487,26 +502,26 @@ public class Jeu extends Observable {
 	public void modifieVue(Action action) {
 		if (showGraphique) {
 			switch (action) {
-			case ACTUALISER_JEU:
-			case ACTUALISER_ESCRIMEUR:
-			case ACTUALISER_ESCRIMEUR_GAUCHER:
-				cartesShowEscrimeurs[Escrimeur.GAUCHER].add(escrimeurs[Escrimeur.GAUCHER].getCartes().clone());
-				if (action == Action.ACTUALISER_ESCRIMEUR_GAUCHER) {
+				case ACTUALISER_JEU:
+				case ACTUALISER_ESCRIMEUR:
+				case ACTUALISER_ESCRIMEUR_GAUCHER:
+					cartesShowEscrimeurs[Escrimeur.GAUCHER].add(escrimeurs[Escrimeur.GAUCHER].getCartes().clone());
+					if (action == Action.ACTUALISER_ESCRIMEUR_GAUCHER) {
+						break;
+					}
+				case ACTUALISER_ESCRIMEUR_DROITIER:
+					cartesShowEscrimeurs[Escrimeur.DROITIER].add(escrimeurs[Escrimeur.DROITIER].getCartes().clone());
+					if (action == Action.ACTUALISER_ESCRIMEUR_DROITIER) {
+						break;
+					}
+				case ACTUALISER_DECK:
+					int distanceCarteVisible = deckDefausse.deckVide() ? -1 : deckDefausse.consulterCarteVisible().getDistance();
+					carteShowDeck.add(new Integer[] {deckPioche.nbCartes(), deckDefausse.nbCartes(), distanceCarteVisible});
+				default:
 					break;
-				}
-			case ACTUALISER_ESCRIMEUR_DROITIER:
-				cartesShowEscrimeurs[Escrimeur.DROITIER].add(escrimeurs[Escrimeur.DROITIER].getCartes().clone());
-				if (action == Action.ACTUALISER_ESCRIMEUR_DROITIER) {
-					break;
-				}
-			case ACTUALISER_DECK:
-				int distanceCarteVisible = deckDefausse.deckVide() ? -1 : deckDefausse.consulterCarteVisible().getDistance();
-				carteShowDeck.add(new Integer[] {deckPioche.nbCartes(), deckDefausse.nbCartes(), distanceCarteVisible});
-			default:
-				break;
-		}
-		listeActions.add(action);
-		demarreActionSuivante();
+			}
+			listeActions.add(action);
+			demarreActionSuivante();
 		}
 		
 	}
@@ -639,20 +654,22 @@ public class Jeu extends Observable {
 	}
 
 	public void clearAnimation() {
-		listeIndiceEscrimeurDefausseCarte.clear();
-		listeIndiceEscrimeurPiocheCarte.clear();
-		this.listeDistancesDefausseRecemment[Escrimeur.GAUCHER].clear();
-		this.listeDistancesDefausseRecemment[Escrimeur.DROITIER].clear();
-		this.listeDistancesPiocheRecemment[Escrimeur.GAUCHER].clear();
-		this.listeEtatMainDefausse[Escrimeur.GAUCHER].clear();
-		this.listeEtatMainDefausse[Escrimeur.DROITIER].clear();
-		this.listeDistancesPiocheRecemment[Escrimeur.DROITIER].clear();
-		this.listeIndiceDefausseRecemment[Escrimeur.GAUCHER].clear();
-		this.listeIndiceDefausseRecemment[Escrimeur.DROITIER].clear();
-		this.listeDistancesPiocheRecemment[Escrimeur.GAUCHER].clear();
-		this.listeDistancesPiocheRecemment[Escrimeur.DROITIER].clear();
-		escrimeurs[Escrimeur.DROITIER].clear();
-		escrimeurs[Escrimeur.GAUCHER].clear();
+		if (showGraphique) {
+			listeIndiceEscrimeurDefausseCarte.clear();
+			listeIndiceEscrimeurPiocheCarte.clear();
+			this.listeDistancesDefausseRecemment[Escrimeur.GAUCHER].clear();
+			this.listeDistancesDefausseRecemment[Escrimeur.DROITIER].clear();
+			this.listeDistancesPiocheRecemment[Escrimeur.GAUCHER].clear();
+			this.listeEtatMainDefausse[Escrimeur.GAUCHER].clear();
+			this.listeEtatMainDefausse[Escrimeur.DROITIER].clear();
+			this.listeDistancesPiocheRecemment[Escrimeur.DROITIER].clear();
+			this.listeIndiceDefausseRecemment[Escrimeur.GAUCHER].clear();
+			this.listeIndiceDefausseRecemment[Escrimeur.DROITIER].clear();
+			this.listeDistancesPiocheRecemment[Escrimeur.GAUCHER].clear();
+			this.listeDistancesPiocheRecemment[Escrimeur.DROITIER].clear();
+			escrimeurs[Escrimeur.DROITIER].clear();
+			escrimeurs[Escrimeur.GAUCHER].clear();
+		}
 	}
 	public Jeu copySimple() {
 		Jeu jeu = new Jeu();
@@ -735,4 +752,8 @@ public class Jeu extends Observable {
 	public int getIndicePremierJoueurPartie() {
 		return indicePremierJoueurPartie;
 	}	
+	
+	public IA getIACurrent() {
+		return listIA.get(escrimeurs[indiceCurrentEscrimeur].getType());
+	}
 }

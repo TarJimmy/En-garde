@@ -87,7 +87,7 @@ public class Classement_DAO {
 	public void insertJoueur(String nom) {
         String sql = "INSERT INTO Joueur(nom) VALUES(?)";
         
-        String sql2 = "SELECT * FROM Joueur WHERE nom = '" + nom + "';";
+        String sql2 = "SELECT * FROM Joueur WHERE nom = '" + nom.toLowerCase() + "';";
         try{
 	        Connection conn = this.connect();
 	        Statement stmt  = conn.createStatement();

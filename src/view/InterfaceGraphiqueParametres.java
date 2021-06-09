@@ -191,16 +191,16 @@ public class InterfaceGraphiqueParametres implements Runnable, Observateur {
 	 */
 	private static void setRadioButtons(String typeJ1, String typeJ2, String modeAttaque, String animation, String joueurDebut) {
 		switch (typeJ1) {
-			case "HUMAIN" : btnRadioJ1_Humain.setSelected(true);break;
-			case "IA_FACILE" : btnRadioJ1_Facile.setSelected(true);break;
-			case "IA_MOYENNE" : btnRadioJ1_Moyenne.setSelected(true);break;
-			case "IA_DIFFICILE" : btnRadioJ1_Difficile.setSelected(true);break;
+			case "HUMAIN" : btnRadioJ1_Humain.setSelected(true);txtJoueur1.setEditable(true);break;
+			case "IA_FACILE" : btnRadioJ1_Facile.setSelected(true);txtJoueur1.setEditable(false);break;
+			case "IA_MOYENNE" : btnRadioJ1_Moyenne.setSelected(true);txtJoueur1.setEditable(false);break;
+			case "IA_DIFFICILE" : btnRadioJ1_Difficile.setSelected(true);txtJoueur1.setEditable(false);break;
 		}
 		switch (typeJ2) {
-			case "HUMAIN" : btnRadioJ2_Humain.setSelected(true);break;
-			case "IA_FACILE" : btnRadioJ2_Facile.setSelected(true);break;
-			case "IA_MOYENNE" : btnRadioJ2_Moyenne.setSelected(true);break;
-			case "IA_DIFFICILE" : btnRadioJ2_Difficile.setSelected(true);break;
+			case "HUMAIN" : btnRadioJ2_Humain.setSelected(true);txtJoueur2.setEditable(true);break;
+			case "IA_FACILE" : btnRadioJ2_Facile.setSelected(true);txtJoueur2.setEditable(false);break;
+			case "IA_MOYENNE" : btnRadioJ2_Moyenne.setSelected(true);txtJoueur2.setEditable(false);break;
+			case "IA_DIFFICILE" : btnRadioJ2_Difficile.setSelected(true);txtJoueur2.setEditable(false);break;
 		}
 		switch (modeAttaque) {
 			case "Basique" : modeAttaque_Basique.setSelected(true);break;

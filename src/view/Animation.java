@@ -11,6 +11,7 @@ public abstract class Animation implements ActionListener {
 	public static final int ANIM_FIN_MANCHE = 2;
 	public static final int ANIM_ESCRIMEUR = 3;
 	public static final int CHANGEMENT_JOUEUR = 4;
+	public static final int IA_JOUE_COUP = 5;
 	
 	protected Timer timer;
 	protected CollecteurEvenements collecteur;

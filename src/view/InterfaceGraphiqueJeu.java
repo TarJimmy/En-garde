@@ -33,6 +33,7 @@ import Patterns.Observateur;
 import model.Carte;
 import controller.ControlerJeu;
 import model.Escrimeur;
+import model.IA;
 import model.Jeu;
 import model.Jeu.Action;
 
@@ -140,6 +141,11 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				vueEscrimeurs[Escrimeur.GAUCHER].actualise(jeu.popShowCarte(Escrimeur.GAUCHER), jeu.getIsTourGaucher() || jeu.getShowAllCartes());
 				controle.commande("ActionTerminer");
 				break;
+			case ACTUALISER_ESCRIMEUR_SANS_BUTTON:
+				vueEscrimeurs[Escrimeur.GAUCHER].setBtnPasserTourVisibility(false);
+				vueEscrimeurs[Escrimeur.DROITIER].setBtnPasserTourVisibility(false);
+				controle.commande("ActionTerminer");
+				break;
 			case ANIMATION_DEPLACER_ESCRIMEUR:
 				controle.animation("Ajouter", vuePlateau.generateAnimationDeplaceJoueur(jeu.getIndiceCurrentEscrimeur()));
 				break;
@@ -192,6 +198,10 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 			case ANIMATION_CHANGER_TOUR:
 				controle.animation("Ajouter", panelAnimation.generateAnimationChangementJoueur());
 				break;
+			case IA_JOUE:
+				System.out.println("lance IA switch");
+				panelAnimation.generateCoupIA(jeu.getIACurrent());
+				controle.commande("ActionTerminer");
 			default:
 				break;
 			}
@@ -352,6 +362,11 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 			return new AnimationRectiligneAvecPause(controle, this, ptDebutPanelAnimation.x, distance, Animation.CHANGEMENT_JOUEUR, 2000 + ajoutVitesse, (float)(1.0 / (200.0 + ajoutVitesse / 10)));
 		}
 
+		public Animation generateCoupIA(IA iA) {
+			System.out.println("lance IA");
+			return new AnimationIAJoue(controle, this, iA);
+		}
+		
 		@Override
 		public void finAnimation(Animation animation) {
 			animActif = animation.ANIM_NONE;
@@ -387,6 +402,10 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 			posADessiner = newPoints;
 			this.showFace = vueEscrimeurs[indiceEscrimeurCarte].getShowFace();
 			repaint();
+		}
+
+		public void joueCoup(int numCase, int nbCarte) {
+			controle.clickCase(numCase, nbCarte);
 		}
 	}
 }

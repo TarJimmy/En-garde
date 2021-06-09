@@ -49,6 +49,7 @@ public class Escrimeur {
 		this.distancesCartesAjouterRecemment = new LinkedList<>();
 		this.indicesCartesSupprimerRecemment = new LinkedList<>();
 		this.distancesCartesSupprimerRecemment = new LinkedList<>();
+		this.etatCarteDefausser = new LinkedList<>();
 	}
 	
 	public int getNbCartes() {
@@ -233,6 +234,17 @@ public class Escrimeur {
 				} 
 			} catch (JSONException | IncorrectCarteException e) {
 				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void setCartes(Carte[] cartes) {
+		if (cartes.length == this.cartes.length) {
+			this.cartes = cartes;
+		} else {
+			int sizeMin = Math.min(cartes.length, this.cartes.length);
+			for (int i = 0; i < sizeMin; i++) {
+				this.cartes[i] = cartes[i];
 			}
 		}
 	}
