@@ -15,8 +15,8 @@ import model.Jeu;
 
 public class SauvegarderPartie_DAO {
 	
-	private final static String url = "jdbc:sqlite:src/Database/En_garde.db";
-
+	private final static String url = "jdbc:sqlite:En_garde.db";
+	public static Statement stmt;
 	private Connection connect() {  
         // SQLite connection string  
         Connection conn = null;  
@@ -107,9 +107,9 @@ public class SauvegarderPartie_DAO {
             	pstmt.setInt(23, idJeu);  
             }
             pstmt.executeUpdate();  
-            System.out.println("Partie sauvegardÃ©\n");
+            System.out.println("Partie sauvegardé\n");
 
-            
+            pstmt.close();
             if (idJeu != -1) {
             	return idJeu;
             } else {
@@ -117,7 +117,10 @@ public class SauvegarderPartie_DAO {
                 
                 Statement stmt  = conn.createStatement();
                 ResultSet rs    = stmt.executeQuery(sql);
-                return rs.getInt("idPartie");
+                int id = rs.getInt("idPartie");
+                rs.close();
+                stmt.close();
+                return id;
             }
             
         } catch (SQLException e) {  
@@ -131,7 +134,7 @@ public class SauvegarderPartie_DAO {
         
         try {
         	Connection conn = this.connect();
-            Statement stmt  = conn.createStatement();
+            stmt  = conn.createStatement();
             ResultSet rs    = stmt.executeQuery(sql);
             // return results
             return rs;
@@ -161,7 +164,7 @@ public class SauvegarderPartie_DAO {
 	}
 
 	public void supprimerPartieSauvegardee(int id) {
-		String sql = "DELETE FROM SauvegarderPartie WHERE idPartie = "+id;
+		String sql = "DELETE FROM SauvegarderPartie WHERE idPartie = '" + id + "';";
 		try {
         	Connection conn = this.connect();
             Statement stmt  = conn.createStatement();

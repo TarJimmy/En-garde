@@ -9,7 +9,6 @@ import model.Coup;
 import model.Escrimeur;
 import model.IA;
 import model.IA_Difficile;
-import model.IA_Moyenne;
 import model.Jeu;
 import model.Jeu.Action;
 import model.Plateau;
@@ -286,6 +285,7 @@ public class ControlerJeu extends Controler {
 				System.exit(0);
 				return false;
 			case "nouveauMatch":
+				closeAll();
 				nouveauMatch();
 				return true;
 			case "nouvellePartie":
@@ -325,6 +325,9 @@ public class ControlerJeu extends Controler {
 				if (jeu.aideEstMontrer()) {
 					jeu.setCaseAide(IA_conseil.getChoixCoup()[0]);
 				}
+				return true;
+			case "annuler":
+				InterfaceGraphiqueChargerPartie.close();
 				return true;
 			default:
 				System.out.println("Commande pas traitee : " + c);
@@ -410,11 +413,11 @@ public class ControlerJeu extends Controler {
 	public void SuiteChargerPartie(Jeu jeu) {
 		// TODO Auto-generated method stub
 		closeAll();
-		this.jeu = jeu;
+		/*this.jeu = jeu;
 		this.animations.clear();
 		animationsActives = false;
 		lancerNouvellePartie = false;
-		InterfaceGraphiqueJeu.demarrer(this, jeu);
+		InterfaceGraphiqueJeu.demarrer(this, jeu);*/
 	}
 	
 	public ControlerJeu copySimple() {

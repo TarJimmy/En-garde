@@ -9,7 +9,7 @@ import java.sql.Statement;
 
 public class Classement_DAO {
 	
-	private final static String url = "jdbc:sqlite:src/Database/En_garde.db";
+	private final static String url = "jdbc:sqlite:En_garde.db";
 	
 
 	private Connection connect() {  

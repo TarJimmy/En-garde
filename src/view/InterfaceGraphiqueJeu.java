@@ -11,12 +11,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -71,7 +67,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	}
 	
 	public static void demarrer(CollecteurEvenements control, Jeu jeu) {
-		if (jeuPresent) {
+		if (frame != null || jeuPresent) {
 			frame.setVisible(false);
 			frame.dispose();
 		}

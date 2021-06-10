@@ -3,7 +3,6 @@ package view;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -19,14 +18,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import Global.Configuration;
-import Patterns.Observateur;
-import Database.SauvegarderPartie_DAO;
+//import Database.SauvegarderPartie_DAO;
 
 public class InterfaceGraphiqueChargerPartie implements Runnable {
 
@@ -34,11 +31,10 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 	private static CollecteurEvenements controle;
 	private static List<JButton> parties = new ArrayList<JButton>();
 	private static List<JButton> supprimer = new ArrayList<JButton>();
-	ResultSet rs;
-	SauvegarderPartie_DAO sp_dao;
+	
 	private InterfaceGraphiqueChargerPartie(CollecteurEvenements controle) {
 		InterfaceGraphiqueChargerPartie.controle = controle;
-		sp_dao = new SauvegarderPartie_DAO();
+		
 	}
 	
 	/**
@@ -75,7 +71,7 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 		String supp = "Supprime";
 		String charge = "Charge";
 		try {
-			contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("PartiesSauv.png", Configuration.MENU))));
+			contentPane = new JLabel(new ImageIcon(ImageIO.read(Configuration.charge("fondChargePartie.png", Configuration.MENU))));
 			fenetreChargerPartie.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(ImageIO.read(Configuration.charge("curseur.png", Configuration.AUTRES)),new Point(0,0),"Mon curseur"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -124,9 +120,9 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 			}
 			
 		});
-		supprimerPartie.setBounds(217, 500, 332, 40);
+		supprimerPartie.setBounds(217, 500, 300, 40);
 		
-		majParties();
+		//majParties();
 		
 		for(JButton Partie : parties) {
 			contentPane.add(Partie);
@@ -135,12 +131,11 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 			Supp.setVisible(false);
 			Supp.addActionListener(new ActionListener() {
 
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						majParties();
-					}
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					//majParties();
 					
-				});
+			}});;
 			contentPane.add(Supp);
 		}
 		contentPane.add(annuler);
@@ -152,9 +147,12 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 		fenetreChargerPartie.setVisible(true);
 		
 	}
-	
-	private void majParties() {
+
+	/*private void majParties() {
 		try {
+			ResultSet rs;
+			SauvegarderPartie_DAO sp_dao;
+			sp_dao = new SauvegarderPartie_DAO();
 			for(JButton Partie : parties) {Partie.setName("Vide");}
 			for(JButton Supp : supprimer) {Supp.setName("Vide");}
 			rs = sp_dao.getAll();
@@ -180,10 +178,11 @@ public class InterfaceGraphiqueChargerPartie implements Runnable {
 				buttonCharge.setHorizontalAlignment(SwingConstants.CENTER);
 				buttonSupp.setHorizontalAlignment(SwingConstants.CENTER);
 				buttonCharge.addActionListener(new AdaptateurSauvPartie(controle,rs.getInt("idPartie"), "Charger"));
-				buttonSupp.addActionListener(new AdaptateurSauvPartie(controle,rs.getInt("idPartie"), "Supprimer"));
+				buttonSupp.addActionListener(new AdaptateurSauvPartie(controle,rs.getInt("idPartie"),"Supprimer"));
 			}
+			rs.close();
+			SauvegarderPartie_DAO.stmt.close();
 		} catch (SQLException e) {
 		}
-	}
-
+	}*/
 }

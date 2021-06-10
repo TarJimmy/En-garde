@@ -3,7 +3,6 @@ package view;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.HeadlessException;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.io.IOException;
@@ -14,10 +13,7 @@ import javax.swing.border.EmptyBorder;
 
 import Global.Configuration;
 import Patterns.Observateur;
-import controller.ControlerAutre;
-import controller.ControlerJeu;
 import model.Escrimeur;
-import model.Jeu;
 
 /**
  * 

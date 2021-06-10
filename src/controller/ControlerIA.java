@@ -2,22 +2,16 @@ package controller;
 
 import java.util.Arrays;
 
-import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Stack;
 
 import model.Carte;
 import model.Coup;
-import model.DeckDefausse;
 import model.DeckPioche;
 import model.Escrimeur;
 import model.Historique;
 import model.IncorrectCarteException;
-import model.IncorrectPlateauException;
 import model.Jeu;
 import model.Plateau;
-import model.TypeEscrimeur;
-import model.Jeu.Action;
 
 public class ControlerIA extends ControlerJeu {
 	

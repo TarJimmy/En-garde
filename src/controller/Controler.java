@@ -2,23 +2,15 @@ package controller;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-
 import Database.SauvegarderPartie_DAO;
-import Global.Parametre;
-import model.Carte;
 import model.DeckDefausse;
 import model.DeckPioche;
 import model.Escrimeur;
 import model.IncorrectPlateauException;
 import model.Jeu;
 import model.Plateau;
-import model.SauvegardeParametre;
 import model.TypeEscrimeur;
 import view.Animation;
 import view.CollecteurEvenements;
@@ -132,13 +124,6 @@ public abstract class Controler implements CollecteurEvenements {
 	@Override
 	public boolean supprimerPartie(int id) {
 		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	@Override
-	public boolean supprimerPartie(int id) {
-		SauvegarderPartie_DAO SPartie_DAO = new SauvegarderPartie_DAO();
-		SPartie_DAO.supprimerPartieSauvegardee(id);
 		return false;
 	}
 	

@@ -3,19 +3,16 @@ package Database;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DB_DAO {
 
-	private final String url = "jdbc:sqlite:src/Database/En_garde.db";
+	private final static String url = "jdbc:sqlite:En_garde.db";
 
 	public void createNewDatabase() {
 
         try {
-
             Connection conn = DriverManager.getConnection(url);
             if (conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
@@ -117,31 +114,9 @@ public class DB_DAO {
             stmt.execute(sqlJoueurCarte);
             stmt.execute(sqlMatch);
             stmt.execute(sqlSauvegarderPartie);
+            stmt.close();
             System.out.println("Tables created.");
 
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    
-
-
-    public void selectAll(){
-        String sql = "SELECT * FROM Joueur";
-
-        try {
-        	Connection conn = this.connect();
-            Statement stmt  = conn.createStatement();
-            ResultSet rs    = stmt.executeQuery(sql);
-            // loop through the result set
-            while (rs.next()) {
-                System.out.println(rs.getInt("id") + "\t" +
-                				   rs.getString("nom") +  "\t" +
-                                   rs.getString("type") + "\t" +
-                                   rs.getInt("position") + "\t" +
-                                   rs.getInt("nbManches"));
-            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }

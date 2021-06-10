@@ -1,8 +1,5 @@
 package model;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,14 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Scanner;
-import java.util.Stack;
-
-import javax.swing.Timer;
-
 import Patterns.Observable;
-import controller.ControlerJeu;
-import model.Jeu.Action;
 
 public class Jeu extends Observable {
 	

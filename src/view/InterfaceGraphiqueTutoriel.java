@@ -39,8 +39,8 @@ public class InterfaceGraphiqueTutoriel implements Runnable {
     private ButtonCustom moins;
     private JPanel center;
     private final CardLayout c1 = new CardLayout();
-    private final int widthImageTuto = 1000;
-    private final int heightImageTuto = 558;
+    private final int widthImageTuto = 1600;
+    private final int heightImageTuto = 900;
     private static Boolean exists = false;
     
     public static void demarrer() {
@@ -82,7 +82,7 @@ public class InterfaceGraphiqueTutoriel implements Runnable {
     	frame.setLayout(new BorderLayout());
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setBackground(Color.white);
-        frame.setSize(1020,700);
+        frame.setSize(1619,1048);
         frame.setResizable(false);
         frame.setIconImage(Configuration.imgIcone);
         try {
