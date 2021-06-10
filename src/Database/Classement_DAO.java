@@ -11,14 +11,15 @@ public class Classement_DAO {
 	
 	private final static String url = "jdbc:sqlite:En_garde.db";
 	
-
+	public static Statement stmt;
+	public Connection conn;
 	private Connection connect() {  
         // SQLite connection string  
-        Connection conn = null;  
+        conn = null;  
         try {  
             conn = DriverManager.getConnection(url);  
         } catch (SQLException e) {  
-            System.out.println(e.getMessage());  
+            System.err.println(e.getMessage());  
         }  
         return conn;  
     }
@@ -42,14 +43,14 @@ public class Classement_DAO {
         
         try {
         	Connection conn = connect();
-            Statement stmt  = conn.createStatement();
+            stmt  = conn.createStatement();
             ResultSet rs    = stmt.executeQuery(sql);
             // return results
             return rs;
             
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
         return null;
 	}
@@ -79,28 +80,32 @@ public class Classement_DAO {
             
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
         return null;
 	}
 	
+
 	public void insertJoueur(String nom) {
         String sql = "INSERT INTO Joueur(nom) VALUES(?)";
         
-        String sql2 = "SELECT * FROM Joueur WHERE nom = '" + nom.toLowerCase() + "';";
+//        String sql2 = "SELECT * FROM Joueur WHERE nom = '" + nom.toLowerCase() + "';";
         try{
-	        Connection conn = this.connect();
-	        Statement stmt  = conn.createStatement();
-	        ResultSet rs    = stmt.executeQuery(sql2);
-	        if (!rs.next()) {
+	        conn = this.connect();
+//	        Statement stmt  = conn.createStatement();
+//	        ResultSet rs    = stmt.executeQuery(sql2);
+//	        //if (!rs.next()) {
 	        	
 	            PreparedStatement pstmt = conn.prepareStatement(sql);
 	            pstmt.setString(1, nom.toLowerCase());
 	            pstmt.executeUpdate();
-	            
-	        }
+	            pstmt.close();
+	            conn.close();
+	       // }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+        	if (e.getErrorCode() != 19) {
+                System.out.println(e.getMessage() + " " + e.getErrorCode());
+        	}
         }
         
     }
@@ -120,7 +125,7 @@ public class Classement_DAO {
 	            pstmt.setString(5, Gagnant);
 	            pstmt.executeUpdate();
 	        } catch (SQLException e) {
-	            System.out.println(e.getMessage());
+	            System.err.println(e.getMessage());
 	        }
 	    }
 	
@@ -128,10 +133,6 @@ public class Classement_DAO {
 	    	Classement_DAO c_dao = new Classement_DAO();
 //	    	c_dao.insertJoueur("jimmy");
 //	    	c_dao.insertJoueur("telmo");
-	    	c_dao.insertJoueur("macron");
-	    	c_dao.insertJoueur("la gifle de macron");
-	    	c_dao.insertMatch("macron","la gifle de macron",3,4,"Droitier");
-//	    	c_dao.insertMatch("la gifle de macron","macron",6,4,"Gaucher");
 //	    	c_dao.insertMatch("jimmy","telmo",0,7,"Droitier");
 //	    	c_dao.insertMatch("jimmy","telmo",3,4,"Gaucher");
 	    	ResultSet rs = c_dao.getPodium();

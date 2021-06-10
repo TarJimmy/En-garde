@@ -108,8 +108,6 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 	@Override
 	public void miseAJour() {
 		Action action = jeu.getActionCourante();
-			
-		System.out.println(action);
 		switch (action) {
 			case ACTUALISER_JEU:
 			case ACTUALISER_PLATEAU: // Actualise les cases accessibles du plateau
@@ -130,18 +128,18 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				}
 			case ACTUALISER_ESCRIMEUR:
 			case ACTUALISER_ESCRIMEUR_DROITIER :
-				vueEscrimeurs[Escrimeur.DROITIER].actualise(jeu.popShowCarte(Escrimeur.DROITIER), (jeu.isIA(Escrimeur.DROITIER) && jeu.getIsTourGaucher() == false || jeu.getShowAllCartes()));
+				vueEscrimeurs[Escrimeur.DROITIER].actualise(jeu.popShowCarte(Escrimeur.DROITIER), (!jeu.isIA(Escrimeur.DROITIER) && !jeu.getIsTourGaucher()) || jeu.getShowAllCartes(), !jeu.isIA(Escrimeur.DROITIER) && jeu.casesJouables().contains(-1));
 				if (action == Action.ACTUALISER_ESCRIMEUR_DROITIER) { // Stop si ce n'est pas  un changement de tour ou l'actualisation des 2 mains
 					controle.commande("ActionTerminer");
 					break;
 				}
 			case ACTUALISER_ESCRIMEUR_GAUCHER:
-				vueEscrimeurs[Escrimeur.GAUCHER].actualise(jeu.popShowCarte(Escrimeur.GAUCHER), (jeu.isIA(Escrimeur.GAUCHER) && jeu.getIsTourGaucher()) || jeu.getShowAllCartes());
+				vueEscrimeurs[Escrimeur.GAUCHER].actualise(jeu.popShowCarte(Escrimeur.GAUCHER), (!jeu.isIA(Escrimeur.GAUCHER) && jeu.getIsTourGaucher()) || jeu.getShowAllCartes(), !jeu.isIA(Escrimeur.GAUCHER) && jeu.casesJouables().contains(-1));
 				controle.commande("ActionTerminer");
 				break;
 			case ACTUALISER_ESCRIMEUR_SANS_BUTTON:
-				vueEscrimeurs[Escrimeur.GAUCHER].setBtnPasserTourVisibility(false);
-				vueEscrimeurs[Escrimeur.DROITIER].setBtnPasserTourVisibility(false);
+				vueEscrimeurs[Escrimeur.GAUCHER].actualise((!jeu.isIA(Escrimeur.GAUCHER) && jeu.getIsTourGaucher()) || jeu.getShowAllCartes(), false);
+				vueEscrimeurs[Escrimeur.DROITIER].actualise((!jeu.isIA(Escrimeur.DROITIER) && !jeu.getIsTourGaucher() == false) || jeu.getShowAllCartes(), false);
 				controle.commande("ActionTerminer");
 				break;
 			case ANIMATION_DEPLACER_ESCRIMEUR:
@@ -197,8 +195,10 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				controle.animation("Ajouter", panelAnimation.generateAnimationChangementJoueur());
 				break;
 			case IA_JOUE:
-				System.out.println("lance IA switch");
-				panelAnimation.generateCoupIA(jeu.getIACurrent());
+				IA ia = jeu.getIACurrent();
+				if (ia != null) {
+					panelAnimation.generateCoupIA(jeu.getIACurrent());
+				}
 				controle.commande("ActionTerminer");
 			default:
 				break;
@@ -319,7 +319,6 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 					FontMetrics fm = drawable.getFontMetrics();
 		            int x = ptDebutPanelAnimation.x - (fm.stringWidth(text) / 2) + (sizeImgPanelAnimation.width / 2);
 		            drawable.drawString(text, x, ptDebutPanelAnimation.y + 150);
-		            drawable.drawLine(ptDebutPanelAnimation.x, ptDebutPanelAnimation.y + ptDebutPanelAnimation.y / 2, ptDebutPanelAnimation.x + fm.stringWidth(text), ptDebutPanelAnimation.y + ptDebutPanelAnimation.y / 2);
 					break;
 				case Animation.ANIM_CARTES:
 					for (int i = 0; i < posADessiner.length; i++) {
@@ -361,7 +360,6 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 		}
 
 		public Animation generateCoupIA(IA iA) {
-			System.out.println("lance IA");
 			return new AnimationIAJoue(controle, this, iA);
 		}
 		

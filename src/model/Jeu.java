@@ -480,11 +480,11 @@ public class Jeu extends Observable {
 		indicePremierJoueurManche = (indicePremierJoueurManche + 1) % 2;
 		indiceCurrentEscrimeur = indicePremierJoueurManche;
 		piocher(escrimeurs[indiceCurrentEscrimeur]);
-		
 		piocher(escrimeurs[(indiceCurrentEscrimeur + 1) % 2]);
-		modifieVue(Action.ACTUALISER_JEU);
 		if (getCurrentEscrimeur().getType() != TypeEscrimeur.HUMAIN) {
-			modifieVue(Action.IA_JOUE);
+			IADoitJouer();
+		} else {
+			modifieVue(Action.ACTUALISER_JEU);
 		}
 	}
 	
@@ -539,8 +539,6 @@ public class Jeu extends Observable {
 	public void demarreActionSuivante() {
 		if (!actionEnCours && !listeActions.isEmpty()) {
 			actionEnCours = true;
-			System.out.println("2");
-			System.out.println(Arrays.toString(listeActions.toArray()));
 			metAJour();
 		}
 	}

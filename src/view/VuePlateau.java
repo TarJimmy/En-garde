@@ -134,7 +134,7 @@ public class VuePlateau extends JPanel implements Animateur {
 		this.spinner = new CustomJSinner();
 		espaceCase = 1600 / NBCases;
 		try {
-			this.background = ImageIO.read(Configuration.charge("Background.png", Configuration.PLATEAU));
+			//this.background = ImageIO.read(Configuration.charge("Background.png", Configuration.PLATEAU));
 			this.imgGaucher = ImageIO.read(Configuration.charge("Gaucher.png", Configuration.ESCRIMEURS));
 			this.imgDroitier = ImageIO.read(Configuration.charge("Droitier.png", Configuration.ESCRIMEURS));
 			this.imgGaucherBlack = ImageIO.read(Configuration.charge("GaucherB.png", Configuration.ESCRIMEURS));

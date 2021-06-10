@@ -3,16 +3,19 @@ package Database;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DB_DAO {
 
-	private final static String url = "jdbc:sqlite:En_garde.db";
+	private final String url = "jdbc:sqlite:En_garde.db";
 
 	public void createNewDatabase() {
 
         try {
+
             Connection conn = DriverManager.getConnection(url);
             if (conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
