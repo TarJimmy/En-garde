@@ -139,7 +139,7 @@ public class InterfaceGraphiqueJeu implements Runnable, Observateur {
 				break;
 			case ACTUALISER_ESCRIMEUR_SANS_BUTTON:
 				vueEscrimeurs[Escrimeur.GAUCHER].actualise((!jeu.isIA(Escrimeur.GAUCHER) && jeu.getIsTourGaucher()) || jeu.getShowAllCartes(), false);
-				vueEscrimeurs[Escrimeur.DROITIER].actualise((!jeu.isIA(Escrimeur.DROITIER) && !jeu.getIsTourGaucher() == false) || jeu.getShowAllCartes(), false);
+				vueEscrimeurs[Escrimeur.DROITIER].actualise((!jeu.isIA(Escrimeur.DROITIER) && !jeu.getIsTourGaucher()) || jeu.getShowAllCartes(), false);
 				controle.commande("ActionTerminer");
 				break;
 			case ANIMATION_DEPLACER_ESCRIMEUR:

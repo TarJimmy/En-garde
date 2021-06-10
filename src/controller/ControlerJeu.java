@@ -9,6 +9,7 @@ import model.Coup;
 import model.Escrimeur;
 import model.IA;
 import model.IA_Difficile;
+import model.IA_Moyenne;
 import model.Jeu;
 import model.Jeu.Action;
 import model.Plateau;
@@ -23,7 +24,7 @@ import view.InterfaceGraphiqueMenu;
 public class ControlerJeu extends Controler {
 	protected Jeu jeu;
 	protected LinkedList<Animation> animations;
-	protected boolean animationsActives;
+	protected boolean animationsActives; 
 	protected final SauvegarderPartie_DAO partieSauvegardee = new SauvegarderPartie_DAO();
 	protected final Classement_DAO classDAO = new Classement_DAO();
 
@@ -78,6 +79,7 @@ public class ControlerJeu extends Controler {
 	@Override
 	public boolean clickCase(int x, int nbCartesAUtiliser) {
 		//jeu.afficherEtatJeu();
+		System.out.println("clique case : " + x);
 		jeu.modifieVue(Action.ACTUALISER_ESCRIMEUR_SANS_BUTTON);
 		int nbCartesAttaque = nbCartesAUtiliser;
 		
@@ -117,6 +119,7 @@ public class ControlerJeu extends Controler {
 		} else if(positionNotCurrentEscrimeur == x){
 			//attaquer
 			cartesAJouer = new Carte[nbCartesAttaque];
+			System.out.println("nbCartesAttaque : "+ nbCartesAttaque);
 			int i = 0;
 			int nbCartesCurrentEscrimeur = currentEscrimeur.getNbCartes();
 			int distanceAttaque = plateau.getPosition(Escrimeur.DROITIER) - plateau.getPosition(Escrimeur.GAUCHER);

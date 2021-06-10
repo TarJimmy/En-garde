@@ -131,6 +131,7 @@ public class Jeu extends Observable {
 		HashMap<TypeEscrimeur, IA> hashIA = new HashMap<>();
 		hashIA.put(TypeEscrimeur.IA_FACILE, new IA_Facile(this));
 		hashIA.put(TypeEscrimeur.IA_MOYENNE, new IA_Moyenne(this));
+		hashIA.put(TypeEscrimeur.IA_DIFFICILE, new IA_Difficile(this));
 		
 		listIA = Collections.unmodifiableMap(hashIA);
 	}
@@ -403,7 +404,8 @@ public class Jeu extends Observable {
 			}
 	}
 
-	public void afficherEtatJeu() {
+	public void afficherEtatJeu() { 
+		System.out.println("indice current escrimeur : " + indiceCurrentEscrimeur);
 		System.out.println("position gaucher : " + getPlateau().getPosition(EGAUCHER));
 		System.out.print("jeu gaucher : ");
 		for (int i = 0; i < escrimeurs[0].getCartes().length; i++) {

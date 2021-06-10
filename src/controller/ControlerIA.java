@@ -18,7 +18,7 @@ public class ControlerIA extends ControlerJeu {
 	int eWinner;
 
 	public ControlerIA(Jeu jeu) {
-		super(jeu, false, false);
+		super(jeu, false, false); 
 		eWinner = Jeu.NONE;
 	}
 	
@@ -27,6 +27,7 @@ public class ControlerIA extends ControlerJeu {
 	
 	
 	public JeuIA generateNewJeuIA(Jeu jeu) {
+		
 		JeuIA j = new JeuIA(jeu);
 		System.out.println("tcsicndiv"+ jeu.getHistorique().equals(j.getHistorique()));
 		return j;
@@ -116,7 +117,7 @@ public class ControlerIA extends ControlerJeu {
 			}
 		}
 		
-		public void init(Jeu jeu) {
+		public void init(Jeu jeu) { 
 			this.escrimeurs = new Escrimeur[2];
 			this.escrimeurs[Escrimeur.GAUCHER] = jeu.getEscrimeurGaucher().copySimple();
 			this.escrimeurs[Escrimeur.DROITIER] = jeu.getEscrimeurDroitier().copySimple();

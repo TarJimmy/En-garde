@@ -1,0 +1,17 @@
+23
+IA_FACILE
+IA_FACILE
+1
+IA_DIFFICILE
+IA_DIFFICILE
+23
+Basique
+5
+5
+5
+5
+5
+5
+5
+Actif
+Gauche

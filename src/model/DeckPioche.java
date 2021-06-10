@@ -18,7 +18,11 @@ public class DeckPioche extends Deck {
 	}
 	
 	public Carte piocher() {
+		if (this.deckVide() ) {
+			return null;
+		}
 		return cartes.pop();
+		
 	}
 	
 	public void reposerCarte(Carte c) {

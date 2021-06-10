@@ -38,7 +38,7 @@ public class ControlerAutre extends Controler {
 	public boolean commande(String c) {
 		switch(c) {
 			case "annuler":
-			case "menu":
+			case "menu": 
 				closeAll();
 				InterfaceGraphiqueMenu.demarrer(new ControlerAutre());
 				break;
