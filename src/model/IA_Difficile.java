@@ -401,41 +401,42 @@ public class IA_Difficile extends IA{
 
 	@Override
 	public int[] getChoixCoup() {
-		System.out.println("etape1:");
-		jeu.afficherEtatJeu();
-		ControlerIA controlerIA = new ControlerIA(jeu);
-		System.out.println("etape2:");
-		jeu.afficherEtatJeu();
-		System.out.println("etape3:");
-		controlerIA.getJeu().afficherEtatJeu();
-		ArrayList<int[]> coups = getCoupsPossibles(controlerIA);
-		System.out.println("nombre de coups possibles :" + coups.size());
-		System.out.print("coupsPossibles : ");
-		for (int i = 0; i < coups.size(); i++) {
-			System.out.print(coups.get(i)[0] +"_"+ coups.get(i)[1] +", ");
-		}
-		System.out.println("");
-		Iterator<int[]> it = coups.iterator();
-		int[] meilleurCoup = new int[2];
-		float scoreMax = 0;
-		ControlerIA copie = new ControlerIA(controlerIA.generateNewJeuIA(controlerIA.getJeu(), jeu.getIndiceCurrentEscrimeur()));
-		while (it.hasNext()) {
-			int[] currentCoup = it.next();
-			System.out.println("doit etre 0 : " + copie.getJeu().getHistorique().getHistorique().size());
-			copie.clickCase(currentCoup[0],currentCoup[1]);
-			System.out.println("doit etre 1 : " + copie.getJeu().getHistorique().getHistorique().size());
-			System.out.println("clickCase : " + currentCoup[0] + " "+ currentCoup[1]);
-			float scoreCoup = scoreConfig(copie, 0);
-			if (scoreCoup > scoreMax){
-				scoreMax = scoreCoup;
-				meilleurCoup = currentCoup;
+		if (jeu.getDeckPioche().nbCartes() > 10) {
+			return new IA_Moyenne(jeu).getChoixCoup();
+		} else {
+			ControlerIA controlerIA = new ControlerIA(jeu);
+			ArrayList<int[]> coups = getCoupsPossibles(controlerIA);
+			/*System.out.println("nombre de coups possibles :" + coups.size());
+			System.out.print("coupsPossibles : ");
+			for (int i = 0; i < coups.size(); i++) {
+				System.out.print(coups.get(i)[0] +"_"+ coups.get(i)[1] +", ");
 			}
+			System.out.println("");*/
+			Iterator<int[]> it = coups.iterator();
+			int[] meilleurCoup = new int[2];
+			if(coups.size() == 1) {
+				meilleurCoup = coups.get(0);
+				return meilleurCoup;
+			}
+			float scoreMax = 0;
+			ControlerIA copie = new ControlerIA(controlerIA.generateNewJeuIA(controlerIA.getJeu(), jeu.getIndiceCurrentEscrimeur()));
+			while (it.hasNext()) {
+				int[] currentCoup = it.next();
+				copie.clickCase(currentCoup[0],currentCoup[1]);
+				//System.out.println("clickCase : " + currentCoup[0] + " "+ currentCoup[1]);
+				//copie.getJeu().afficherEtatJeu();
+				float scoreCoup = scoreConfig(copie, 0);
+				if (scoreCoup > scoreMax){
+					scoreMax = scoreCoup;
+					meilleurCoup = currentCoup;
+				}
+			}
+			if(meilleurCoup[0] == 0){
+	            it = coups.iterator();
+	            meilleurCoup = (int[])it.next();
+			}
+			return meilleurCoup;
 		}
-		if(meilleurCoup[0] == 0){
-            it = coups.iterator();
-            meilleurCoup = (int[])it.next();
-		}
-		return meilleurCoup;
 	}
 	
 	public ArrayList<int[]> getCoupsPossibles(ControlerIA config) {

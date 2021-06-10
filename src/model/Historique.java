@@ -1,3 +1,4 @@
+  
 package model;
 
 import java.util.HashSet;
@@ -172,7 +173,6 @@ public class Historique {
 			return true;
 		}
 		if((!this.getHistorique().empty() && other.getHistorique().empty()) || (!other.getHistorique().empty() && this.getHistorique().empty())) {
-			System.out.println("probleme");
 			return false;
 		}
 		if (this.getHistorique().empty() && other.getHistorique().empty()) {

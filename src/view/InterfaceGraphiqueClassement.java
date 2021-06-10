@@ -25,17 +25,17 @@ import javax.swing.border.EmptyBorder;
 import Global.Configuration;
 import Patterns.Observateur;
 import controller.ControlerAutre;
-//import Database.Classement_DAO;
-//import Database.DB_DAO;
-//import Database.SauvegarderPartie_DAO;
+import Database.Classement_DAO;
+import Database.DB_DAO;
+import Database.SauvegarderPartie_DAO;
 
 public class InterfaceGraphiqueClassement implements Runnable {
 
 	private static JFrame fenetreClassement;
 	private static CollecteurEvenements controle;
 	private static List<JLabel> labels = new ArrayList<>();
-	//protected final Classement_DAO classDAO = new Classement_DAO();
-	//ResultSet rs;
+	protected final Classement_DAO classDAO = new Classement_DAO();
+	ResultSet rs;
 	private InterfaceGraphiqueClassement(CollecteurEvenements controle) {
 		InterfaceGraphiqueClassement.controle = controle;
 	}
@@ -99,13 +99,18 @@ public class InterfaceGraphiqueClassement implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		//rs = classDAO.getPodium();
-		for(int i=0; i<10; i++) {
-			JLabel label = labels.get(i);
-			//rs.next();
-			//name = "<html>" + capitalize(rs.getString("nom"))+" : "+ rs.getString("win")+"<strong> V</strong> "+ rs.getString("defaite") + " <strong>D</strong></html>";
+		try {
+			rs = classDAO.getPodium();
+			for(int i=0; i<10; i++) {
+				JLabel label = labels.get(i);
+				rs.next();
+				name = "<html>" + capitalize(rs.getString("nom"))+" : "+ rs.getString("win")+"<strong> V</strong> "+ rs.getString("defaite") + " <strong>D</strong></html>";
 
-			label.setText(name);
+				label.setText(name);
+			}
+			rs.close();
+			Classement_DAO.stmt.close();
+		} catch (SQLException e) {
 		}
 		
 		for(JLabel label : labels) {
@@ -121,6 +126,14 @@ public class InterfaceGraphiqueClassement implements Runnable {
 	
 	private String capitalize(String name) {
 		return name.substring(0, 1).toUpperCase() + name.substring(1);
+	}
+	
+	public static void main(String[] args) {
+		Configuration.instance();
+		DB_DAO db = new DB_DAO();
+    	db.createNewDatabase();
+    	db.createTables();
+		InterfaceGraphiqueClassement.demarrer(new ControlerAutre());
 	}
 
 }
