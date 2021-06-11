@@ -48,7 +48,7 @@ public class InterfaceGraphiqueTutoriel implements Runnable {
     		exists = true;
     		SwingUtilities.invokeLater(new InterfaceGraphiqueTutoriel());
     	} else {
-    		System.out.println("La fenetre existe dÈj‡");
+    		System.out.println("La fenetre existe d√©j√†");
     	}
     }
    
@@ -112,7 +112,7 @@ public class InterfaceGraphiqueTutoriel implements Runnable {
                 c1.next(center);
             }
         });
-        moins = new ButtonCustom("<< PrÈcedent", "cadre4", dim, f);
+        moins = new ButtonCustom("<< Pr√©cedent", "cadre4", dim, f);
         moins.setForeground(Color.white);;
         moins.addActionListener(new ActionListener() {
             @Override
@@ -171,7 +171,7 @@ public class InterfaceGraphiqueTutoriel implements Runnable {
                 Graphics2D g = (Graphics2D) gd;
                 //Et j'affiche en utilisant la transformation
                 g.drawImage(img, 0, 0, width, height, null);
-                //On libËre un peu de mÈmoire histoire de laisser le GC tranquille un peu plus longtemps
+                //On libÔøΩre un peu de mÔøΩmoire histoire de laisser le GC tranquille un peu plus longtemps
                 g.dispose();
             }
         }

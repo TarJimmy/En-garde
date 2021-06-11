@@ -479,6 +479,9 @@ public class Jeu extends Observable {
 	
 	public void nouvelleManche() {
 		resetManche();
+
+		modifieVue(Action.ACTUALISER_DECK);
+		modifieVue(Action.ACTUALISER_PLATEAU_SANS_CASE);
 		indicePremierJoueurManche = (indicePremierJoueurManche + 1) % 2;
 		indiceCurrentEscrimeur = indicePremierJoueurManche;
 		piocher(escrimeurs[indiceCurrentEscrimeur]);
@@ -628,6 +631,19 @@ public class Jeu extends Observable {
 		while(!deckDefausse.deckVide()) {
 			deckPioche.reposerCarte(deckDefausse.reprendreDerniereCarte());
 		}
+		for (int i = 0; i < escrimeurs[0].getNbCartes(); i++) {
+			if (escrimeurs[0].getCarte(i) != null) {
+				deckPioche.reposerCarte(escrimeurs[0].getCarte(i));
+			}
+			if (escrimeurs[1].getCarte(i) != null) {
+				deckPioche.reposerCarte(escrimeurs[1].getCarte(i));
+			}
+		}
+		escrimeurs[0].setCartes(new Carte[escrimeurs[0].getNbCartes()]);
+		escrimeurs[1].setCartes(new Carte[escrimeurs[1].getNbCartes()]);
+		cartesShowEscrimeurs[0].clear();
+		cartesShowEscrimeurs[1].clear();
+		carteShowDeck.clear();
 		deckPioche.melanger();
 		
 		// Reset Mains Escrimeurs

@@ -416,11 +416,11 @@ public class ControlerJeu extends Controler {
 	public void SuiteChargerPartie(Jeu jeu) {
 		// TODO Auto-generated method stub
 		closeAll();
-		/*this.jeu = jeu;
+		this.jeu = jeu;
 		this.animations.clear();
 		animationsActives = false;
 		lancerNouvellePartie = false;
-		InterfaceGraphiqueJeu.demarrer(this, jeu);*/
+		InterfaceGraphiqueJeu.demarrer(this, jeu);
 	}
 	
 	public ControlerJeu copySimple() {
